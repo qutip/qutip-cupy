@@ -1,1 +1,4 @@
 include VERSION
+# pyproject.toml is automatically included in setuptools>=43.0, but we can
+# support back to 36.6 (which added PEP 517 builds) if we're explicit.
+include pyproject.toml
