@@ -7,11 +7,14 @@ cimport numpy as cnp
 
 #from qutip cimport data
 
+ctypedef cnp.npy_int32 idxint
+cdef int idxint_DTYPE
 
 cdef class Dense:
 #    cdef double complex *data
 #    cdef bint fortran
-    cdef object _cp
+    cpdef object _cp
+    cdef readonly (idxint, idxint) shape
     # cdef bint _deallocate
     # cdef void _fix_flags(Dense self, object array, bint make_owner=*)
     # cpdef Dense reorder(Dense self, int fortran=*)

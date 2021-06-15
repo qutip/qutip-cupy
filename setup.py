@@ -136,7 +136,7 @@ for package, files in cy_exts.items():
     for file in files:
         _module = 'src' + ('.' + package if package else '') + '.' + file
         _file = os.path.join('src', *package.split("."), file + '.pyx')
-        _sources = [_file, 'qutip/core/data/src/matmul_csr_vector.cpp']
+        _sources = [_file]#, 'qutip/core/data/src/matmul_csr_vector.cpp']
         EXT_MODULES.append(Extension(_module,
                                      sources=_sources,
                                      include_dirs=_include,
