@@ -86,6 +86,69 @@ def create_version_py_file(options):
     with open(filename, 'w') as file:
         print(content, file=file)
 
+#The following is required to get unit tests up and running.
+# If the user doesn't have, then that's OK, we'll just skip unit tests.
+try:
+    from setuptools import setup, Extension
+    EXTRA_KWARGS = {
+        'tests_require': ['pytest']
+    }
+except:
+    from distutils.core import setup
+    from distutils.extension import Extension
+    EXTRA_KWARGS = {}
+
+from Cython.Build import cythonize
+from Cython.Distutils import build_ext
+
+# Cython extensions to be compiled.  The key is the relative package name, the
+# value is a list of the Cython modules in that package.
+cy_exts = {
+    'qutip_cupy': [
+        'cupy_dense']}
+
+# Extra link args
+_link_flags = []
+
+# If on Win and Python version >= 3.5 and not in MSYS2
+# (i.e. Visual studio compile)
+if (
+    sys.platform == 'win32'
+    and int(str(sys.version_info[0])+str(sys.version_info[1])) >= 35
+    and os.environ.get('MSYSTEM') is None
+):
+    _compiler_flags = ['/w', '/Ox']
+# Everything else
+else:
+    _compiler_flags = ['-w', '-O3', '-funroll-loops']
+    if sys.platform == 'darwin':
+        # These are needed for compiling on OSX 10.14+
+        _compiler_flags.append('-mmacosx-version-min=10.9')
+        _link_flags.append('-mmacosx-version-min=10.9')
+import numpy as np
+EXT_MODULES = []
+_include = [
+    np.get_include(),
+]
+
+# Add Cython files from qutip
+for package, files in cy_exts.items():
+    for file in files:
+        _module = 'src' + ('.' + package if package else '') + '.' + file
+        _file = os.path.join('src', *package.split("."), file + '.pyx')
+        _sources = [_file, 'qutip/core/data/src/matmul_csr_vector.cpp']
+        EXT_MODULES.append(Extension(_module,
+                                     sources=_sources,
+                                     include_dirs=_include,
+                                     extra_compile_args=_compiler_flags,
+                                     extra_link_args=_link_flags,
+                                     language='c++'))
+
+# Remove -Wstrict-prototypes from cflags
+import distutils.sysconfig
+cfg_vars = distutils.sysconfig.get_config_vars()
+if "CFLAGS" in cfg_vars:
+    cfg_vars["CFLAGS"] = cfg_vars["CFLAGS"].replace("-Wstrict-prototypes", "")
 
 if __name__ == "__main__":
     options = process_options()
@@ -94,4 +157,6 @@ if __name__ == "__main__":
     # keep here are ones that we have done some compile-time processing on.
     setuptools.setup(
         version=options['version'],
+        ext_modules=cythonize(EXT_MODULES),
+        cmdclass={'build_ext': build_ext}
     )

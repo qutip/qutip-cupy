@@ -3,6 +3,9 @@ requires = [
     "setuptools>=36.6",
     "packaging",
     "wheel",
+    "cython",
+    "numpy",
+    "cupy-cuda101",
 ]
 build-backend = "setuptools.build_meta"
 
