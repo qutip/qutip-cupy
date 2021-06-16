@@ -150,6 +150,8 @@ cfg_vars = distutils.sysconfig.get_config_vars()
 if "CFLAGS" in cfg_vars:
     cfg_vars["CFLAGS"] = cfg_vars["CFLAGS"].replace("-Wstrict-prototypes", "")
 
+
+
 if __name__ == "__main__":
     options = process_options()
     create_version_py_file(options)
@@ -158,5 +160,6 @@ if __name__ == "__main__":
     setuptools.setup(
         version=options['version'],
         ext_modules=cythonize(EXT_MODULES),
-        cmdclass={'build_ext': build_ext}
+        cmdclass={'build_ext': build_ext},
+        
     )
