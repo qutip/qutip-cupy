@@ -1,20 +1,13 @@
 #cython: language_level=3
 #cython: boundscheck=False, wraparound=False, initializedcheck=False
 
-from libc.string cimport memcpy
 cimport cython
 
 import numbers
 
-import numpy as np
-cimport numpy as cnp
-
 import cupy as cp 
 import qutip
 
-from scipy.linalg cimport cython_blas as blas
-
-cnp.import_array()
 
 
 # Creation functions like 'identity' and 'from_csr' aren't exported in __all__
