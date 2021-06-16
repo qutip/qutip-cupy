@@ -13,7 +13,7 @@ cdef int idxint_DTYPE
 cdef class Dense:
 #    cdef double complex *data
 #    cdef bint fortran
-    cpdef object _cp
+    cdef public object cpa
     cdef readonly (idxint, idxint) shape
     # cdef bint _deallocate
     # cdef void _fix_flags(Dense self, object array, bint make_owner=*)
