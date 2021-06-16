@@ -144,7 +144,7 @@ cy_exts = {
 
 EXT_MODULES = []
 _include = [
-    np.get_include(),'/home/felipe/anaconda3/envs/cupy_toolkit_10_1/lib/python3.7/site-packages/cupy/src/core'
+    np.get_include()
 ]
 
 # Add Cython files from qutip
@@ -152,7 +152,7 @@ for package, files in cy_exts.items():
     for file in files:
         _module = 'src' + ('.' + package if package else '') + '.' + file
         _file = os.path.join('src', *package.split("."), file + '.pyx')
-        _sources = [_file]#, 'qutip/core/data/src/matmul_csr_vector.cpp']
+        _sources = [_file]
         EXT_MODULES.append(Extension(_module,
                                      sources=_sources,
                                      include_dirs=_include,
