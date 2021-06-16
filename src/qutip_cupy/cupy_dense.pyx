@@ -6,48 +6,14 @@ cimport cython
 
 import numbers
 
-import numpy as np
-cimport numpy as cnp
-
 import cupy as cp 
 import qutip
 
-from scipy.linalg cimport cython_blas as blas
-
-#from .base import EfficiencyWarning
-# from qutip.core.data cimport base, CSR
-# from qutip.core.data.add cimport add_dense, sub_dense
-# from qutip.core.data.adjoint cimport adjoint_dense, transpose_dense, conj_dense
-# from qutip.core.data.mul cimport mul_dense, neg_dense
-# from qutip.core.data.matmul cimport matmul_dense
-# from qutip.core.data.trace cimport trace_dense
-
-from qutip.qutip.core cimport data
-
-cnp.import_array()
-
-# cdef int _ONE = 1
-
-# cdef extern from *:
-#     void PyArray_ENABLEFLAGS(cnp.ndarray arr, int flags)
-#     void PyArray_CLEARFLAGS(cnp.ndarray arr, int flags)
-#     void *PyDataMem_NEW(size_t size)
-#     void *PyDataMem_NEW_ZEROED(size_t size, size_t elsize)
-#     void PyDataMem_FREE(void *ptr)
+from qutip.core cimport 
 
 
-# Creation functions like 'identity' and 'from_csr' aren't exported in __all__
-# to avoid naming clashes with other type modules.
-__all__ = [
-    'Dense', 'OrderEfficiencyWarning',
-]
 
-
-# class OrderEfficiencyWarning(EfficiencyWarning):
-#     pass
-
-
-cdef class Dense(Data):
+cdef class Dense(data.Data):
     def __init__(self, data, shape=None, copy=True):
         base = cp.array(data, dtype=np.complex128, order='K', copy=copy)
         if shape is None:
