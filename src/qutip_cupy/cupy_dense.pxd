@@ -6,6 +6,6 @@ from qutip.core.data cimport base
 
 
 
-cdef class Dense(data.Data):
+cdef class Dense(base.Data):
     cdef object _cp
     

@@ -14,7 +14,7 @@ from qutip.core.data cimport base
 
 
 
-cdef class Dense(data.Data):
+cdef class Dense(base.Data):
     def __init__(self, data, shape=None, copy=True):
         base = cp.array(data, dtype=np.complex128, order='K', copy=copy)
         if shape is None:
