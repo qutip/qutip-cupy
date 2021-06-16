@@ -1,7 +1,7 @@
 from .version import version as __version__
 
 from qutip.core import data
-from .cupy_dense import NewDataType
+from .cupy_dense import CuPyDense
 
 def dense_from_new(newarray):
     
@@ -10,12 +10,12 @@ def dense_from_new(newarray):
 
 def new_from_dense(dense):
     
-    dense_cp = NewDataType(dense.as_ndarray())
+    dense_cp = CuPyDense(dense.as_ndarray())
     return dense_cp
 
 
     
 data.to.add_conversions([
-     (NewDataType, data.Dense, new_from_dense),
-     (data.Dense, NewDataType, dense_from_new),
+     (CuPyDense, data.Dense, new_from_dense),
+     (data.Dense, CuPyDense, dense_from_new),
  ])
