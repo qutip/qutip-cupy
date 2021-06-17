@@ -56,6 +56,7 @@ jobs:
         # Install in editable mode so Coveralls detects the tree structure
         # relative to the git repository root as well.
         run: |
+            conda install setuptools>=36.6 packaging wheel
             python -mpip install --no-build-isolation -e .[full]
             python -mpip install pytest-cov coveralls
 
