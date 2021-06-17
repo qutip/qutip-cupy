@@ -1,3 +1,6 @@
+#The idea is see which changes are necessary here for having CUDA toolkit installed as a CPU emulator
+# and thus allow cupoy to be installed on top 
+
 # The name is short because we mostly care how it appears in the pull request
 # "checks" dialogue box - it looks like
 #     Tests / ubuntu-latest, python-3.9, defaults
