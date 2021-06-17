@@ -4,7 +4,7 @@ requires = [
     "packaging",
     "wheel",
     "cython>=0.29.20",
-    "numpy","scipy"
+    "numpy", "qutip>=5.0.0.dev0",
 ]
 build-backend = "setuptools.build_meta"
 

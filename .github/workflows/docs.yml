@@ -26,8 +26,10 @@ jobs:
           python -c 'import qutip; qutip.about()'
 
       - name: Install qutip-cupy from GitHub
+        # As dev-major is not yet released we must use --no-build-isolation,
+        # in this way we can include it in the toml to be available at compile time.
         run: |
-          python -mpip install .[full]
+          python -mpip install --no-build-isolation -e .[full]
           python -c 'import qutip_cupy; print(qutip_cupy.__version__)'
 
       - name: Build documentation

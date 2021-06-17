@@ -42,8 +42,10 @@ jobs:
       - name: Install qutip-cupy and dependencies
         # Install in editable mode so Coveralls detects the tree structure
         # relative to the git repository root as well.
+        # As dev-major is not yet released we must use --no-build-isolation,
+        # in this way we can include it in the toml to be available at compile time.
         run: |
-            python -mpip install -e .[full]
+            python -mpip install --no-build-isolation -e .[full]
             python -mpip install pytest-cov coveralls
 
       - name: Package information
