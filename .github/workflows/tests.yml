@@ -22,6 +22,12 @@ jobs:
   cases:
     name: ${{ matrix.os }}, ${{ matrix.case-name }}
     runs-on: ${{ matrix.os }}
+    container: nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
+    # runs:
+    #   using: 'docker'
+    #   image: 'Dockerfile'
+
+
     strategy:
       fail-fast: false
       matrix:
@@ -37,9 +43,9 @@ jobs:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
 
-      - name: Install CUDA toolkit
-        run:
-            conda install cudatoolkit=10.1
+      # - name: Install CUDA toolkit
+      #   run:
+      #       conda install cudatoolkit=10.1
             # wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
             # mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
             # apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
@@ -56,7 +62,7 @@ jobs:
         # Install in editable mode so Coveralls detects the tree structure
         # relative to the git repository root as well.
         run: |
-            conda install setuptools>=36.6 packaging wheel 
+            pip install setuptools>=36.6 packaging wheel 
             python -mpip install cupy-cuda101
             python -mpip install --no-build-isolation -e .[full]
             python -mpip install pytest-cov coveralls
