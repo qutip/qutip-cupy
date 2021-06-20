@@ -48,8 +48,7 @@ jobs:
             # apt-get update
             # apt-get -y install cuda    
       - name: Install python
-        run:
-              apt-get update -y && \
+        run:  sudo apt-get update -y && \
               apt-get install -y --no-install-recommends \
               python3.7-dev python3-pip python3-wheel python3-setuptools \
               wget git g++ make && \
