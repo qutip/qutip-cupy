@@ -1,13 +1,38 @@
 #!/usr/bin/env python
-
+import collections
 import os
+import pathlib
+import re
 import subprocess
 import sys
+import sysconfig
+import warnings
+
 
 # Required third-party imports, must be specified in pyproject.toml.
+# Required third-party imports, must be specified in pyproject.toml.
 import packaging.version
-import setuptools
+from setuptools import setup, Extension
+import distutils.sysconfig
+import numpy as np
+from Cython.Build import cythonize
+from Cython.Distutils import build_ext
 
+
+# def process_options():
+#     """
+#     Determine all runtime options, returning a dictionary of the results.  The
+#     keys are:
+#         'rootdir': str
+#             The root directory of the setup.  Almost certainly the directory
+#             that this setup.py file is contained in.
+#         'release': bool
+#             Is this a release build (True) or a local development build (False)
+#     """
+#     options = {}
+#     options['rootdir'] = os.path.dirname(os.path.abspath(__file__))
+#     options = _determine_version(options)
+#     return options
 
 def process_options():
     """
@@ -18,10 +43,86 @@ def process_options():
             that this setup.py file is contained in.
         'release': bool
             Is this a release build (True) or a local development build (False)
+        'openmp': bool
+            Should we build our OpenMP extensions and attempt to link in OpenMP
+            libraries?
+        'cflags': list of str
+            Flags to be passed to the C++ compiler.
+        'ldflags': list of str
+            Flags to be passed to the linker.
+        'include': list of str
+            Additional directories to be added to the header files include
+            path.  These files will be detected by Cython as dependencies, so
+            changes to them will trigger recompilation of .pyx files, whereas
+            includes added in 'cflags' as '-I/path/to/include' may not.
     """
     options = {}
     options['rootdir'] = os.path.dirname(os.path.abspath(__file__))
+    options = _determine_user_arguments(options)
     options = _determine_version(options)
+    options = _determine_compilation_options(options)
+    return options
+
+
+def _get_environment_bool(var, default=False):
+    """
+    Get a boolean value from the environment variable `var`.  This evalutes to
+    `default` if the environment variable is not present.  The false-y values
+    are '0', 'false', 'none' and empty string, insensitive to case.  All other
+    values are truth-y.
+    """
+    from_env = os.environ.get(var)
+    if from_env is None:
+        return default
+    return from_env.lower() not in {'0', 'false', 'none', ''}
+
+
+def _determine_user_arguments(options):
+    """
+    Add the 'openmp' option to the collection, based on the passed command-line
+    arguments or environment variables.
+    """
+    options['openmp'] = (
+        '--with-openmp' in sys.argv
+        or _get_environment_bool('CI_QUTIP_WITH_OPENMP')
+    )
+    if "--with-openmp" in sys.argv:
+        sys.argv.remove("--with-openmp")
+    return options
+
+
+def _determine_compilation_options(options):
+    """
+    Add additional options specific to C/C++ compilation.  These are 'cflags',
+    'ldflags' and 'include'.
+    """
+    # Remove -Wstrict-prototypes from the CFLAGS variable that the Python build
+    # process uses in addition to user-specified ones; the flag is not valid
+    # for C++ compiles, but CFLAGS gets appended to those compiles anyway.
+    config = distutils.sysconfig.get_config_vars()
+    if "CFLAGS" in config:
+        config["CFLAGS"] = config["CFLAGS"].replace("-Wstrict-prototypes", "")
+    options['cflags'] = []
+    options['ldflags'] = []
+    options['include'] = [np.get_include()]
+    if (
+        sysconfig.get_platform().startswith("win")
+        and os.environ.get('MSYSTEM') is None
+    ):
+        # Visual Studio
+        options['cflags'].extend(['/w', '/Ox'])
+        if options['openmp']:
+            options['cflags'].append('/openmp')
+    else:
+        # Everything else
+        options['cflags'].extend(['-w', '-O3', '-funroll-loops'])
+    if sysconfig.get_platform().startswith("macos"):
+        # These are needed for compiling on OSX 10.14+
+        options['cflags'].append('-mmacosx-version-min=10.9')
+        options['ldflags'].append('-mmacosx-version-min=10.9')
+        if options['openmp']:
+            options['cflags'].append('-fopenmp')
+            options['ldflags'].append('-fopenmp')
     return options
 
 
@@ -88,88 +189,57 @@ def create_version_py_file(options):
 
 
 
-# The following is required to get unit tests up and running.
-# If the user doesn't have, then that's OK, we'll just skip unit tests.
-try:
-    from setuptools import setup, Extension
-    EXTRA_KWARGS = {
-        'tests_require': ['pytest']
-    }
-except:
-    from distutils.core import setup
-    from distutils.extension import Extension
-    EXTRA_KWARGS = {}
-
-
-import Cython
-from Cython.Build import cythonize
-from Cython.Distutils import build_ext
-import numpy as np
-#we will probably need to create our own get include to get the cupy headers out
-
-
-
-
-# Extra link args
-_link_flags = []
-
-# If on Win and Python version >= 3.5 and not in MSYS2
-# (i.e. Visual studio compile)
-if (
-    sys.platform == 'win32'
-    and int(str(sys.version_info[0])+str(sys.version_info[1])) >= 35
-    and os.environ.get('MSYSTEM') is None
-):
-    _compiler_flags = ['/w', '/Ox']
-# Everything else
-else:
-    _compiler_flags = ['-w', '-O3', '-funroll-loops']
-    if sys.platform == 'darwin':
-        # These are needed for compiling on OSX 10.14+
-        _compiler_flags.append('-mmacosx-version-min=10.9')
-        _link_flags.append('-mmacosx-version-min=10.9')
-
-# Remove -Wstrict-prototypes from cflags
-import distutils.sysconfig
-cfg_vars = distutils.sysconfig.get_config_vars()
-if "CFLAGS" in cfg_vars:
-    cfg_vars["CFLAGS"] = cfg_vars["CFLAGS"].replace("-Wstrict-prototypes", "")
-
-
-
-# Cython extensions to be compiled.  The key is the relative package name, the
-# value is a list of the Cython modules in that package.
-cy_exts = {
-    'qutip_cupy': ['cupy_dense']}
-
-EXT_MODULES = []
-_include = [
-    np.get_include()
-]
-
-# Add Cython files from qutip
-for package, files in cy_exts.items():
-    for file in files:
-        _module = 'src' + ('.' + package if package else '') + '.' + file
-        _file = os.path.join('src', *package.split("."), file + '.pyx')
-        _sources = [_file]
-        EXT_MODULES.append(Extension(_module,
-                                     sources=_sources,
-                                     include_dirs=_include,
-                                     extra_compile_args=_compiler_flags,
-                                     extra_link_args=_link_flags,
-                                     language='c++'))
-
-#cfg_vars should be checked to conform the needed flags just like in cupy
+def create_extension_modules(options):
+    """
+    Discover and Cythonise all extension modules that need to be built.  These
+    are returned so they can be passed into the setup command.
+    """
+    out = []
+    root = pathlib.Path(options['rootdir'])
+    pyx_files = set(root.glob('qutip/**/*.pyx'))
+    if not options['openmp']:
+        pyx_files -= set(root.glob('qutip/**/openmp/**/*.pyx'))
+   # extra_sources = _extension_extra_sources()
+    # Add Cython files from qutip
+    for pyx_file in pyx_files:
+        pyx_file = pyx_file.relative_to(root)
+        pyx_file_str = str(pyx_file)
+        if 'compiled_coeff' in pyx_file_str or 'qtcoeff_' in pyx_file_str:
+            # In development (at least for QuTiP ~4.5 and ~5.0) sometimes the
+            # Cythonised time-dependent coefficients would get dropped in the
+            # qutip directory if you weren't careful - this is just trying to
+            # minimise the occasional developer error.
+            warnings.warn(
+                "skipping generated time-dependent coefficient: "
+                + pyx_file_str
+            )
+            continue
+        # The module name is the same as the folder structure, but with dots in
+        # place of separators ('/' or '\'), and without the '.pyx' extension.
+        pyx_module = ".".join(pyx_file.parts)[:-4]
+        pyx_sources = [pyx_file_str] # + extra_sources[pyx_module]
+        out.append(Extension(pyx_module,
+                             sources=pyx_sources,
+                             include_dirs=options['include'],
+                             extra_compile_args=options['cflags'],
+                             extra_link_args=options['ldflags'],
+                             language='c++'))
+    return cythonize(out)
 
 
 if __name__ == "__main__":
     options = process_options()
     create_version_py_file(options)
+    extensions = create_extension_modules(options)
     # Most of the kwargs to setup are defined in setup.cfg; the only ones we
     # keep here are ones that we have done some compile-time processing on.
-    setuptools.setup(
+    setup(
         version=options['version'],
-        ext_modules=cythonize(EXT_MODULES),
-        cmdclass={'build_ext': build_ext}, zip_safe=False
+        ext_modules=extensions,
+        cmdclass={'build_ext': build_ext},
     )
+    # setuptools.setup(
+    #     version=options['version'],
+    #     ext_modules=cythonize(EXT_MODULES),
+    #     cmdclass={'build_ext': build_ext}, zip_safe=False
+    # )
