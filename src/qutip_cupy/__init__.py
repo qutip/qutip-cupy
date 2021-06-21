@@ -13,7 +13,7 @@ from src.qutip_cupy.cupy_dense import CuPyDense
 
 def dense_from_new(newarray):
     
-    dense_np = data.Dense(newarray._cp.tolist())
+    dense_np = data.Dense(newarray.cpar.tolist())
     return dense_np
 
 def new_from_dense(dense):

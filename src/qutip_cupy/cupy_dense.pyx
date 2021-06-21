@@ -37,6 +37,7 @@ cdef class CuPyDense(base.Data):
                 " for input data with size ",
                 str(base.size)
             ]))
-        self._cp = base      
         self.shape = (shape[0], shape[1])
+        self.cpar = base      
+       
 
