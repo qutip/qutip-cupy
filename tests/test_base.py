@@ -7,7 +7,7 @@ def test_import():
 
 def test_conversion_cycle():
     from qutip_cupy import CuPyDense
-    from qutip_cupy import data
+    from qutip.core import data
 
     old_dense = data.Dense([[0,1,2,6,7,8]])
 
