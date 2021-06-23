@@ -9,11 +9,11 @@ def test_conversion_cycle():
     from qutip_cupy import CuPyDense
     from qutip.core import data
 
-    old_dense = data.Dense([[0,1,2,6,7,8]])
+    qutip_dense = data.Dense([[0,1,2,6,7,8]])
 
-    tr1 = data.to[CuPyDense, data.Dense](old_dense)
+    tr1 = data.to(CuPyDense, qutip_dense)
 
-    assert (old_dense.to_array() == data.to[data.Dense, CuPyDense](tr1).to_array()).all()
+    assert (qutip_dense.to_array() == data.to(data.Dense, tr1).to_array()).all()
 
 
 def test_shape():
