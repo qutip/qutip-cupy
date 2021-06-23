@@ -29,5 +29,15 @@ class CuPyDense(data.Data):
 
         self._cp = base
 
+def dense_from_cupydense(cupydense):
+    
+    dense_np = data.Dense(cupydense._cp.tolist())
+    return dense_np
+
+def cupydense_from_dense(dense):
+
+    dense_cp = CuPyDense(dense.as_ndarray())
+    return dense_cp
+
 
 

@@ -18,7 +18,6 @@ def test_conversion_cycle():
 
 def test_shape():
     from qutip_cupy import CuPyDense
-    from qutip_cupy import data
 
     cupy_dense = CuPyDense([[0,1,2,6,7,8]])
 
