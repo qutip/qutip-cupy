@@ -65,4 +65,18 @@ def cupydense_from_dense(dense):
     return dense_cp
 
 
+def cpd_adjoint(cpd_array):
+    return cpd_array.adjoint()
+
+
+def cpd_conj(cpd_array):
+    return cpd_array.conj()
+
+
+def cpd_transpose(cpd_array):
+    return cpd_array.transpose()
+
+
+def cpd_trace(cpd_array):
+    return cpd_array.trace()
 
