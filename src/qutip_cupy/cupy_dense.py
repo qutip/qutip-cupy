@@ -1,6 +1,7 @@
 import cupy as cp
 import numbers
 from qutip.core import data
+
 class CuPyDense(data.Data):
     def __init__(self, data, shape=None, copy=True):
         base = cp.array(data, dtype=cp.complex128, order='K', copy=copy)
@@ -28,21 +29,39 @@ class CuPyDense(data.Data):
             else:
                 self._cp = base.reshape(shape)
         else:
-            
+
             self._cp = base
 
         super().__init__((shape[0], shape[1]))
 
-        
+    def copy(self):
+        return CuPyDense(self._cp.copy())
+
+    def to_array(self):
+        return cp.asnumpy(self._cp)
+
+    def conj(self):
+        return CuPyDense(self._cp.conj())
+
+    def transpose(self):
+        return CuPyDense(self._cp.transpose())
+
+    def adjoint(self):
+        return CuPyDense(self._cp.transpose().conj())
+
+    def trace(self):
+        return self._cp.trace()
+
 
 def dense_from_cupydense(cupydense):
-    
-    dense_np = data.Dense(cupydense._cp.tolist())
+
+    dense_np = data.Dense(cupydense.to_array(), copy=False)
     return dense_np
+
 
 def cupydense_from_dense(dense):
 
-    dense_cp = CuPyDense(dense.as_ndarray())
+    dense_cp = CuPyDense(dense.as_ndarray(), copy=False)
     return dense_cp
 
 

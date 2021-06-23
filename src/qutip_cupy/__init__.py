@@ -7,6 +7,7 @@ data.to.add_conversions([
      (CuPyDense, data.Dense, cupydense_from_dense),
      (data.Dense, CuPyDense, dense_from_cupydense),
  ])
+data.to.register_aliases(['cupyd'], CuPyDense)
 # We must register the functions to the data layer but do not want 
 # the data layer to be callable from qutip_cupy
 del data
