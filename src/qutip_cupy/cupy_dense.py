@@ -17,17 +17,23 @@ class CuPyDense(data.Data):
             and shape[1] > 0
         ):
             raise ValueError("shape must be a 2-tuple of positive ints, but is " + repr(shape))
-        if shape[0] * shape[1] != base.size:
-            raise ValueError("".join([
-                "invalid shape ",
-                str(shape),
-                " for input data with size ",
-                str(base.size)
-            ]))
+        if shape and (shape[0] != base.shape[0] or shape[1] != base.shape[1]):
+            if shape[0] * shape[1] != base.size:
+                raise ValueError("".join([
+                    "invalid shape ",
+                    str(shape),
+                    " for input data with size ",
+                    str(base.size)
+                ]))
+            else:
+                self._cp = base.reshape(shape)
+        else:
+            
+            self._cp = base
 
         super().__init__((shape[0], shape[1]))
 
-        self._cp = base
+        
 
 def dense_from_cupydense(cupydense):
     
