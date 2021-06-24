@@ -1,0 +1,93 @@
+# The name is short because we mostly care how it appears in the pull request
+# "checks" dialogue box - it looks like
+#     Tests on GPU / ubuntu-latest, python-3.9, defaults
+# or similar.
+name: Tests on GPU
+
+on:
+    [push, pull_request]
+
+defaults:
+  run:
+    # The slightly odd shell call is to force bash to read .bashrc, which is
+    # necessary for having conda behave sensibly.  We use bash as the shell even
+    # on Windows, since we don't run anything much complicated, and it makes
+    # things much simpler.
+    shell: bash -l {0}
+
+jobs:
+  cases:
+    name: ${{ matrix.os }}, ${{ matrix.case-name }}
+    runs-on: [self-hosted, gpu]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: [3.9]
+        case-name: [defaults]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install QuTiP from GitHub
+        run: |
+          python -mpip install git+https://github.com/qutip/qutip.git@dev.major
+          python -c 'import qutip; qutip.about()'
+
+      - name: Install qutip-cupy and dependencies
+        # Install in editable mode so Coveralls detects the tree structure
+        # relative to the git repository root as well.
+        run: |
+            python -mpip install -e .[full]
+            python -mpip install pytest-cov coveralls
+
+      - name: Package information
+        run: |
+          conda list
+          python -c 'import qutip_cupy; print(qutip_cupy.__version__)'
+
+      - name: Run tests
+        # If our tests are running for longer than an twenty minutes,
+        # _something_ is wrong somewhere.  The GitHub default is 6 hours, which
+        # is a bit long to wait to see if something hung and way too long to
+        # pay for GPUs for.
+        timeout-minutes: 20
+        run: |
+          pytest --durations=0 --durations-min=1.0 --verbosity=1 --cov=qutip_cupy --color=yes
+          # Above flags are:
+          #  --durations=0 --durations-min=1.0
+          #     at the end, show a list of all the tests that took longer than a
+          #     second to run
+          #  --verbosity=1
+          #     turn the verbosity up so pytest prints the names of the tests
+          #     it's currently working on
+          #  --cov=qutip_cupy
+          #     limit coverage reporting to code that's within the qutip_cupy package
+          #  --color=yes
+          #     force coloured output in the terminal
+          # These flags are added to those in pyproject.toml.
+
+      - name: Upload to Coveralls
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+          COVERALLS_FLAG_NAME: ${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.case-name }}
+          COVERALLS_PARALLEL: true
+        run: coveralls --service=github
+
+  finalise:
+    name: Finalise coverage reporting
+    needs: cases
+    runs-on: ubuntu-latest
+    container: python:3-slim
+    steps:
+      - name: Finalise coverage reporting
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        run: |
+          python -mpip install coveralls
+          coveralls --service=github --finish
