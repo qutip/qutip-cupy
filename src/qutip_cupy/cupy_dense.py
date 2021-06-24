@@ -2,6 +2,7 @@ import cupy as cp
 import numbers
 from qutip.core import data
 
+
 class CuPyDense(data.Data):
     def __init__(self, data, shape=None, copy=True):
         base = cp.array(data, dtype=cp.complex128, order='K', copy=copy)
@@ -38,6 +39,12 @@ class CuPyDense(data.Data):
         return CuPyDense(self._cp.copy())
 
     def to_array(self):
+        """ 
+        Get a copy as a `numpy.ndarray`.
+        This incurs memory-transfer from `host` to `device`
+        and should be avoided when possible
+        
+        """
         return cp.asnumpy(self._cp)
 
     def conj(self):
@@ -79,4 +86,3 @@ def cpd_transpose(cpd_array):
 
 def cpd_trace(cpd_array):
     return cpd_array.trace()
-
