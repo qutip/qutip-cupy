@@ -10,6 +10,6 @@ runners:
     machine_image: ami-06fd8a495a537da8b
     preemptible: false
     workflow: .github/workflows/tests-gpu.yml
-    count: 2
+    count: 1
     labels:
       - gpu
