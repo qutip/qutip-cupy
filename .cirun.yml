@@ -3,6 +3,7 @@
 runners:
   - name: gpu-runner
     cloud: gcp
+    region: europe-west4-b
     gpu: nvidia-tesla-t4
     instance_type: n1-standard-1
     machine_image: ubuntu-minimal-2004-lts
