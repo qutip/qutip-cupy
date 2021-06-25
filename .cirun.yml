@@ -4,7 +4,7 @@ runners:
   - name: gpu-runner
     cloud: aws
     # Cheapest VM on AWS
-    instance_type: t3.nano
+    instance_type: g4dn.xlarge
     # Ubuntu-20.4, ami image"
     machine_image: ami-06fd8a495a537da8b
     preemptible: false
