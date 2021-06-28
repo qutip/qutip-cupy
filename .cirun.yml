@@ -6,7 +6,7 @@ runners:
     region: eu-west-1
     instance_type: g4dn.xlarge  # Cheapest VM on AWS
     gpu: true
-    machine_image: ami-0d4a18a6050cef430  # Ubuntu 20.04 in eu-west-1
+    machine_image: ami-03caf24deed650e2c  # Ubuntu 20.04 in eu-west-1
     preemptible: false
     workflow: .github/workflows/tests-gpu.yml
     count: 1
