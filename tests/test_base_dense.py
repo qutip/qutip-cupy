@@ -39,6 +39,18 @@ def test_adjoint(shape):
     assert (cpdense_adj.to_array() == qtpdense_adj.to_array()).all()
 
 
+def test_adjoint2(shape):
+
+    from qutip.core import data
+
+    array = np.random.uniform(size=shape) + 1.j*np.random.uniform(size=shape)
+
+    cpdense_adj = CuPyDense(array).adjoint2()
+    qtpdense_adj = data.Dense(array).adjoint()
+
+    assert (cpdense_adj.to_array() == qtpdense_adj.to_array()).all()
+
+
 
 @pytest.mark.parametrize(["matrix", "trace"], [pytest.param([[0, 1],[1, 0]], 0),
                                               pytest.param([[2.j, 1],[1, 1]], 1+2.j)])
