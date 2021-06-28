@@ -59,17 +59,17 @@ class CuPyDense(data.Data):
         return self._cp.trace()
 
     def __add__(left, right):
-        if not isinstance(left, Dense) or not isinstance(right, Dense):
+        if not isinstance(left, CuPyDense) or not isinstance(right, CuPyDense):
             return NotImplemented
         return CuPyDense(cp.add(left._cp, right._cp))
 
     def __matmul__(left, right):
-        if not isinstance(left, Dense) or not isinstance(right, Dense):
+        if not isinstance(left, CuPyDense) or not isinstance(right, CuPyDense):
             return NotImplemented
         return CuPyDense(cp.matmul(left._cp, right._cp))
 
     def __mul__(left, right):
-        dense, number = (left, right) if isinstance(left, Dense) else (right, left)
+        dense, number = (left, right) if isinstance(left, CuPyDense) else (right, left)
         if not isinstance(number, numbers.Number):
             return NotImplemented
         return CuPyDense(dense._cp * complex(number))
@@ -83,7 +83,7 @@ class CuPyDense(data.Data):
     #     return self
 
     def __truediv__(left, right):
-        dense, number = (left, right) if isinstance(left, Dense) else (right, left)
+        dense, number = (left, right) if isinstance(left, CuPyDense) else (right, left)
         if not isinstance(number, numbers.Number):
             return NotImplemented
         # Technically `(1 / x) * y` doesn't necessarily equal `y / x` in
@@ -120,7 +120,7 @@ def empty(rows, cols, fortran):
     uninitialised.
     """
     out = CuPyDense.__new__(CuPyDense)
-    super(CuPyDense, out).__init__(data.shape)
+    super(CuPyDense, out).__init__((rows, cols))
     order = 'F' if fortran else 'C'
     out._cp = cp.empty(shape=(rows, cols), dtype=cp.complex128, order=order)
 
@@ -128,8 +128,8 @@ def empty(rows, cols, fortran):
 
 
 def empty_like(other, fortran):
-    out = CuPyDense.__new__()
-    out.shape = other.shape
+    out = CuPyDense.__new__(CuPyDense)
+    super(CuPyDense, out).__init__(other.shape)
     order = 'F' if fortran else 'C'
     out._cp = cp.empty_like(other, dtype=cp.complex128, order=order)
 
@@ -139,7 +139,7 @@ def empty_like(other, fortran):
 def zeros(rows, cols, fortran):
     """Return the zero matrix with the given shape."""
     out = CuPyDense.__new__(CuPyDense)
-    super(CuPyDense, out).__init__(data.shape)
+    super(CuPyDense, out).__init__((rows, cols))
     order = 'F' if fortran else 'C'
     out._cp = cp.zeros(shape=(rows, cols), dtype=cp.complex128, order=order)
     return out
@@ -152,10 +152,10 @@ def identity(dimension, scale=1, fortran=True):
     is passed, then the result will be `scale` times the identity.
     """
     out = CuPyDense.__new__(CuPyDense)
-    super(CuPyDense, out).__init__(data.shape)
+    super(CuPyDense, out).__init__((dimension,dimension))
     order = 'F' if fortran else 'C'
     if scale != 1:
-        out._cp = cp.eye(dimension, dtype=cp.complex128,order=orde)
+        out._cp = cp.eye(dimension, dtype=cp.complex128,order=order)
     else:
         out._cp = scale*cp.eye(dimension, dtype=cp.complex128,order=order)
 
