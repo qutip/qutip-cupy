@@ -5,7 +5,7 @@ from qutip.core import data
 
 class CuPyDense(data.Data):
     def __init__(self, data, shape=None, copy=True):
-        if isinstance(data, cp.ndarray):
+        if isinstance(data, cp.ndarray) and not copy:
             shape = data.shape
             self._cp = data
         else:
