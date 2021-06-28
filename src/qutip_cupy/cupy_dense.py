@@ -74,42 +74,35 @@ class CuPyDense(data.Data):
             return NotImplemented
         return CuPyDense(dense._cp * complex(number))
 
-    # def __imul__(self, other):
-    #     if not isinstance(other, numbers.Number):
-    #         return NotImplemented
-    #     cdef int size = self.shape[0]*self.shape[1]
-    #     cdef double complex mul = complex(other)
-    #     blas.zscal(&size, &mul, self.data, &_ONE)
-    #     return self
+    def __imul__(self, other):
+        
+        self._cp.__imul__(other)
+        return self
 
     def __truediv__(left, right):
         dense, number = (left, right) if isinstance(left, CuPyDense) else (right, left)
         if not isinstance(number, numbers.Number):
             return NotImplemented
-        # Technically `(1 / x) * y` doesn't necessarily equal `y / x` in
-        # floating point, but multiplication is faster than division, and we
-        # don't really care _that_ much anyway.
-        return mul_dense(dense, 1 / complex(number))
+        return CuPyDense(dense._cp.__truediv__(number))
 
     def __itruediv__(self, other):
         if not isinstance(other, numbers.Number):
             return NotImplemented
-        # cdef int size = self.shape[0]*self.shape[1]
-        # cdef double complex mul = 1 / complex(other)
-        # blas.zscal(&size, &mul, self.data, &_ONE)
+        self._cp.__itruediv__(other)
         return self
 
     def __neg__(self):
-        return neg_dense(self)
+
+        return CuPyDense(self._cp.__neg__())
 
     def __sub__(left, right):
-        if not isinstance(left, Dense) or not isinstance(right, Dense):
+        if not isinstance(left, CuPyDense) or not isinstance(right, CuPyDense):
             return NotImplemented
-        return sub_dense(left, right)
+        return CuPyDense(left._cp - right._cp)
 
-    def __dealloc__(self):
-        if self._deallocate and self.data != NULL:
-            PyDataMem_FREE(self.data)
+    # def __dealloc__(self):
+    #     if self._deallocate and self.data != NULL:
+    #         PyDataMem_FREE(self.data)
 
 
 #@TOCHECK  here I am reducing the aguments of empty but I should probably be keeping all of them at least as dummies

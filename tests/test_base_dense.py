@@ -47,3 +47,42 @@ def test_trace(matrix, trace):
     cupy_array = CuPyDense(matrix)
 
     assert cupy_array.trace() == trace
+
+
+
+
+
+def test_true_div(shape):
+
+    from qutip.core import data
+
+    array = np.random.uniform(size=shape) + 1.j*np.random.uniform(size=shape)
+
+    cpdense_tr = CuPyDense(array)  /2.
+    qtpdense_tr = data.Dense(array) /2.
+
+    assert (cpdense_tr.to_array() == qtpdense_tr.to_array()).all()
+
+
+def test_itrue_div(shape):
+
+    from qutip.core import data
+
+    array = np.random.uniform(size=shape) + 1.j*np.random.uniform(size=shape)
+
+    cpdense_tr = CuPyDense(array).__itruediv__(2.)
+    qtpdense_tr = data.Dense(array).__itruediv__(2.)
+
+    assert (cpdense_tr.to_array() == qtpdense_tr.to_array()).all()
+
+
+def test_mul(shape):
+
+    from qutip.core import data
+
+    array = np.random.uniform(size=shape) + 1.j*np.random.uniform(size=shape)
+
+    cpdense_tr = CuPyDense(array).__mul__(2.+1.j)
+    qtpdense_tr = data.Dense(array).__mul__(2.+1.j)
+
+    assert (cpdense_tr.to_array() == qtpdense_tr.to_array()).all()
