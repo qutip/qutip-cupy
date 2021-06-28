@@ -114,7 +114,7 @@ class CuPyDense(data.Data):
 
 #@TOCHECK  here I am reducing the aguments of empty but I should probably be keeping all of them at least as dummies
 
-def empty(rows, cols):
+def empty(rows, cols, fortran):
     """
     Return a new Dense type of the given shape, with the data allocated but
     uninitialised.
@@ -124,11 +124,20 @@ def empty(rows, cols):
     # out.data = <double complex *> PyDataMem_NEW(rows * cols * sizeof(double complex))
     # out._deallocate = True
     # out.fortran = fortran
-    return CuPyDense(cp.empty(shape=(rows, cols), dtype=cp.complex128))
+    out = CuPyDense.__new__()
+    out.shape = (rows, cols)
+    order = 'F' if fortran else 'C'
+    out._cp = cp.empty(shape=(rows, cols), dtype=cp.complex128, order=order)
+
+    return CuPyDense(out)
 
 
 def empty_like(other):
-    return CuPyDense(cp.empty_like(other))
+    out = CuPyDense.__new__()
+    out.shape = other.shape
+    out._cp = cp.empty_like(other, dtype=cp.complex128, order=order)
+
+    return CuPyDense(out)
 
 
 def zeros(rows, cols, fortran):
@@ -139,9 +148,10 @@ def zeros(rows, cols, fortran):
     #     <double complex *> PyDataMem_NEW_ZEROED(rows * cols, sizeof(double complex))
     # out.fortran = fortran
     # out._deallocate = True
-    contiguity = 'F' if fortran else 'C'
-    out = empty(rows, cols, contiguity)
-    out._cp = cp.zeros(shape=(rows, cols), dtype=cp.complex128, order=contiguity)
+    out = CuPyDense.__new__()
+    out.shape = (rows, cols)
+    order = 'F' if fortran else 'C'
+    out._cp = cp.zeros(shape=(rows, cols), dtype=cp.complex128, order=order)
     return out
 
 
@@ -151,8 +161,15 @@ def identity(dimension, scale=1, fortran=True):
     the diagonal.  By default this will be the identity matrix, but if `scale`
     is passed, then the result will be `scale` times the identity.
     """
-    out = cp.eye(dimension, dtype=cp.complex128) if scale != 1 else scale*cp.eye(dimension, dtype=cp.complex128)
-    return CuPyDense(out)
+    out = CuPyDense.__new__()
+    out.shape = (dimension, dimension)
+    order = 'F' if fortran else 'C'
+    if scale != 1:
+        out._cp = cp.eye(dimension, dtype=cp.complex128,order=orde)
+    else:
+        out._cp = scale*cp.eye(dimension, dtype=cp.complex128,order=order)
+
+    return out
 
 
 def Dense from_csr(CSR matrix, bint fortran=False):
