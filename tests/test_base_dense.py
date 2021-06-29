@@ -52,13 +52,21 @@ def test_trace(matrix, trace):
 
 
 
-def test_true_div(shape):
+import time
+@pytest.mark.benchmark(
+    min_rounds=5,
+    timer=time.time,
+)
+def test_true_div(shape, benchmark):
 
     from qutip.core import data
 
     array = np.random.uniform(size=shape) + 1.j*np.random.uniform(size=shape)
-
-    cpdense_tr = CuPyDense(array)  /2.
+    
+    def divide_by_2(cp_arr):
+        return cp_arr /2.
+    cup_arr = CuPyDense(array)
+    cpdense_tr = benchmark(divide_by_2, cup_arr)
     qtpdense_tr = data.Dense(array) /2.
 
     assert (cpdense_tr.to_array() == qtpdense_tr.to_array()).all()
@@ -77,6 +85,18 @@ def test_itrue_div(shape):
 
 
 def test_mul(shape):
+
+    from qutip.core import data
+
+    array = np.random.uniform(size=shape) + 1.j*np.random.uniform(size=shape)
+
+    cpdense_tr = CuPyDense(array).__mul__(2.+1.j)
+    qtpdense_tr = data.Dense(array).__mul__(2.+1.j)
+
+    assert (cpdense_tr.to_array() == qtpdense_tr.to_array()).all()
+
+
+def test_matmul(shape):
 
     from qutip.core import data
 
