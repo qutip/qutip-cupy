@@ -23,4 +23,4 @@ def test_norm_cupy():
     x = cp.array([1, 2, 3])
     y = cp.array([2, 3, 4])
     z = x + y
-    assert z == np.array([3, 5, 7])
+    assert cp.asnumpy(z) == np.array([3, 5, 7])
