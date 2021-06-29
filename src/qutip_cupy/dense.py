@@ -1,10 +1,31 @@
-import cupy as cp
+"""" This module contains the ```CuPyDense``` class as well as all its 
+asociated function conversion and specializations functions as required by QuTiP's Data Layer """
+
 import numbers
+
+import cupy as cp
 from qutip.core import data
 
 
 class CuPyDense(data.Data):
     def __init__(self, data, shape=None, copy=True):
+        """ 
+            This class provides a dense matrix backend for QuTiP. 
+            Matrices are stored internally in a CuPy array on the GPU.
+            
+            Parameters
+            ----------
+            data: array-like 
+                Data to be stored.
+            shape: (int, int) 
+                Defaults to ``None``. If ``None`` will infer the shape from ``data``,
+                else it will set the shape for the internal CuPy array. 
+            copy: bool 
+                Defaults to ``True``. Whether to make a copy of 
+                the elements in ``data`` or not.
+        
+        
+        """
         base = cp.array(data, dtype=cp.complex128, order='K', copy=copy)
         if shape is None:
             shape = base.shape
