@@ -1,4 +1,4 @@
-name: Documentation
+name: Documentation of GPU
 
 on:
   [push, pull_request]
@@ -6,15 +6,18 @@ on:
 jobs:
   build:
     name: Build HTML documentation
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, gpu]
 
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/setup-python@v2
-        name: Install Python
+      - uses: conda-incubator/setup-miniconda@v2
+        env:
+          CONDA: /home/runnerx/miniconda3
         with:
-          python-version: '3.9'
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+          miniconda-version: "latest"
 
       - name: Install documentation dependencies
         run: |
@@ -27,6 +30,7 @@ jobs:
 
       - name: Install qutip-cupy from GitHub
         run: |
+          conda install cupy
           python -mpip install .[full]
           python -c 'import qutip_cupy; print(qutip_cupy.__version__)'
 
