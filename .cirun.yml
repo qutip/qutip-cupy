@@ -1,12 +1,13 @@
-# Self-Hosted Github Action Runners on GCP via Cirun.io
+# Self-Hosted Github Action Runners on AWS via Cirun.io
 # Reference: https://docs.cirun.io/reference/yaml.html
 runners:
   - name: gpu-runner
     cloud: aws
     region: eu-west-1
     instance_type: g4dn.xlarge  # Cheapest VM on AWS
-    gpu: true
-    machine_image: ami-03caf24deed650e2c  # Ubuntu 20.04 in eu-west-1
+    # NVIDIA Deep Learning AMI from AWS Marketplace
+    # https://aws.amazon.com/marketplace/pp/prodview-e7zxdqduz4cbs
+    machine_image: ami-00ac0c28c01352e53
     preemptible: false
     workflow: .github/workflows/tests-gpu.yml
     count: 1
