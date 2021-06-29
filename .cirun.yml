@@ -7,7 +7,7 @@ runners:
     instance_type: g4dn.xlarge  # Cheapest VM on AWS
     # NVIDIA Deep Learning AMI from AWS Marketplace
     # https://aws.amazon.com/marketplace/pp/prodview-e7zxdqduz4cbs
-    machine_image: ami-00ac0c28c01352e53
+    machine_image: ami-0887cec38e5c0ab84
     preemptible: false
     workflow: .github/workflows/tests-gpu.yml
     count: 1
