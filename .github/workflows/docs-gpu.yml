@@ -16,7 +16,7 @@ jobs:
           CONDA: /home/runnerx/miniconda3
         with:
           auto-update-conda: true
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.9"
           miniconda-version: "latest"
 
       - name: Install documentation dependencies
