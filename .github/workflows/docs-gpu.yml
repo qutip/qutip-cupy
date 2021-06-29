@@ -3,6 +3,12 @@ name: Documentation of GPU
 on:
   [push, pull_request]
 
+defaults:
+  run:
+    # The slightly odd shell call is to force bash to read .bashrc, which is
+    # necessary for having conda behave sensibly.
+    shell: bash -l {0}
+
 jobs:
   build:
     name: Build HTML documentation
