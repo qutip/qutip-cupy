@@ -1,4 +1,4 @@
-name: Documentation of GPU
+name: Documentation on GPU
 
 on:
   [push, pull_request]
