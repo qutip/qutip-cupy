@@ -1,20 +1,29 @@
-name: Documentation
+name: Documentation on GPU
 
 on:
   [push, pull_request]
 
+defaults:
+  run:
+    # The slightly odd shell call is to force bash to read .bashrc, which is
+    # necessary for having conda behave sensibly.
+    shell: bash -l {0}
+
 jobs:
   build:
     name: Build HTML documentation
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, gpu]
 
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/setup-python@v2
-        name: Install Python
+      - uses: conda-incubator/setup-miniconda@v2
+        env:
+          CONDA: /home/runnerx/miniconda3
         with:
-          python-version: '3.9'
+          auto-update-conda: true
+          python-version: "3.9"
+          miniconda-version: "latest"
 
       - name: Install documentation dependencies
         run: |
@@ -27,6 +36,7 @@ jobs:
 
       - name: Install qutip-cupy from GitHub
         run: |
+          conda install cupy
           python -mpip install .[full]
           python -c 'import qutip_cupy; print(qutip_cupy.__version__)'
 

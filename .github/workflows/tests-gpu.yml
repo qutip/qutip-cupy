@@ -1,8 +1,8 @@
+name: Tests on GPU
 # The name is short because we mostly care how it appears in the pull request
 # "checks" dialogue box - it looks like
-#     Tests / ubuntu-latest, python-3.9, defaults
+#     Tests on GPU / ubuntu-latest, python-3.9, defaults
 # or similar.
-name: Tests
 
 on:
     [push, pull_request]
@@ -18,7 +18,7 @@ defaults:
 jobs:
   cases:
     name: ${{ matrix.os }}, ${{ matrix.case-name }}
-    runs-on: ${{ matrix.os }}
+    runs-on: [self-hosted, gpu]
     strategy:
       fail-fast: false
       matrix:
@@ -30,9 +30,12 @@ jobs:
       - uses: actions/checkout@v2
 
       - uses: conda-incubator/setup-miniconda@v2
+        env:
+          CONDA: /home/runnerx/miniconda3
         with:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
+          miniconda-version: "latest"
 
       - name: Install QuTiP from GitHub
         run: |
@@ -43,6 +46,7 @@ jobs:
         # Install in editable mode so Coveralls detects the tree structure
         # relative to the git repository root as well.
         run: |
+            conda install cupy
             python -mpip install -e .[full]
             python -mpip install pytest-cov coveralls
 
@@ -52,10 +56,11 @@ jobs:
           python -c 'import qutip_cupy; print(qutip_cupy.__version__)'
 
       - name: Run tests
-        # If our tests are running for longer than an hour, _something_ is wrong
-        # somewhere.  The GitHub default is 6 hours, which is a bit long to wait
-        # to see if something hung.
-        timeout-minutes: 60
+        # If our tests are running for longer than an twenty minutes,
+        # _something_ is wrong somewhere.  The GitHub default is 6 hours, which
+        # is a bit long to wait to see if something hung and way too long to
+        # pay for GPUs for.
+        timeout-minutes: 20
         run: |
           pytest --durations=0 --durations-min=1.0 --verbosity=1 --cov=qutip_cupy --color=yes
           # Above flags are:
