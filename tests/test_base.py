@@ -23,4 +23,4 @@ def test_add_cupy():
     x = cp.array([1, 2, 3])
     y = cp.array([2, 3, 4])
     z = x + y
-    assert np.testing.assert_array_equal(cp.asnumpy(z), np.array([3, 5, 7]))
+    np.testing.assert_array_equal(cp.asnumpy(z), np.array([3, 5, 7]))
