@@ -13,7 +13,14 @@ with warnings.catch_warnings():
      from qutip.core import data
 
 from .version import version as __version__
-from . import dense as cd
+
+
+with warnings.catch_warnings():
+     warnings.filterwarnings(
+        action ='ignore',
+        category = DeprecationWarning,
+        message = r'`np.bool` is a deprecated')
+     from . import dense as cd
 
 CuPyDense = cd.CuPyDense
 
