@@ -15,7 +15,7 @@ def test_import_cupy():
     assert cupy.__version__
 
 
-def test_norm_cupy():
+def test_add_cupy():
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=DeprecationWarning)
         import cupy as cp
@@ -23,4 +23,4 @@ def test_norm_cupy():
     x = cp.array([1, 2, 3])
     y = cp.array([2, 3, 4])
     z = x + y
-    assert (cp.asnumpy(z) == np.array([3, 5, 7])).all()
+    assert np.testing.assert_array_equal(cp.asnumpy(z), np.array([3, 5, 7]))
