@@ -1,5 +1,16 @@
 """ The qutip-cupy package provides a CuPy-based data layer for QuTiP. """
-from qutip.core import data
+# we need to silence this specific warning 
+# remember to remove once QuTiP moves matplotlib 
+# to an official optional dependency
+import warnings
+
+with warnings.catch_warnings():
+     warnings.filterwarnings(
+        action ='ignore',
+        category = UserWarning,
+        message = r'matplotlib not found:')
+
+     from qutip.core import data
 
 from .version import version as __version__
 from . import dense as cd
