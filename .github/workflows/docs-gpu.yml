@@ -36,7 +36,7 @@ jobs:
 
       - name: Install qutip-cupy from GitHub
         run: |
-          conda install conda-forge cupy
+          conda install -c conda-forge cupy
           python -mpip install .[full]
           python -c 'import qutip_cupy; print(qutip_cupy.__version__)'
 
