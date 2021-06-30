@@ -10,8 +10,10 @@ from qutip.core import data
 class CuPyDense(data.Data):
     def __init__(self, data, shape=None, copy=True):
         """ 
-            This class provides a dense matrix backend for QuTiP. 
-            Matrices are stored internally in a CuPy array on the GPU.
+            This class provides a dense matrix backend for QuTiP.
+            Matrices are stored internally in a CuPy array on a GPU.
+            If you hamve many GPUs you can set GPU ``i`` 
+            by calling ``cp.cuda.Device(i).use()`` befor construction.
             
             Parameters
             ----------
