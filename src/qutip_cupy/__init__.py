@@ -15,13 +15,8 @@ with warnings.catch_warnings():
 from .version import version as __version__
 
 
-with warnings.catch_warnings():
-     warnings.filterwarnings(
-        action ='ignore',
-        category = DeprecationWarning,
-        message = r'`np.bool` is a deprecated')
-     from . import dense as cd
 
+from . import dense as cd
 CuPyDense = cd.CuPyDense
 
 data.to.add_conversions([
