@@ -8,7 +8,7 @@ from qutip.core import data
 
 
 class CuPyDense(data.Data):
-    def __init__(self, data, shape=None, copy=True):
+    def __init__(self, data, shape=None, copy=True, dtype=cp.complex128):
         """ 
             This class provides a dense matrix backend for QuTiP.
             Matrices are stored internally in a CuPy array on a GPU.
@@ -25,10 +25,13 @@ class CuPyDense(data.Data):
             copy: bool 
                 Defaults to ``True``. Whether to make a copy of 
                 the elements in ``data`` or not.
-        
-        
+            dtype:
+                Data type specifier. Either ``cp.complex128`` or ``cp.complex64``
+            
         """
-        base = cp.array(data, dtype=cp.complex128, order='K', copy=copy)
+        self.dtype = dtype
+
+        base = cp.array(data, dtype=self.dtype, order='K', copy=copy)
         if shape is None:
             shape = base.shape
             # Promote to a ket by default if passed 1D data.
@@ -65,6 +68,7 @@ class CuPyDense(data.Data):
         out = CuPyDense.__new__(CuPyDense)
         super(CuPyDense, out).__init__(data.shape)
         out._cp = data
+        out.dtype = data.dtype
         return out
 
     def copy(self):
