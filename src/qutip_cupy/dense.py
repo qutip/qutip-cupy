@@ -1,5 +1,6 @@
 """" This module contains the ```CuPyDense``` class as well as all its 
-asociated function conversion and specializations functions as required by QuTiP's Data Layer """
+asociated function conversion and specializations functions as 
+required by QuTiP's Data Layer """
 
 import numbers
 
@@ -12,8 +13,8 @@ class CuPyDense(data.Data):
         """ 
             This class provides a dense matrix backend for QuTiP.
             Matrices are stored internally in a CuPy array on a GPU.
-            If you hamve many GPUs you can set GPU ``i`` 
-            by calling ``cp.cuda.Device(i).use()`` befor construction.
+            If you have many GPUs you can set GPU ``i`` 
+            by calling ``cp.cuda.Device(i).use()`` before construction.
             
             Parameters
             ----------
@@ -100,7 +101,7 @@ class CuPyDense(data.Data):
 # I am not really sure how the dispatcher would handle it.
 # It looks like we may be needing 2 classes. 
 def dense_from_cupydense(cupydense):
-    """"Creates a QuTiP ``data.Dense`` array from a CuPyDense array.
+    """"Creates a QuTiP ``data.Dense`` array from the values in a CuPyDense array.
         The resulting array has  complex128 precision. """
 
     dense_np = data.Dense(cupydense.to_array(), copy=False)
@@ -108,7 +109,7 @@ def dense_from_cupydense(cupydense):
 
 
 def cupydense_from_dense(dense):
-    """ Creates a CuPyDense array from a QuTiP ``data.Dense`` array 
+    """ Creates a CuPyDense array from the values in a QuTiP ``data.Dense`` array 
         with ``cp.complex128`` precision. """
     dense_cp = CuPyDense(dense.as_ndarray(), copy=False)
     return dense_cp
