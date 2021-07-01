@@ -95,15 +95,21 @@ class CuPyDense(data.Data):
     def trace(self):
         return self._cp.trace()
 
-
+# @TOCHECK I added docstrings describing functions as they are. 
+# If we were to have a precision parameter on the conversion
+# I am not really sure how the dispatcher would handle it.
+# It looks like we may be needing 2 classes. 
 def dense_from_cupydense(cupydense):
+    """"Creates a QuTiP ``data.Dense`` array from a CuPyDense array.
+        The resulting array has  complex128 precision. """
 
     dense_np = data.Dense(cupydense.to_array(), copy=False)
     return dense_np
 
 
 def cupydense_from_dense(dense):
-
+    """ Creates a CuPyDense array from a QuTiP ``data.Dense`` array 
+        with ``cp.complex128`` precision. """
     dense_cp = CuPyDense(dense.as_ndarray(), copy=False)
     return dense_cp
 
