@@ -66,8 +66,8 @@ class CuPyDense(data.Data):
     def _no_checks_constructor(cls, data):
         # This constructor should only be called when we are sure the argument
         # is a CuPy 2-dimensional array.
-        out = CuPyDense.__new__(CuPyDense)
-        super(CuPyDense, out).__init__(data.shape)
+        out = cls.__new__(cls)
+        super(cls, out).__init__(data.shape)
         out._cp = data
         out.dtype = data.dtype
         return out
@@ -79,19 +79,18 @@ class CuPyDense(data.Data):
         """ 
         Get a copy as a `numpy.ndarray`.
         This incurs memory-transfer from `host` to `device`
-        and should be avoided when possible
-        
+        and should be avoided when possible    
         """
         return cp.asnumpy(self._cp)
 
     def conj(self):
-        return self._no_checks_constructor(self._cp.conj())
+        return CuPyDense._no_checks_constructor(self._cp.conj())
 
     def transpose(self):
-        return self._no_checks_constructor(self._cp.transpose())
+        return CuPyDense._no_checks_constructor(self._cp.transpose())
 
     def adjoint(self):
-        return self._no_checks_constructor(self._cp.transpose().conj())
+        return CuPyDense._no_checks_constructor(self._cp.transpose().conj())
 
     def trace(self):
         return self._cp.trace()
@@ -102,7 +101,7 @@ class CuPyDense(data.Data):
 # It looks like we may be needing 2 classes. 
 def dense_from_cupydense(cupydense):
     """"Creates a QuTiP ``data.Dense`` array from the values in a CuPyDense array.
-        The resulting array has  complex128 precision. """
+        The resulting array has complex128 precision. """
 
     dense_np = data.Dense(cupydense.to_array(), copy=False)
     return dense_np
