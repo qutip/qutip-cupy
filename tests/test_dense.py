@@ -55,3 +55,15 @@ class TestCuPyDense:
         cupy_array = CuPyDense(matrix)
 
         assert cupy_array.trace() == trace
+
+
+def test_no_checks_constr():
+    """Checks if CuPyDense canbe properly inherited"""
+
+    class wrapcpd(CuPyDense):
+        pass
+    wcpd1 = wrapcpd([[1,2],[0,1]])
+
+    wcpd2 = wcpd1.to_array().transpose()
+
+    np.testing.assert_array_equal(wcpd1.transpose().to_array(),wcpd2)
