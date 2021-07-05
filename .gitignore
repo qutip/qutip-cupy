@@ -7,7 +7,6 @@
 .idea/
 .vscode/
 
-
 # Packages
 *.egg
 .eggs
