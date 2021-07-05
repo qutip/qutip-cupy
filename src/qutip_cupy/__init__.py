@@ -38,7 +38,6 @@ data.conj.add_specialisations([
 
 
 # We must register the functions to the data layer but do not want
-# the data layer to be callable from qutip_cupy
+# the data layer or qutip_cupy.dense to be accessible from qutip_cupy
 del data
-
 del cd
