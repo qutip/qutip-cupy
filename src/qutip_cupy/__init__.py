@@ -1,7 +1,7 @@
 """ The qutip-cupy package provides a CuPy-based data layer for QuTiP. """
 
-# we need to silence this specific warning 
-# remember to remove once QuTiP moves matplotlib 
+# we need to silence this specific warning
+# remember to remove once QuTiP moves matplotlib
 # to an official optional dependency
 import warnings
 

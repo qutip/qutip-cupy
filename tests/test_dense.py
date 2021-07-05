@@ -32,7 +32,7 @@ class TestCuPyDense:
     def test_transpose(self, shape):
 
         cupy_dense = CuPyDense(np.random.uniform(size=shape)).transpose()
-        
+
         np.testing.assert_array_equal(cupy_dense.shape, (shape[1], shape[0]))
 
     def test_adjoint(self, shape):
@@ -56,4 +56,4 @@ def test_no_checks_constr():
 
     wcpd2 = wcpd1.to_array().transpose()
 
-    np.testing.assert_array_equal(wcpd1.transpose().to_array(),wcpd2)
+    np.testing.assert_array_equal(wcpd1.transpose().to_array(), wcpd2)

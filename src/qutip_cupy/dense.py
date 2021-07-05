@@ -10,29 +10,29 @@ from qutip.core import data
 
 
 class CuPyDense(data.Data):
-    """ 
+    """
         This class provides a dense matrix backend for QuTiP.
         Matrices are stored internally in a CuPy array on a GPU.
-        If you have many GPUs you can set GPU ``i`` 
+        If you have many GPUs you can set GPU ``i``
         by calling ``cp.cuda.Device(i).use()`` before construction.
-        
+
         Parameters
         ----------
-        data: array-like 
+        data: array-like
             Data to be stored.
-        shape: (int, int) 
+        shape: (int, int)
             Defaults to ``None``. If ``None`` will infer the shape from ``data``,
-            else it will set the shape for the internal CuPy array. 
-        copy: bool 
-            Defaults to ``True``. Whether to make a copy of 
+            else it will set the shape for the internal CuPy array.
+        copy: bool
+            Defaults to ``True``. Whether to make a copy of
             the elements in ``data`` or not.
         dtype:
             Data type specifier. Either ``cp.complex128`` or ``cp.complex64``
-        
+
     """
-    
+
     def __init__(self, data, shape=None, copy=True, dtype=cp.complex128):
-    
+
         self.dtype = dtype
         base = cp.array(data, dtype=self.dtype, order='K', copy=copy)
         if shape is None:
@@ -66,11 +66,11 @@ class CuPyDense(data.Data):
     @classmethod
     def _raw_cupy_constructor(cls, data):
         """
-        A fast low-level constructor for wrapping an existing CuPy array in a CuPyDense object 
-        without copying it.   
-        
+        A fast low-level constructor for wrapping an existing CuPy array in a CuPyDense object
+        without copying it.
+
         The ``data`` argument must be a CuPy array with the correct shape.
-        The CuPy array will not be copied and will be used as is. 
+        The CuPy array will not be copied and will be used as is.
         """
         out = cls.__new__(cls)
         super(cls, out).__init__(data.shape)
@@ -96,10 +96,10 @@ class CuPyDense(data.Data):
     def trace(self):
         return self._cp.trace()
 
-# @TOCHECK I added docstrings describing functions as they are. 
+# @TOCHECK I added docstrings describing functions as they are.
 # If we were to have a precision parameter on the conversion
 # I am not really sure how the dispatcher would handle it.
-# It looks like we may be needing 2 classes. 
+# It looks like we may be needing 2 classes.
 def dense_from_cupydense(cupydense):
     """
     Creates a QuTiP ``data.Dense`` array from the values in a CuPyDense array.
@@ -112,7 +112,7 @@ def dense_from_cupydense(cupydense):
 
 def cupydense_from_dense(dense):
     """
-    Creates a CuPyDense array from the values in a QuTiP ``data.Dense`` array 
+    Creates a CuPyDense array from the values in a QuTiP ``data.Dense`` array
     with ``cp.complex128`` precision.
     """
     dense_cp = CuPyDense(dense.as_ndarray(), copy=False)
