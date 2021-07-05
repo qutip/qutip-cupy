@@ -26,9 +26,7 @@ class TestCuPyDense:
     """ Tests of the methods and constructors of the CuPyDense class. """
 
     def test_shape(self, shape):
-
         cupy_dense = CuPyDense(np.random.uniform(size=shape))
-
         assert (cupy_dense.shape == shape)
 
     def test_transpose(self, shape):
