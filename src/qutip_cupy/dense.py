@@ -64,9 +64,14 @@ class CuPyDense(data.Data):
         super().__init__((shape[0], shape[1]))
 
     @classmethod
-    def _no_checks_constructor(cls, data):
-        # This constructor should only be called when we are sure the argument
-        # is a CuPy 2-dimensional array.
+    def _raw_cupy_constructor(cls, data):
+        """
+        A fast low-level constructor for wrapping an existing CuPy array in a CuPyDense object 
+        without copying it.   
+        
+        The ``data`` argument must be a CuPy array with the correct shape.
+        The CuPy array will not be copied and will be used as is. 
+        """
         out = cls.__new__(cls)
         super(cls, out).__init__(data.shape)
         out._cp = data
@@ -74,7 +79,7 @@ class CuPyDense(data.Data):
         return out
 
     def copy(self):
-        return self._no_checks_constructor(self._cp.copy())
+        return self._raw_cupy_constructor(self._cp.copy())
 
     def to_array(self):
         """ 
@@ -85,13 +90,13 @@ class CuPyDense(data.Data):
         return cp.asnumpy(self._cp)
 
     def conj(self):
-        return CuPyDense._no_checks_constructor(self._cp.conj())
+        return CuPyDense._raw_cupy_constructor(self._cp.conj())
 
     def transpose(self):
-        return CuPyDense._no_checks_constructor(self._cp.transpose())
+        return CuPyDense._raw_cupy_constructor(self._cp.transpose())
 
     def adjoint(self):
-        return CuPyDense._no_checks_constructor(self._cp.transpose().conj())
+        return CuPyDense._raw_cupy_constructor(self._cp.transpose().conj())
 
     def trace(self):
         return self._cp.trace()
