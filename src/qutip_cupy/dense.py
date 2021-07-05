@@ -82,11 +82,6 @@ class CuPyDense(data.Data):
         return self._raw_cupy_constructor(self._cp.copy())
 
     def to_array(self):
-        """ 
-        Get a copy as a `numpy.ndarray`.
-        This incurs memory-transfer from `host` to `device`
-        and should be avoided when possible    
-        """
         return cp.asnumpy(self._cp)
 
     def conj(self):
