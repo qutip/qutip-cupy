@@ -106,8 +106,10 @@ class CuPyDense(data.Data):
 # I am not really sure how the dispatcher would handle it.
 # It looks like we may be needing 2 classes. 
 def dense_from_cupydense(cupydense):
-    """"Creates a QuTiP ``data.Dense`` array from the values in a CuPyDense array.
-        The resulting array has complex128 precision. """
+    """
+    Creates a QuTiP ``data.Dense`` array from the values in a CuPyDense array.
+    The resulting array has complex128 precision.
+    """
 
     dense_np = data.Dense(cupydense.to_array(), copy=False)
     return dense_np
