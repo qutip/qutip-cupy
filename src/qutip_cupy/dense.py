@@ -1,6 +1,7 @@
-"""" This module contains the ```CuPyDense``` class as well as all its 
-asociated function conversion and specializations functions as 
-required by QuTiP's Data Layer """
+"""
+This module contains the ``CuPyDense`` class and associated function
+conversion and specializations for registration with QuTiP's data layer.
+"""
 
 import numbers
 
