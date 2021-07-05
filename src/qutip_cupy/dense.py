@@ -116,8 +116,10 @@ def dense_from_cupydense(cupydense):
 
 
 def cupydense_from_dense(dense):
-    """ Creates a CuPyDense array from the values in a QuTiP ``data.Dense`` array 
-        with ``cp.complex128`` precision. """
+    """
+    Creates a CuPyDense array from the values in a QuTiP ``data.Dense`` array 
+    with ``cp.complex128`` precision.
+    """
     dense_cp = CuPyDense(dense.as_ndarray(), copy=False)
     return dense_cp
 
