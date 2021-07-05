@@ -35,7 +35,9 @@ data.transpose.add_specialisations([
 data.conj.add_specialisations([
       (CuPyDense, CuPyDense, cd.cpd_conj),
      ])
-
+data.trace.add_specialisations([
+      (CuPyDense, cd.cpd_trace),
+     ])
 
 # We must register the functions to the data layer but do not want
 # the data layer or qutip_cupy.dense to be accessible from qutip_cupy
