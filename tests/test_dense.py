@@ -33,15 +33,15 @@ class TestCuPyDense:
 
         cupy_dense = CuPyDense(np.random.uniform(size=shape)).transpose()
         
-        np.testing.assert_array_equal(cupy_dense.shape, (shape[1],shape[0]))
+        np.testing.assert_array_equal(cupy_dense.shape, (shape[1], shape[0]))
 
     def test_adjoint(self, shape):
-        data = np.random.uniform(size=shape) + 1.j*np.random.uniform(size=shape)
-        cp_adj = CuPyDense(data).adjoint()
-        np.testing.assert_array_equal(cpdense_adj.to_array(), data.transpose().conj())
+        data = np.random.uniform(size=shape) + 1.j*np.random.uniform(size= shape)
+        cpd_adj = CuPyDense(data).adjoint()
+        np.testing.assert_array_equal(cpd_adj.to_array(), data.transpose().conj())
 
-    @pytest.mark.parametrize(["matrix", "trace"], [pytest.param([[0, 1],[1, 0]], 0),
-                                                pytest.param([[2.j, 1],[1, 1]], 1+2.j)])
+    @pytest.mark.parametrize(["matrix", "trace"], [pytest.param([[0, 1], [1, 0]], 0),
+                                                pytest.param([[2.j, 1], [1, 1]], 1+2.j)])
     def test_trace(self, matrix, trace):
         cupy_array = CuPyDense(matrix)
         assert cupy_array.trace() == trace
@@ -52,7 +52,7 @@ def test_no_checks_constr():
 
     class wrapcpd(CuPyDense):
         pass
-    wcpd1 = wrapcpd([[1,2],[0,1]])
+    wcpd1 = wrapcpd([[1, 2], [0, 1]])
 
     wcpd2 = wcpd1.to_array().transpose()
 
