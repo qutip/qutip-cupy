@@ -51,9 +51,7 @@ class TestCuPyDense:
     @pytest.mark.parametrize(["matrix", "trace"], [pytest.param([[0, 1],[1, 0]], 0),
                                                 pytest.param([[2.j, 1],[1, 1]], 1+2.j)])
     def test_trace(self, matrix, trace):
-
         cupy_array = CuPyDense(matrix)
-
         assert cupy_array.trace() == trace
 
 
