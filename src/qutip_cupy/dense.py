@@ -57,7 +57,6 @@ class CuPyDense(data.Data):
             else:
                 self._cp = base.reshape(shape)
         else:
-
             self._cp = base
 
         super().__init__((shape[0], shape[1]))
