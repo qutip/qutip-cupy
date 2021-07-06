@@ -93,7 +93,7 @@ class CuPyDense(data.Data):
 
     def trace(self):
         return self._cp.trace()
-      def __add__(left, right):
+    def __add__(left, right):
         if not isinstance(left, CuPyDense) or not isinstance(right, CuPyDense):
             return NotImplemented
         return CuPyDense(cp.add(left._cp, right._cp))
