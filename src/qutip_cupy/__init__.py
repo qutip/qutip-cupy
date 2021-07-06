@@ -8,8 +8,10 @@ import warnings
 try:
     import cupy
 except ModuleNotFoundError:
-    raise RuntimeError('''qutip_cupy requires cupy to be installed, please install
-                         cupy by following the instructions at https://docs.cupy.dev/en/stable/install.html''')
+    raise RuntimeError(
+        "qutip_cupy requires cupy to be installed, please install "
+        "cupy by following the instructions at https://docs.cupy.dev/en/stable/install.html"
+    )
 del cupy
 
 with warnings.catch_warnings():
