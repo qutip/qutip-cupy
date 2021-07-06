@@ -30,9 +30,7 @@ class TestCuPyDense:
         assert (cupy_dense.shape == shape)
 
     def test_transpose(self, shape):
-
         cupy_dense = CuPyDense(np.random.uniform(size=shape)).transpose()
-
         np.testing.assert_array_equal(cupy_dense.shape, (shape[1], shape[0]))
 
     def test_adjoint(self, shape):

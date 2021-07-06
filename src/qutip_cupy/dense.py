@@ -11,28 +11,26 @@ from qutip.core import data
 
 class CuPyDense(data.Data):
     """
-        This class provides a dense matrix backend for QuTiP.
-        Matrices are stored internally in a CuPy array on a GPU.
-        If you have many GPUs you can set GPU ``i``
-        by calling ``cp.cuda.Device(i).use()`` before construction.
+    This class provides a dense matrix backend for QuTiP.
+    Matrices are stored internally in a CuPy array on a GPU.
+    If you have many GPUs you can set GPU ``i``
+    by calling ``cp.cuda.Device(i).use()`` before construction.
 
-        Parameters
-        ----------
-        data: array-like
-            Data to be stored.
-        shape: (int, int)
-            Defaults to ``None``. If ``None`` will infer the shape from ``data``,
-            else it will set the shape for the internal CuPy array.
-        copy: bool
-            Defaults to ``True``. Whether to make a copy of
-            the elements in ``data`` or not.
-        dtype:
-            Data type specifier. Either ``cp.complex128`` or ``cp.complex64``
-
+    Parameters
+    ----------
+    data: array-like
+        Data to be stored.
+    shape: (int, int)
+        Defaults to ``None``. If ``None`` will infer the shape from ``data``,
+        else it will set the shape for the internal CuPy array.
+    copy: bool
+        Defaults to ``True``. Whether to make a copy of
+        the elements in ``data`` or not.
+    dtype:
+        Data type specifier. Either ``cp.complex128`` or ``cp.complex64``
     """
 
     def __init__(self, data, shape=None, copy=True, dtype=cp.complex128):
-
         self.dtype = dtype
         base = cp.array(data, dtype=self.dtype, order='K', copy=copy)
         if shape is None:
@@ -105,7 +103,6 @@ def dense_from_cupydense(cupydense):
     Creates a QuTiP ``data.Dense`` array from the values in a CuPyDense array.
     The resulting array has complex128 precision.
     """
-
     dense_np = data.Dense(cupydense.to_array(), copy=False)
     return dense_np
 
