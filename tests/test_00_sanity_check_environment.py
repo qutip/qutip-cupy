@@ -1,4 +1,5 @@
-# This is a dummy test file; delete it once the package actually has tests.
+# This test is used to check if the environment is properly set.
+# If there are no GPUs in the environment CuPy imports will break.
 
 import warnings
 

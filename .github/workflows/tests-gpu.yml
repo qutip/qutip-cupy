@@ -46,7 +46,7 @@ jobs:
         # Install in editable mode so Coveralls detects the tree structure
         # relative to the git repository root as well.
         run: |
-            conda install cupy
+            conda install -c conda-forge cupy
             python -mpip install -e .[full]
             python -mpip install pytest-cov coveralls
 
