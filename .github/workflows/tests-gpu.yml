@@ -84,19 +84,18 @@ jobs:
           COVERALLS_PARALLEL: true
         run: coveralls --service=github
 
-
-      .
   pyflakes:
-      name: runner/pyflakes
-      runs-on: ubuntu-latest
-      steps:
-          - uses: actions/checkout@v2
-          - name: pyflakes
-            uses: reviewdog/action-pyflakes@master
-            with:
-              github_token: ${{ secrets.github_token }}
-              reporter: github-pr-check # Change reporterpyflakes:
-      
+    name: runner/pyflakes
+    needs: cases
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: pyflakes
+        uses: reviewdog/action-pyflakes@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-check # Change reporterpyflakes:
+  
   finalise:
     name: Finalise coverage reporting
     needs: cases
