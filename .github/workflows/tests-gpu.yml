@@ -15,6 +15,7 @@ defaults:
     # things much simpler.
     shell: bash -l {0}
 
+
 jobs:
   cases:
     name: ${{ matrix.os }}, ${{ matrix.case-name }}
@@ -82,6 +83,20 @@ jobs:
           COVERALLS_FLAG_NAME: ${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.case-name }}
           COVERALLS_PARALLEL: true
         run: coveralls --service=github
+
+    name: reviewdog
+    on: [pull_request]
+    jobs:
+      pyflakes:
+        name: runner / pyflakes
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v2
+          - name: pyflakes
+            uses: reviewdog/action-pyflakes@master
+            with:
+              github_token: ${{ secrets.github_token }}
+              reporter: github-pr-check # Change reporter.
 
   finalise:
     name: Finalise coverage reporting
