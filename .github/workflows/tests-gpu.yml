@@ -17,6 +17,35 @@ defaults:
 
 
 jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out 
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: "3.9"
+          miniconda-version: "latest"
+      - name: Install QuTiP from GitHub
+        run: |
+          python -mpip install git+https://github.com/qutip/qutip.git@dev.major
+      - name: Install cupy and dependencies
+        run: |
+          conda install cudatoolkit=10.1
+          conda install -c conda-forge cupy
+      - name: Install style check dependencies
+        run: |
+          conda install flake8~=3.7.9
+          conda install black~=19.10b0
+      - name: check-style
+        run: |
+          flake8
+      - name: check-format
+        run: |
+          black --check --diff mitiq
+
+
   cases:
     name: ${{ matrix.os }}, ${{ matrix.case-name }}
     runs-on: [self-hosted, gpu]
@@ -84,17 +113,7 @@ jobs:
           COVERALLS_PARALLEL: true
         run: coveralls --service=github
 
-  pyflakes:
-    name: runner/pyflakes
-    needs: cases
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: pyflakes
-        uses: reviewdog/action-pyflakes@master
-        with:
-          github_token: ${{ secrets.github_token }}
-          reporter: github-pr-check # Change reporterpyflakes:
+ 
   
   finalise:
     name: Finalise coverage reporting
