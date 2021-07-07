@@ -2,25 +2,33 @@
 
 import pytest
 import numpy as np
+import cupy as cp
 
-from qutip_cupy import CuPyDense
+#from qutip_cupy import CuPyDense
 
 from .cpu_gpu_times_wrapper import GpuWrapper
 
+@pytest.fixture(scope="function", params=((1000, 1000),(2000, 2000)))
+def shape(request):
+    return request.param
 
 @pytest.mark.benchmark()
-def test_true_div(shape, benchmark):
-
-    from qutip.core import data
+def test_matmul(shape, benchmark):
 
     array = np.random.uniform(size=shape) + 1.j*np.random.uniform(size=shape)
 
-    def divide_by_2(cp_arr):
-        return cp_arr /2.
-    cup_arr = CuPyDense(array)
+    cp_arr = cp.array(array)
+
+    def matmul_(cp_arr):
+        return array @ array
 
     benchmark2 = GpuWrapper(benchmark)
-    cpdense_tr = benchmark2.pedanticupy(divide_by_2, cup_arr)
-    qtpdense_tr = data.Dense(array) /2.
+    cp_mult = benchmark2.pedanticupy(matmul_, (cp_arr,))
 
-    assert (cpdense_tr.to_array() == qtpdense_tr.to_array()).all()
+    print((cp_arr @ cp_arr).__class__)
+    print(cp_arr.__class__)
+    print(cp_mult.__class__)
+    print(cp_mult.shape)
+    np_mult = matmul_(array)
+
+    np.testing.assert_array_almost_equal(cp_mult.asnumpy(), np_mult)

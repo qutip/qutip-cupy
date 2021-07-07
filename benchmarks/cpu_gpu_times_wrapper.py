@@ -1,16 +1,17 @@
 import warnings
 
-from pytest_benchmark.fixture import BenchmarkFixture 
+#from pytest_benchmark.fixture import BenchmarkFixture
+from pytest_benchmark.fixture import FixtureAlreadyUsed
 from pytest_benchmark.stats import Metadata
 from cupyx.time import repeat as cp_repeat
 
 class GpuWrapper(object):
-    def __init__(self,wrapped_class):
+    def __init__(self, wrapped_class):
         self.__dict__['wrapped_class'] = wrapped_class
 
-    def __getattr__(self,attr):
+    def __getattr__(self, attr):
         #orig_attr = self.wrapped_class.__getattribute__(attr)
-        orig_attr = getattr(self.wrapped_class,attr)
+        orig_attr = getattr(self.wrapped_class, attr)
         if callable(orig_attr):
             def hooked(*args, **kwargs):
                 result = orig_attr(*args, **kwargs)
@@ -21,8 +22,9 @@ class GpuWrapper(object):
             return hooked
         else:
             return orig_attr
-    def __setattr__(self,attr,value):
-        setattr(self.wrapped_class, attr,value)
+
+    def __setattr__(self, attr, value):
+        setattr(self.wrapped_class, attr, value)
 
     def pedanticupy(self, function_to_benchmark, *args, **kwargs):
         if self._mode:
@@ -36,7 +38,10 @@ class GpuWrapper(object):
             self.has_error = True
             raise
 
-    def _raw2(self, function_to_benchmark, *args, **kwargs,  iterations = 30, rounds = 5, warmup_rounds=10):
+    def _raw2(self, function_to_benchmark, args=(), kwargs=None, iterations=30, rounds=5, warmup_rounds=10):
+        if kwargs is None:
+            kwargs = {}
+
         if self.enabled:
             self.stats = self._make_stats(iterations)
             self.stats.group = 'device_all'
@@ -61,7 +66,6 @@ class GpuWrapper(object):
                     self.statscpu.update(tim_cpu)
                     self.statsgpu.update(tim_gpu)
 
-           
         function_result = function_to_benchmark(*args, **kwargs)
         return function_result
 
@@ -75,6 +79,5 @@ class GpuWrapper(object):
             "warmup": self._warmup,
         })
         self._add_stats(bench_stats)
-        #this makes it difficult to track
-        #self.stats = bench_stats
+    
         return bench_stats
