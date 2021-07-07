@@ -21,16 +21,16 @@ Installation
 `qutip-cupy` is not yet officially released.
 
 If you want to try out the package you will need to have a CUDA enabled GPU, `QuTiP >5.0.0` and `CuPy`.
-We recommend using a conda environment.
+We recommend using a conda environment `Python >= 3.7`.
 To install `CuPy` we recommend the following steps:
 
 - conda install cudatoolkit
 - conda install -c conda-forge cupy
 
-To install `QuTiP >5.0.0` while it is not yet released we recommend
+To install `QuTiP >5.0.0` while it is not yet released we recommend:
 
 - python -mpip install git+https://github.com/qutip/qutip.git@dev.major
 
-Now you can safely install `qutip-cupy`
+Now you can safely install `qutip_cupy`
 
-- python -mpip install https://github.com/qutip/qutip-cupy.git
+- python -mpip install git+https://github.com/qutip/qutip-cupy.git
