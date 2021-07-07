@@ -5,9 +5,14 @@ from pytest_benchmark.fixture import FixtureAlreadyUsed
 from pytest_benchmark.stats import Metadata
 from cupyx.time import repeat as cp_repeat
 
+
 class GpuWrapper(object):
-    def __init__(self, wrapped_class):
+    def __init__(self, wrapped_class,iterations=30, rounds=5, warmup_rounds=10):
         self.__dict__['wrapped_class'] = wrapped_class
+        self.iterations = iterations
+        self.rounds = rounds
+        self.warmup_rounds = warmup_rounds
+
 
     def __getattr__(self, attr):
         #orig_attr = self.wrapped_class.__getattribute__(attr)
@@ -38,9 +43,13 @@ class GpuWrapper(object):
             self.has_error = True
             raise
 
-    def _raw2(self, function_to_benchmark, args=(), kwargs=None, iterations=30, rounds=5, warmup_rounds=10):
-        if kwargs is None:
-            kwargs = {}
+    def _raw2(self, function_to_benchmark, *args, **kwargs):
+
+        iterations = self.iterations
+        rounds = self.rounds
+        warmup_rounds = self.warmup_rounds
+
+        self.warmup_rounds = warmup_rounds
 
         if self.enabled:
             self.stats = self._make_stats(iterations)
@@ -58,7 +67,8 @@ class GpuWrapper(object):
                         action ='ignore',
                         category = FutureWarning,
                         message = r'cupyx.time.repeat is experimental.')
-                    results = cp_repeat(function_to_benchmark, args, kwargs, n_warmup= warmup_rounds,max_duration=self._max_time, n_repeat=iterations)
+
+                    results = cp_repeat(function_to_benchmark, args, kwargs, n_warmup=warmup_rounds, max_duration=self._max_time, n_repeat=iterations)
 
                 for tim_cpu, tim_gpu in zip(results.cpu_times, results.gpu_times[0]):
 

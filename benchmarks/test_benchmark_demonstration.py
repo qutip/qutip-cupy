@@ -8,7 +8,7 @@ import cupy as cp
 
 from .cpu_gpu_times_wrapper import GpuWrapper
 
-@pytest.fixture(scope="function", params=((1000, 1000),(2000, 2000)))
+@pytest.fixture(scope="function", params=((1000, 1000)))#,(2000, 2000)))
 def shape(request):
     return request.param
 
@@ -20,15 +20,11 @@ def test_matmul(shape, benchmark):
     cp_arr = cp.array(array)
 
     def matmul_(cp_arr):
-        return array @ array
+        return cp_arr @ cp_arr
 
     benchmark2 = GpuWrapper(benchmark)
-    cp_mult = benchmark2.pedanticupy(matmul_, (cp_arr,))
+    cp_mult = benchmark2.pedanticupy(matmul_, cp_arr)
 
-    print((cp_arr @ cp_arr).__class__)
-    print(cp_arr.__class__)
-    print(cp_mult.__class__)
-    print(cp_mult.shape)
     np_mult = matmul_(array)
 
-    np.testing.assert_array_almost_equal(cp_mult.asnumpy(), np_mult)
+    np.testing.assert_array_almost_equal(cp.asnumpy(cp_mult), np_mult)
