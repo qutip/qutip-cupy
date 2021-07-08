@@ -3,6 +3,9 @@ import warnings
 
 import packaging.version
 
+import sys
+import os
+sys.path.insert(0, os.path.abspath('../src/qutip_cupy'))
 
 needs_sphinx = '4.0'
 
