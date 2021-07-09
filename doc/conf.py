@@ -78,4 +78,5 @@ intersphinx_mapping = {
     'numpy': ('https://numpy.org/doc/stable/', None),
     'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
     'cython': ('https://cython.readthedocs.io/en/latest/', None),
+    'cupy': ('https://docs.cupy.dev/en/stable/index.html', None)
 }
