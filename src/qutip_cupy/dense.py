@@ -46,19 +46,12 @@ class CuPyDense(data.Data):
             and shape[1] > 0
         ):
             raise ValueError(
-                "shape must be a 2-tuple of positive ints, but is " + repr(shape)
+                f"shape must be a 2-tuple of positive ints, but is {shape!r}"
             )
         if shape and (shape[0] != base.shape[0] or shape[1] != base.shape[1]):
             if shape[0] * shape[1] != base.size:
                 raise ValueError(
-                    "".join(
-                        [
-                            "invalid shape ",
-                            str(shape),
-                            " for input data with size ",
-                            str(base.size),
-                        ]
-                    )
+                    f"invalid shape {shape} for input data with size {base.shape}"
                 )
             else:
                 self._cp = base.reshape(shape)
