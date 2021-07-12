@@ -6,6 +6,7 @@ import warnings
 
 def test_import():
     import qutip_cupy
+
     assert qutip_cupy.__version__
 
 
@@ -21,6 +22,7 @@ def test_add_cupy():
         warnings.filterwarnings("ignore", category=DeprecationWarning)
         import cupy as cp
     import numpy as np
+
     x = cp.array([1, 2, 3])
     y = cp.array([2, 3, 4])
     z = x + y
