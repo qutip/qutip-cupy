@@ -20,8 +20,11 @@ with warnings.catch_warnings():
 
     from qutip.core import data
 
-from .version import version as __version__  # noqa
-from . import dense as cd
+# qutip_cupy imports need to be after the cupy import check above
+from .version import version as __version__  # noqa: E402
+from . import dense as cd  # noqa: E402
+
+__all__ = ["__version__", "CuPyDense"]
 
 CuPyDense = cd.CuPyDense
 
