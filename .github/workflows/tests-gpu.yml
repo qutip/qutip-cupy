@@ -20,7 +20,7 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out 
+      - name: Check out
         uses: actions/checkout@v2
       - name: Set up Python
         uses: conda-incubator/setup-miniconda@v2
@@ -40,10 +40,10 @@ jobs:
           conda install black~=19.10b0
       - name: check-style
         run: |
-          flake8
+          flake8 doc src tests setup.py
       - name: check-format
         run: |
-          black --check --diff mitiq
+          black --check --diff doc src tests setup.py
 
 
   cases:
@@ -114,8 +114,7 @@ jobs:
           COVERALLS_PARALLEL: true
         run: coveralls --service=github
 
- 
-  
+
   finalise:
     name: Finalise coverage reporting
     needs: cases
