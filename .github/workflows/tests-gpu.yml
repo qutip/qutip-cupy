@@ -24,9 +24,40 @@ defaults:
     # things much simpler.
     shell: bash -l {0}
 
+
 jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: "3.8"
+          miniconda-version: "latest"
+      - name: Install QuTiP from GitHub
+        run: |
+          python -mpip install git+https://github.com/qutip/qutip.git@dev.major
+      - name: Install cupy and dependencies
+        run: |
+          conda install cudatoolkit=10.1
+          conda install -c conda-forge cupy
+      - name: Install style check dependencies
+        run: |
+          conda install flake8~=3.7.9
+          conda install black~=19.10b0
+      - name: check-style
+        run: |
+          flake8 doc src tests setup.py
+      - name: check-format
+        run: |
+          black --check --diff doc src tests setup.py
+
+
   cases:
     name: ${{ matrix.os }}, ${{ matrix.case-name }}
+    needs: validate
     runs-on: [self-hosted, gpu]
     strategy:
       fail-fast: false
@@ -91,6 +122,7 @@ jobs:
           COVERALLS_FLAG_NAME: ${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.case-name }}
           COVERALLS_PARALLEL: true
         run: coveralls --service=github
+
 
   finalise:
     name: Finalise coverage reporting
