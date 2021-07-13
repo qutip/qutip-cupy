@@ -1,7 +1,16 @@
 name: Documentation on GPU
 
 on:
-  [push, pull_request]
+  # Limit this workflow to pushes and PRs to particular branches (e.g. main or
+  # release branches) so that the workflows don't run and automatically fail on
+  # branches in forked repositories (where there is typically no `gpu` worker to
+  # run on).
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 
 defaults:
   run:

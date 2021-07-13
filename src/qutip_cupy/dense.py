@@ -32,7 +32,7 @@ class CuPyDense(data.Data):
 
     def __init__(self, data, shape=None, copy=True, dtype=cp.complex128):
         self.dtype = dtype
-        base = cp.array(data, dtype=self.dtype, order='K', copy=copy)
+        base = cp.array(data, dtype=self.dtype, order="K", copy=copy)
         if shape is None:
             shape = base.shape
             # Promote to a ket by default if passed 1D data.
@@ -45,15 +45,14 @@ class CuPyDense(data.Data):
             and shape[0] > 0
             and shape[1] > 0
         ):
-            raise ValueError("shape must be a 2-tuple of positive ints, but is " + repr(shape))
+            raise ValueError(
+                f"shape must be a 2-tuple of positive ints, but is {shape!r}"
+            )
         if shape and (shape[0] != base.shape[0] or shape[1] != base.shape[1]):
             if shape[0] * shape[1] != base.size:
-                raise ValueError("".join([
-                    "invalid shape ",
-                    str(shape),
-                    " for input data with size ",
-                    str(base.size)
-                ]))
+                raise ValueError(
+                    f"invalid shape {shape} for input data with size {base.shape}"
+                )
             else:
                 self._cp = base.reshape(shape)
         else:
@@ -64,8 +63,8 @@ class CuPyDense(data.Data):
     @classmethod
     def _raw_cupy_constructor(cls, data):
         """
-        A fast low-level constructor for wrapping an existing CuPy array in a CuPyDense object
-        without copying it.
+        A fast low-level constructor for wrapping an existing CuPy array in a
+        CuPyDense object without copying it.
 
         The ``data`` argument must be a CuPy array with the correct shape.
         The CuPy array will not be copied and will be used as is.
@@ -291,6 +290,7 @@ def diags(diagonals, offsets=None, shape=None):
     #             out.data[idx*(n_rows+1) + offset*n_rows] = diagonals_[diag_idx][idx]
     # return out
     pass
+
 
 # @TOCHECK I added docstrings describing functions as they are.
 # If we were to have a precision parameter on the conversion
