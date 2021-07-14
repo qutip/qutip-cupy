@@ -1,6 +1,7 @@
 # Contains functions for dense_cupy, this are the same functions that
 # are defined ouside the dense.pyx file
 
+
 def expect_dense(op, state):
     """
     Get the expectation value of the operator `op` over the state `state`.  The
