@@ -338,18 +338,18 @@ def trace_cupydense(cpd_array):  # noqa: E302
 
 
 def imul_cupydense(cpd_array, value):  # noqa: E302
-    """Multiply this CuPyDense `matrix` by a complex scalar `value`."""
+    """Multiply this CuPyDense `cpd_array` by a complex scalar `value`."""
     cpd_array.__imul__(value)
     return cpd_array
 
 
 def mul_cupydense(cpd_array, value):  # noqa: E302
-    """Multiply this Dense `matrix` by a complex scalar `value`."""
+    """Multiply this Dense `cpd_array` by a complex scalar `value`."""
     return cpd_array * value
 
 
 def neg_cupydense(cpd_array):  # noqa: E302
-    """Unary negation of this Dense `matrix`.  Return a new object."""
+    """Unary negation of this Dense `cpd_array`.  Return a new object."""
     return cpd_array.__neg__()
 
 
@@ -364,3 +364,23 @@ def matmul_cupydense(left, right, scale=1, out=None):
         return scale * (left @ right) + out
     else:
         return scale * (left @ right)
+
+
+def add_cupydense(left, right, scale=1):
+    """
+    Perform the operation ``out := left + scale*right``
+    Parameters
+    ----------
+    left : CuPyDense
+        Matrix to be added.
+    right : CuPyDense
+        Matrix to be added.  If `scale` is given, this matrix will be
+        multiplied by `scale` before addition.
+    scale : optional double complex (1)
+        The scalar value to multiply `right` by before addition.
+
+    Returns
+    -------
+    out : CUPyDense
+    """
+    return left + scale * right
