@@ -92,24 +92,25 @@ class CuPyDense(data.Data):
 
     def trace(self):
         return self._cp.trace()
+
     def __add__(left, right):
         if not isinstance(left, CuPyDense) or not isinstance(right, CuPyDense):
             return NotImplemented
-        return CuPyDense(cp.add(left._cp, right._cp))
+        return CuPyDense._raw_cupy_constructor(cp.add(left._cp, right._cp))
 
     def __matmul__(left, right):
         if not isinstance(left, CuPyDense) or not isinstance(right, CuPyDense):
             return NotImplemented
-        return CuPyDense(cp.matmul(left._cp, right._cp))
+        return CuPyDense._raw_cupy_constructor(left._cp @ right._cp)
 
     def __mul__(left, right):
         dense, number = (left, right) if isinstance(left, CuPyDense) else (right, left)
         if not isinstance(number, numbers.Number):
             return NotImplemented
-        return CuPyDense(dense._cp * complex(number))
+        return CuPyDense._raw_cupy_constructor(dense._cp * complex(number))
 
     def __imul__(self, other):
-        
+
         self._cp.__imul__(other)
         return self
 
@@ -117,7 +118,7 @@ class CuPyDense(data.Data):
         dense, number = (left, right) if isinstance(left, CuPyDense) else (right, left)
         if not isinstance(number, numbers.Number):
             return NotImplemented
-        return CuPyDense(dense._cp.__truediv__(number))
+        return CuPyDense._raw_cupy_constructor(dense._cp.__truediv__(number))
 
     def __itruediv__(self, other):
         if not isinstance(other, numbers.Number):
@@ -127,49 +128,43 @@ class CuPyDense(data.Data):
 
     def __neg__(self):
 
-        return CuPyDense(self._cp.__neg__())
+        return CuPyDense._raw_cupy_constructor(self._cp.__neg__())
 
     def __sub__(left, right):
         if not isinstance(left, CuPyDense) or not isinstance(right, CuPyDense):
             return NotImplemented
-        return CuPyDense(left._cp - right._cp)
+        return CuPyDense._raw_cupy_constructor(left._cp - right._cp)
 
     # def __dealloc__(self):
     #     if self._deallocate and self.data != NULL:
     #         PyDataMem_FREE(self.data)
 
 
-#@TOCHECK  here I am reducing the aguments of empty but I should probably be keeping all of them at least as dummies
-
+# @TOCHECK  here I am reducing the aguments of empty but I should probably be keeping all of them at least as dummies
 def empty(rows, cols, fortran):
     """
     Return a new Dense type of the given shape, with the data allocated but
     uninitialised.
     """
-    out = CuPyDense.__new__(CuPyDense)
-    super(CuPyDense, out).__init__((rows, cols))
     order = 'F' if fortran else 'C'
-    out._cp = cp.empty(shape=(rows, cols), dtype=cp.complex128, order=order)
-
-    return CuPyDense(out)
+    cparr = cp.empty(shape=(rows, cols), dtype=cp.complex128, order=order)
+    return CuPyDense._raw_cupy_constructor(cparr)
 
 
 def empty_like(other, fortran):
-    out = CuPyDense.__new__(CuPyDense)
-    super(CuPyDense, out).__init__(other.shape)
+    """
+    Return a new Dense type of the same shape as the given array.
+    """
     order = 'F' if fortran else 'C'
-    out._cp = cp.empty_like(other, dtype=cp.complex128, order=order)
-
-    return CuPyDense(out)
+    cparr = cp.empty_like(other, dtype=cp.complex128, order=order)
+    return CuPyDense._raw_cupy_constructor(cparr)
 
 
 def zeros(rows, cols, fortran):
     """Return the zero matrix with the given shape."""
-    out = CuPyDense.__new__(CuPyDense)
-    super(CuPyDense, out).__init__((rows, cols))
     order = 'F' if fortran else 'C'
-    out._cp = cp.zeros(shape=(rows, cols), dtype=cp.complex128, order=order)
-    return out
+    cparr = cp.zeros(shape=(rows, cols), dtype=cp.complex128, order=order)
+    return CuPyDense._raw_cupy_constructor(cparr)
 
 
 def identity(dimension, scale=1, fortran=True):
@@ -178,15 +173,13 @@ def identity(dimension, scale=1, fortran=True):
     the diagonal.  By default this will be the identity matrix, but if `scale`
     is passed, then the result will be `scale` times the identity.
     """
-    out = CuPyDense.__new__(CuPyDense)
-    super(CuPyDense, out).__init__((dimension,dimension))
     order = 'F' if fortran else 'C'
     if scale != 1:
-        out._cp = cp.eye(dimension, dtype=cp.complex128,order=order)
+        cparr = cp.eye(dimension, dtype=cp.complex128, order=order)
     else:
-        out._cp = scale*cp.eye(dimension, dtype=cp.complex128,order=order)
+        cparr = scale*cp.eye(dimension, dtype=cp.complex128, order=order)
 
-    return out
+    return CuPyDense._raw_cupy_constructor(cparr)
 
 
 def Dense_from_csr(CSR_matrix, fortran=False):
