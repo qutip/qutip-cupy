@@ -292,6 +292,7 @@ def diags(diagonals, offsets=None, shape=None):
     pass
 
 
+
 # @TOCHECK I added docstrings describing functions as they are.
 # If we were to have a precision parameter on the conversion
 # I am not really sure how the dispatcher would handle it.
@@ -314,17 +315,17 @@ def cupydense_from_dense(dense):
     return dense_cp
 
 
-def cpd_adjoint(cpd_array):
+def adjoint_cupydense(cpd_array):
     return cpd_array.adjoint()
 
 
-def cpd_conj(cpd_array):
+def conj_cupydense(cpd_array):
     return cpd_array.conj()
 
 
-def cpd_transpose(cpd_array):
+def transpose_cupydense(cpd_array):
     return cpd_array.transpose()
 
 
-def cpd_trace(cpd_array):
+def trace_cupydense(cpd_array):
     return cpd_array.trace()
