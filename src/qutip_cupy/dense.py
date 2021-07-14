@@ -292,7 +292,6 @@ def diags(diagonals, offsets=None, shape=None):
     return out
 
 
-
 # @TOCHECK I added docstrings describing functions as they are.
 # If we were to have a precision parameter on the conversion
 # I am not really sure how the dispatcher would handle it.

@@ -1,7 +1,7 @@
 # Contains functions for dense_cupy, this are the same functions that 
 # are defined ouside the dense.pyx file
 
-def expect_dense( op,  state) :
+def expect_dense(op, state):
     """
     Get the expectation value of the operator `op` over the state `state`.  The
     state can be either a ket or a density matrix.
@@ -17,7 +17,7 @@ def expect_dense( op,  state) :
     pass
 
 
-def _expect_dense_ket( op,  state) :
+def _expect_dense_ket(op, state):
     # _check_shape_ket(op, state)
     # cdef double complex out=0, sum
     # cdef size_t row, col, op_row_stride, op_col_stride
@@ -33,7 +33,8 @@ def _expect_dense_ket( op,  state) :
     # return out
     pass
 
-def _expect_dense_dense_dm( op, state):
+
+def _expect_dense_dense_dm(op, state):
     # _check_shape_dm(op, state)
     # cdef double complex out=0
     # cdef size_t row, col, op_row_stride, op_col_stride
@@ -50,7 +51,8 @@ def _expect_dense_dense_dm( op, state):
     # return out
     pass
 
-def  tidyup_dense( matrix, tol, inplace=True):
+
+def tidyup_dense(matrix, tol, inplace=True):
     # cdef Dense out = matrix if inplace else matrix.copy()
     # cdef double complex value
     # cdef size_t ptr
@@ -62,4 +64,3 @@ def  tidyup_dense( matrix, tol, inplace=True):
     #         matrix.data[ptr].imag = 0
     # return out
     pass
-
