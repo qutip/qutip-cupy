@@ -40,6 +40,9 @@ data.adjoint.add_specialisations([(CuPyDense, CuPyDense, cd.adjoint_cupydense)])
 data.transpose.add_specialisations([(CuPyDense, CuPyDense, cd.transpose_cupydense)])
 data.conj.add_specialisations([(CuPyDense, CuPyDense, cd.conj_cupydense)])
 data.trace.add_specialisations([(CuPyDense, cd.trace_cupydense)])
+data.mul.add_specialisations([(CuPyDense, CuPyDense, cd.mul_cupydense)])
+data.imul.add_specialisations([(CuPyDense, CuPyDense, cd.imul_cupydense)])
+data.neg.add_specialisations([(CuPyDense, CuPyDense, cd.neg_cupydense)])
 
 # We must register the functions to the data layer but do not want
 # the data layer or qutip_cupy.dense to be accessible from qutip_cupy

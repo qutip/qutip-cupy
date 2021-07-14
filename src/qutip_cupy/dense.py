@@ -317,17 +317,27 @@ def cupydense_from_dense(dense):
     return dense_cp
 
 
-def adjoint_cupydense(cpd_array):
+def adjoint_cupydense(cpd_array):  # noqa: E302
     return cpd_array.adjoint()
 
-
-def conj_cupydense(cpd_array):
+def conj_cupydense(cpd_array):  # noqa: E302
     return cpd_array.conj()
 
-
-def transpose_cupydense(cpd_array):
+def transpose_cupydense(cpd_array):  # noqa: E302
     return cpd_array.transpose()
 
-
-def trace_cupydense(cpd_array):
+def trace_cupydense(cpd_array):  # noqa: E302
     return cpd_array.trace()
+
+def imul_cupydense(cpd_array, value):  # noqa: E302
+    """Multiply this CuPyDense `matrix` by a complex scalar `value`."""
+    cpd_array.__imul__(value)
+    return cpd_array
+
+def mul_cupydense(cpd_array, value):  # noqa: E302
+    """Multiply this Dense `matrix` by a complex scalar `value`."""
+    return cpd_array*value
+
+def neg_dense(cpd_array):  # noqa: E302
+    """Unary negation of this Dense `matrix`.  Return a new object."""
+    return cpd_array.__neg__()
