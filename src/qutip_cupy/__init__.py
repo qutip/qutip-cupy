@@ -46,7 +46,8 @@ data.neg.add_specialisations([(CuPyDense, CuPyDense, cd.neg_cupydense)])
 data.matmul.add_specialisations(
     [(CuPyDense, CuPyDense, CuPyDense, cd.matmul_cupydense)]
 )
-data.matmul.add_specialisations([(CuPyDense, CuPyDense, CuPyDense, cd.add_cupydense)])
+data.add.add_specialisations([(CuPyDense, CuPyDense, CuPyDense, cd.add_cupydense)])
+data.sub.add_specialisations([(CuPyDense, CuPyDense, CuPyDense, cd.sub_cupydense)])
 
 # We must register the functions to the data layer but do not want
 # the data layer or qutip_cupy.dense to be accessible from qutip_cupy

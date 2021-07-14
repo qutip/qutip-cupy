@@ -384,3 +384,19 @@ def add_cupydense(left, right, scale=1):
     out : CUPyDense
     """
     return left + scale * right
+
+
+def sub_cupydense(left, right):
+    """
+    Perform the operation ``out := left - right``
+
+    Parameters
+    ----------
+    left : CuPyDense
+        Matrix to be added.
+    right : CuPyDense
+    Returns
+    -------
+    out : CUPyDense
+    """
+    return left - right
