@@ -348,6 +348,6 @@ def mul_cupydense(cpd_array, value):  # noqa: E302
     return cpd_array * value
 
 
-def neg_dense(cpd_array):  # noqa: E302
+def neg_cupydense(cpd_array):  # noqa: E302
     """Unary negation of this Dense `matrix`.  Return a new object."""
     return cpd_array.__neg__()
