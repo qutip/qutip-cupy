@@ -186,6 +186,11 @@ def Dense_from_csr(CSR_matrix, fortran=False):
     pass
 
 
+def _diagonal_length(offset, n_rows, n_cols,):
+    if offset > 0:
+        return n_rows if offset <= n_cols - n_rows else n_cols - offset
+    return n_cols if offset > n_cols - n_rows else n_rows + offset
+
 
 def diags(diagonals, offsets=None, shape=None):
     """
@@ -213,76 +218,78 @@ def diags(diagonals, offsets=None, shape=None):
         not need to be square, but the diagonals must be of the correct length
         to fit in exactly.
     """
-    # cdef base.idxint n_rows, n_cols, offset
-    # try:
-    #     diagonals = list(diagonals)
-    #     if diagonals and np.isscalar(diagonals[0]):
-    #         # Catch the case where we're being called as (for example)
-    #         #   diags([1, 2, 3], 0)
-    #         # with a single diagonal and offset.
-    #         diagonals = [diagonals]
-    # except TypeError:
-    #     raise TypeError("diagonals must be a list of arrays of complex") from None
-    # if offsets is None:
-    #     if len(diagonals) == 0:
-    #         offsets = []
-    #     elif len(diagonals) == 1:
-    #         offsets = [0]
-    #     else:
-    #         raise TypeError("offsets must be supplied if passing more than one diagonal")
-    # offsets = np.atleast_1d(offsets)
-    # if offsets.ndim > 1:
-    #     raise ValueError("offsets must be a 1D array of integers")
-    # if len(diagonals) != len(offsets):
-    #     raise ValueError("number of diagonals does not match number of offsets")
-    # if len(diagonals) == 0:
-    #     if shape is None:
-    #         raise ValueError("cannot construct matrix with no diagonals without a shape")
-    #     else:
-    #         n_rows, n_cols = shape
-    #     return zeros(n_rows, n_cols)
-    # order = np.argsort(offsets)
-    # diagonals_ = []
-    # offsets_ = []
-    # prev, cur = None, None
-    # for i in order:
-    #     cur = offsets[i]
-    #     if cur == prev:
-    #         diagonals_[-1] += np.asarray(diagonals[i], dtype=np.complex128)
-    #     else:
-    #         offsets_.append(cur)
-    #         diagonals_.append(np.asarray(diagonals[i], dtype=np.complex128))
-    #     prev = cur
-    # if shape is None:
-    #     n_rows = n_cols = abs(offsets_[0]) + len(diagonals_[0])
-    # else:
-    #     try:
-    #         n_rows, n_cols = shape
-    #     except (TypeError, ValueError):
-    #         raise TypeError("shape must be a 2-tuple of positive integers")
-    #     if n_rows < 0 or n_cols < 0:
-    #         raise ValueError("shape must be a 2-tuple of positive integers")
-    # for i in range(len(diagonals_)):
-    #     offset = offsets_[i]
-    #     if len(diagonals_[i]) != _diagonal_length(offset, n_rows, n_cols):
-    #         raise ValueError("given diagonals do not have the correct lengths")
-    # if n_rows == 0 and n_cols == 0:
-    #     raise ValueError("can't produce a 0x0 matrix")
+    # This implementation follows the one of cupy.diagonal
+    # alternatively we may define our own cuda kernel.
 
-    # out = zeros(n_rows, n_cols, fortran=True)
+    # we make sure to export the variables to the GPU
+    # we should actually benchmark if we should ascertain
+    # that sending the variables to the device is better before than after
+    diagonals = cp.asarray(diagonals)
+    offsets = cp.asarray(offsets)
+    try:
+        diagonals = list(diagonals)
+        if diagonals and cp.isscalar(diagonals[0]):
+            # Catch the case where we're being called as (for example)
+            #   diags([1, 2, 3], 0)
+            # with a single diagonal and offset. 
+            diagonals = diagonals[cp.newaxis, :]
+    except TypeError:
+        raise TypeError("diagonals must be a list of arrays of complex") from None
+    diagonals_length = diagonals.shape[0]
+    if offsets is None:
+        if diagonals_length == 0:
+            offsets = []
+        elif diagonals_length == 1:
+            offsets = [0]
+        else:
+            raise TypeError("offsets must be supplied if passing more than one diagonal")
+    offsets = cp.atleast_1d(offsets)
+    if offsets.ndim > 1:
+        raise ValueError("offsets must be a 1D array of integers")
+    if diagonals_length != len(offsets):
+        raise ValueError("number of diagonals does not match number of offsets")
+    if diagonals_length == 0:
+        if shape is None:
+            raise ValueError("cannot construct matrix with no diagonals without a shape")
+        else:
+            n_rows, n_cols = shape
+        return zeros(n_rows, n_cols)
+    # I am keeping this section assuming that properly sorting will lead to 
+    # contiguous memory accesses and a decreased runtime
+    order = cp.argsort(offsets)
+    diagonals_ = []
+    offsets_ = []
+    prev, cur = None, None
+    for i in order:
+        cur = offsets[i]
+        if cur == prev:
+            diagonals_[-1] += cp.asarray(diagonals[i], dtype=cp.complex128)
+        else:
+            offsets_.append(cur)
+            diagonals_.append(cp.asarray(diagonals[i], dtype=cp.complex128))
+        prev = cur
+    if shape is None:
+        n_rows = n_cols = abs(offsets_[0]) + len(diagonals_[0])
+    else:
+        try:
+            n_rows, n_cols = shape
+        except (TypeError, ValueError):
+            raise TypeError("shape must be a 2-tuple of positive integers")
+        if n_rows < 0 or n_cols < 0:
+            raise ValueError("shape must be a 2-tuple of positive integers")
+    for i in range(len(diagonals_)):
+        offset = offsets_[i]
+        if len(diagonals_[i]) != _diagonal_length(offset, n_rows, n_cols):
+            raise ValueError("given diagonals do not have the correct lengths")
+    if n_rows == 0 and n_cols == 0:
+        raise ValueError("can't produce a 0x0 matrix")
 
-    # cdef size_t diag_idx, idx, n_diagonals = len(diagonals_)
+    out = zeros(n_rows, n_cols, fortran=True)
 
-    # for diag_idx in range(n_diagonals):
-    #     offset = offsets_[diag_idx]
-    #     if offset <= 0:
-    #         for idx in range(_diagonal_length(offset, n_rows, n_cols)):
-    #             out.data[idx*(n_rows+1) - offset] = diagonals_[diag_idx][idx]
-    #     else:
-    #         for idx in range(_diagonal_length(offset, n_rows, n_cols)):
-    #             out.data[idx*(n_rows+1) + offset*n_rows] = diagonals_[diag_idx][idx]
-    # return out
-    pass
+    for diag_idx in diagonals_length:
+        out.diagonal(offsets_[diag_idx])[:] = diagonals_[diag_idx]
+
+    return out
 
 
 
