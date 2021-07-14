@@ -351,3 +351,16 @@ def mul_cupydense(cpd_array, value):  # noqa: E302
 def neg_cupydense(cpd_array):  # noqa: E302
     """Unary negation of this Dense `matrix`.  Return a new object."""
     return cpd_array.__neg__()
+
+
+def matmul_cupydense(left, right, scale=1, out=None):
+    """
+    Perform the operation
+        ``out := scale * (left @ right) + out``
+    where `left`, `right` and `out` are matrices.  `scale` is a complex scalar,
+    defaulting to 1.
+    """
+    if out:
+        return scale * (left @ right) + out
+    else:
+        return scale * (left @ right)
