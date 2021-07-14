@@ -140,7 +140,8 @@ class CuPyDense(data.Data):
     #         PyDataMem_FREE(self.data)
 
 
-# @TOCHECK  here I am reducing the aguments of empty but I should probably be keeping all of them at least as dummies
+# @TOCHECK  here I am reducing the aguments of empty but I should probably be keeping
+# all of them at least as dummies
 def empty(rows, cols, fortran):
     """
     Return a new Dense type of the given shape, with the data allocated but
@@ -231,7 +232,7 @@ def diags(diagonals, offsets=None, shape=None):
         if diagonals and cp.isscalar(diagonals[0]):
             # Catch the case where we're being called as (for example)
             #   diags([1, 2, 3], 0)
-            # with a single diagonal and offset. 
+            # with a single diagonal and offset.
             diagonals = diagonals[cp.newaxis, :]
     except TypeError:
         raise TypeError("diagonals must be a list of arrays of complex") from None
@@ -242,7 +243,8 @@ def diags(diagonals, offsets=None, shape=None):
         elif diagonals_length == 1:
             offsets = [0]
         else:
-            raise TypeError("offsets must be supplied if passing more than one diagonal")
+            raise TypeError("offsets must be supplied"
+                            "if passing more than one diagonal")
     offsets = cp.atleast_1d(offsets)
     if offsets.ndim > 1:
         raise ValueError("offsets must be a 1D array of integers")
@@ -250,11 +252,12 @@ def diags(diagonals, offsets=None, shape=None):
         raise ValueError("number of diagonals does not match number of offsets")
     if diagonals_length == 0:
         if shape is None:
-            raise ValueError("cannot construct matrix with no diagonals without a shape")
+            raise ValueError("cannot construct matrix"
+                             "with no diagonals without a shape")
         else:
             n_rows, n_cols = shape
         return zeros(n_rows, n_cols)
-    # I am keeping this section assuming that properly sorting will lead to 
+    # I am keeping this section assuming that properly sorting will lead to
     # contiguous memory accesses and a decreased runtime
     order = cp.argsort(offsets)
     diagonals_ = []

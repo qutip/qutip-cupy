@@ -1,4 +1,4 @@
-# Contains functions for dense_cupy, this are the same functions that 
+# Contains functions for dense_cupy, this are the same functions that
 # are defined ouside the dense.pyx file
 
 def expect_dense(op, state):
