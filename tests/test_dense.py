@@ -56,11 +56,11 @@ def test_true_div(shape):
 
     from qutip.core import data
 
-    array = np.random.uniform(size=shape) + 1.j*np.random.uniform(size=shape)
+    array = np.random.uniform(size=shape) + 1.0j * np.random.uniform(size=shape)
 
     cup_arr = CuPyDense(array)
-    cpdense_tr = cup_arr / 2.
-    qtpdense_tr = data.Dense(array) / 2.
+    cpdense_tr = cup_arr / 2.0
+    qtpdense_tr = data.Dense(array) / 2.0
 
     np.testing.assert_array_equal(cpdense_tr.to_array(), qtpdense_tr.to_array())
 
@@ -69,10 +69,10 @@ def test_itrue_div(shape):
 
     from qutip.core import data
 
-    array = np.random.uniform(size=shape) + 1.j*np.random.uniform(size=shape)
+    array = np.random.uniform(size=shape) + 1.0j * np.random.uniform(size=shape)
 
-    cpdense_tr = CuPyDense(array).__itruediv__(2.)
-    qtpdense_tr = data.Dense(array).__itruediv__(2.)
+    cpdense_tr = CuPyDense(array).__itruediv__(2.0)
+    qtpdense_tr = data.Dense(array).__itruediv__(2.0)
 
     np.testing.assert_array_equal(cpdense_tr.to_array(), qtpdense_tr.to_array())
 
@@ -81,10 +81,10 @@ def test_mul(shape):
 
     from qutip.core import data
 
-    array = np.random.uniform(size=shape) + 1.j*np.random.uniform(size=shape)
+    array = np.random.uniform(size=shape) + 1.0j * np.random.uniform(size=shape)
 
-    cpdense_tr = CuPyDense(array).__mul__(2.+1.j)
-    qtpdense_tr = data.Dense(array).__mul__(2.+1.j)
+    cpdense_tr = CuPyDense(array).__mul__(2.0 + 1.0j)
+    qtpdense_tr = data.Dense(array).__mul__(2.0 + 1.0j)
 
     np.testing.assert_array_equal(cpdense_tr.to_array(), qtpdense_tr.to_array())
 
@@ -93,9 +93,9 @@ def test_matmul(shape):
 
     from qutip.core import data
 
-    array = np.random.uniform(size=shape) + 1.j*np.random.uniform(size=shape)
+    array = np.random.uniform(size=shape) + 1.0j * np.random.uniform(size=shape)
 
-    cpdense_tr = CuPyDense(array).__mul__(2.+1.j)
-    qtpdense_tr = data.Dense(array).__mul__(2.+1.j)
+    cpdense_tr = CuPyDense(array).__mul__(2.0 + 1.0j)
+    qtpdense_tr = data.Dense(array).__mul__(2.0 + 1.0j)
 
     np.testing.assert_array_equal(cpdense_tr.to_array(), qtpdense_tr.to_array())

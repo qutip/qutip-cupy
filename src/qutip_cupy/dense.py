@@ -147,7 +147,7 @@ def empty(rows, cols, fortran):
     Return a new Dense type of the given shape, with the data allocated but
     uninitialised.
     """
-    order = 'F' if fortran else 'C'
+    order = "F" if fortran else "C"
     cparr = cp.empty(shape=(rows, cols), dtype=cp.complex128, order=order)
     return CuPyDense._raw_cupy_constructor(cparr)
 
@@ -156,14 +156,14 @@ def empty_like(other, fortran):
     """
     Return a new Dense type of the same shape as the given array.
     """
-    order = 'F' if fortran else 'C'
+    order = "F" if fortran else "C"
     cparr = cp.empty_like(other, dtype=cp.complex128, order=order)
     return CuPyDense._raw_cupy_constructor(cparr)
 
 
 def zeros(rows, cols, fortran):
     """Return the zero matrix with the given shape."""
-    order = 'F' if fortran else 'C'
+    order = "F" if fortran else "C"
     cparr = cp.zeros(shape=(rows, cols), dtype=cp.complex128, order=order)
     return CuPyDense._raw_cupy_constructor(cparr)
 
@@ -174,11 +174,11 @@ def identity(dimension, scale=1, fortran=True):
     the diagonal.  By default this will be the identity matrix, but if `scale`
     is passed, then the result will be `scale` times the identity.
     """
-    order = 'F' if fortran else 'C'
+    order = "F" if fortran else "C"
     if scale != 1:
         cparr = cp.eye(dimension, dtype=cp.complex128, order=order)
     else:
-        cparr = scale*cp.eye(dimension, dtype=cp.complex128, order=order)
+        cparr = scale * cp.eye(dimension, dtype=cp.complex128, order=order)
 
     return CuPyDense._raw_cupy_constructor(cparr)
 
@@ -187,7 +187,9 @@ def Dense_from_csr(CSR_matrix, fortran=False):
     pass
 
 
-def _diagonal_length(offset, n_rows, n_cols,):
+def _diagonal_length(
+    offset, n_rows, n_cols,
+):
     if offset > 0:
         return n_rows if offset <= n_cols - n_rows else n_cols - offset
     return n_cols if offset > n_cols - n_rows else n_rows + offset
@@ -243,8 +245,9 @@ def diags(diagonals, offsets=None, shape=None):
         elif diagonals_length == 1:
             offsets = [0]
         else:
-            raise TypeError("offsets must be supplied"
-                            "if passing more than one diagonal")
+            raise TypeError(
+                "offsets must be supplied" "if passing more than one diagonal"
+            )
     offsets = cp.atleast_1d(offsets)
     if offsets.ndim > 1:
         raise ValueError("offsets must be a 1D array of integers")
@@ -252,8 +255,9 @@ def diags(diagonals, offsets=None, shape=None):
         raise ValueError("number of diagonals does not match number of offsets")
     if diagonals_length == 0:
         if shape is None:
-            raise ValueError("cannot construct matrix"
-                             "with no diagonals without a shape")
+            raise ValueError(
+                "cannot construct matrix" "with no diagonals without a shape"
+            )
         else:
             n_rows, n_cols = shape
         return zeros(n_rows, n_cols)
@@ -320,23 +324,29 @@ def cupydense_from_dense(dense):
 def adjoint_cupydense(cpd_array):  # noqa: E302
     return cpd_array.adjoint()
 
+
 def conj_cupydense(cpd_array):  # noqa: E302
     return cpd_array.conj()
+
 
 def transpose_cupydense(cpd_array):  # noqa: E302
     return cpd_array.transpose()
 
+
 def trace_cupydense(cpd_array):  # noqa: E302
     return cpd_array.trace()
+
 
 def imul_cupydense(cpd_array, value):  # noqa: E302
     """Multiply this CuPyDense `matrix` by a complex scalar `value`."""
     cpd_array.__imul__(value)
     return cpd_array
 
+
 def mul_cupydense(cpd_array, value):  # noqa: E302
     """Multiply this Dense `matrix` by a complex scalar `value`."""
-    return cpd_array*value
+    return cpd_array * value
+
 
 def neg_dense(cpd_array):  # noqa: E302
     """Unary negation of this Dense `matrix`.  Return a new object."""
