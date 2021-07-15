@@ -140,8 +140,8 @@ class CuPyDense(data.Data):
     #         PyDataMem_FREE(self.data)
 
 
-# @TOCHECK  here I am reducing the aguments of empty but I should probably be keeping
-# all of them at least as dummies
+# @TOCHECK  emti and empty_like are not dispatched in qutip
+# if we do not use them internally here we should remove them
 def empty(rows, cols, fortran):
     """
     Return a new Dense type of the given shape, with the data allocated but

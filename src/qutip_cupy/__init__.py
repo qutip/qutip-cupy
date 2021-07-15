@@ -49,6 +49,10 @@ data.matmul.add_specialisations(
 data.add.add_specialisations([(CuPyDense, CuPyDense, CuPyDense, cd.add_cupydense)])
 data.sub.add_specialisations([(CuPyDense, CuPyDense, CuPyDense, cd.sub_cupydense)])
 
+data.diag.add_specialisations([(CuPyDense, cd.diags)])
+data.identity.add_specialisations([(CuPyDense, cd.identity)])
+data.zeros.add_specialisations([(CuPyDense, cd.sub_cupydense)])
+
 # We must register the functions to the data layer but do not want
 # the data layer or qutip_cupy.dense to be accessible from qutip_cupy
 del data
