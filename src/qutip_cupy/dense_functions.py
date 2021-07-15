@@ -1,6 +1,10 @@
 # Contains functions for dense_cupy, this are the same functions that
 # are defined ouside the dense.pyx file
 
+import cupy as cp
+
+from . import CuPyDense
+
 
 def expect_dense(op, state):
     """
@@ -65,3 +69,29 @@ def tidyup_dense(matrix, tol, inplace=True):
     #         matrix.data[ptr].imag = 0
     # return out
     pass
+
+
+def reshape_cupydense(cp_arr, n_rows_out, n_cols_out):
+
+    return CuPyDense(cp_arr, (n_rows_out, n_cols_out))
+
+
+def stack_cupydense(cp_arr, inplace=False):
+
+    pass
+
+
+def unstack_cupydense(cp_arr, idxint, inplace=False):
+
+    pass
+
+
+# reshape
+# stack
+# kron
+
+# dot
+
+# eigval
+# pow
+# expm
