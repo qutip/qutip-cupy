@@ -88,9 +88,11 @@ def _expect_dense_ket_cublas(op, state):
     #                 state.data[col])
     #     out += sum * conj(state.data[row])
     # return out
-    out = cp.complex128()
+    out = cp.zeros((1, 1), cp.complex128)
+
     cublas.gemm("H", "N", state, op @ state, out=out)
-    return out
+
+    return out.item()
 
 
 def _expect_dense_ket_kernel(op, state):
@@ -115,14 +117,8 @@ def _expect_dense_ket_kernel(op, state):
         r"""
     #include <cupy/complex.cuh>
     extern "C" __global__
-    void my_func(const complex<float>* x1, const complex<float>* x2,
-                complex<float>* y, float a) {
-        int tid = blockDim.x * blockIdx.x + threadIdx.x;
-        y[tid] = x1[tid] + a * x2[tid];
-
-
-                __global__ void MatrixMulKernel(float* d_M, float* d_N, float* d_P, int Width)
-        {
+    void expect(const complex<float>* d_M, const complex<float>* d_N,
+                complex<float>* d_P, int Width) {
 
         __ shared__ float Mds[TILE_WIDTH][TILE_WIDTH];
         __ shared__ float Nds[TILE_WIDTH][TILE_WIDTH];
