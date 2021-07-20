@@ -86,6 +86,23 @@ def unstack_cupydense(cp_arr, idxint, inplace=False):
     pass
 
 
+def kron_cupydense(cp_arr, idxint, inplace=False):
+
+    # Any improvement on matmul could be applied here since
+    # cp.kron depends on cp.cupy._core.tensordot_core
+    pass
+
+
+def trace_cupydense(cp_arr):
+
+    return cp.trace(cp_arr._cp)
+
+
+def ptrace_cupydense(cp_arr, dims, sel):
+
+    return cp.trace(cp_arr)
+
+
 # reshape
 # stack
 # kron
