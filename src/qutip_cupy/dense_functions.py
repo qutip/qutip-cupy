@@ -100,6 +100,26 @@ def trace_cupydense(cp_arr):
 
 def ptrace_cupydense(cp_arr, dims, sel):
 
+    #  _check_shape(matrix)
+    # dims, sel = _prepare_inputs(dims, sel)
+    # if len(sel) == len(dims):
+    #     return matrix.copy()
+    # nd = dims.shape[0]
+    # dkeep = [dims[x] for x in sel]
+    # qtrace = list(set(np.arange(nd)) - set(sel))
+    # dtrace = [dims[x] for x in qtrace]
+    # dims = list(dims)
+    # sel = list(sel)
+    # rhomat = np.trace(matrix.as_ndarray()
+    #                   .reshape(dims + dims)
+    #                   .transpose(qtrace + [nd + q for q in qtrace] +
+    #                              sel + [nd + q for q in sel])
+    #                   .reshape([np.prod(dtrace),
+    #                             np.prod(dtrace),
+    #                             np.prod(dkeep),
+    #                             np.prod(dkeep)]))
+    return CuPyDense._raw_cupy_constructor(rhomat)
+
     return cp.trace(cp_arr)
 
 
