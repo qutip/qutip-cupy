@@ -38,56 +38,17 @@ def expect_dense(op, state):
 
 
 def _expect_dense_ket_naive(op, state):
-    # _check_shape_ket(op, state)
-    # cdef double complex out=0, sum
-    # cdef size_t row, col, op_row_stride, op_col_stride
-    # op_row_stride = 1 if op.fortran else op.shape[1]
-    # op_col_stride = op.shape[0] if op.fortran else 1
 
-    # for row in range(op.shape[0]):
-    #     sum = 0
-    #     for col in range(op.shape[0]):
-    #         sum += (op.data[row * op_row_stride + col * op_col_stride] *
-    #                 state.data[col])
-    #     out += sum * conj(state.data[row])
-    # return out
     return state.adjoint() @ (op @ state)
 
 
 def _expect_dense_ket_naive2(op, state):
-    # _check_shape_ket(op, state)
-    # cdef double complex out=0, sum
-    # cdef size_t row, col, op_row_stride, op_col_stride
-    # op_row_stride = 1 if op.fortran else op.shape[1]
-    # op_col_stride = op.shape[0] if op.fortran else 1
 
-    # for row in range(op.shape[0]):
-    #     sum = 0
-    #     for col in range(op.shape[0]):
-    #         sum += (op.data[row * op_row_stride + col * op_col_stride] *
-    #                 state.data[col])
-    #     out += sum * conj(state.data[row])
-    # return out
-    # the timings for this one s should not differ  much from naive1
-    # simple inspection of vdot shows it is doing conj at python level
-    # not cython or cublas level, see cupy._linalg._product.vdot
     return cp.vdot(state, op @ state)
 
 
 def _expect_dense_ket_cublas(op, state):
-    # _check_shape_ket(op, state)
-    # cdef double complex out=0, sum
-    # cdef size_t row, col, op_row_stride, op_col_stride
-    # op_row_stride = 1 if op.fortran else op.shape[1]
-    # op_col_stride = op.shape[0] if op.fortran else 1
 
-    # for row in range(op.shape[0]):
-    #     sum = 0
-    #     for col in range(op.shape[0]):
-    #         sum += (op.data[row * op_row_stride + col * op_col_stride] *
-    #                 state.data[col])
-    #     out += sum * conj(state.data[row])
-    # return out
     out = cp.zeros((1, 1), cp.complex128)
 
     cublas.gemm("H", "N", state, op @ state, out=out)
