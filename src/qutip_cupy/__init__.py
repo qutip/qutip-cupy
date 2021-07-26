@@ -47,6 +47,7 @@ data.matmul.add_specialisations(
     [(CuPyDense, CuPyDense, CuPyDense, cd.matmul_cupydense)]
 )
 data.add.add_specialisations([(CuPyDense, CuPyDense, CuPyDense, cd.add_cupydense)])
+# data.iadd.add_specialisations([(CuPyDense, CuPyDense, CuPyDense, cd.iadd_cupydense)])
 data.sub.add_specialisations([(CuPyDense, CuPyDense, CuPyDense, cd.sub_cupydense)])
 
 data.diag.add_specialisations([(CuPyDense, cd.diags)])

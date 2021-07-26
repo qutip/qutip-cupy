@@ -6,6 +6,7 @@ conversion and specializations for registration with QuTiP's data layer.
 import numbers
 
 import cupy as cp
+from cupy import cublas
 from qutip.core import data
 
 
@@ -134,10 +135,6 @@ class CuPyDense(data.Data):
         if not isinstance(left, CuPyDense) or not isinstance(right, CuPyDense):
             return NotImplemented
         return CuPyDense._raw_cupy_constructor(left._cp - right._cp)
-
-    # def __dealloc__(self):
-    #     if self._deallocate and self.data != NULL:
-    #         PyDataMem_FREE(self.data)
 
 
 # @TOCHECK  emti and empty_like are not dispatched in qutip
@@ -321,34 +318,45 @@ def cupydense_from_dense(dense):
     return dense_cp
 
 
-def adjoint_cupydense(cpd_array):  # noqa: E302
+# mathematical operations
+
+
+def _check_same_shape(left, right):
+
+    if left.shape[0] != right.shape[0] or left.shape[1] != right.shape[1]:
+        raise ValueError(
+            "incompatible matrix shapes " + str(left.shape) + " and " + str(right.shape)
+        )
+
+
+def adjoint_cupydense(cpd_array):
     return cpd_array.adjoint()
 
 
-def conj_cupydense(cpd_array):  # noqa: E302
+def conj_cupydense(cpd_array):
     return cpd_array.conj()
 
 
-def transpose_cupydense(cpd_array):  # noqa: E302
+def transpose_cupydense(cpd_array):
     return cpd_array.transpose()
 
 
-def trace_cupydense(cpd_array):  # noqa: E302
+def trace_cupydense(cpd_array):
     return cpd_array.trace()
 
 
-def imul_cupydense(cpd_array, value):  # noqa: E302
+def imul_cupydense(cpd_array, value):
     """Multiply this CuPyDense `cpd_array` by a complex scalar `value`."""
     cpd_array.__imul__(value)
     return cpd_array
 
 
-def mul_cupydense(cpd_array, value):  # noqa: E302
+def mul_cupydense(cpd_array, value):
     """Multiply this Dense `cpd_array` by a complex scalar `value`."""
     return cpd_array * value
 
 
-def neg_cupydense(cpd_array):  # noqa: E302
+def neg_cupydense(cpd_array):
     """Unary negation of this Dense `cpd_array`.  Return a new object."""
     return cpd_array.__neg__()
 
@@ -383,7 +391,32 @@ def add_cupydense(left, right, scale=1):
     -------
     out : CUPyDense
     """
-    return left + scale * right
+    _check_same_shape(left, right)
+    return left + right * scale
+
+
+def iadd_cupydense(left, right, scale=1):
+    """
+    Perform the operation ``left += scale*right``
+    Parameters
+    ----------
+    left : CuPyDense
+        Matrix to be added.
+    right : CuPyDense
+        Matrix to be added.  If `scale` is given, this matrix will be
+        multiplied by `scale` before addition.
+    scale : optional double complex (1)
+        The scalar value to multiply `right` by before addition.
+
+    Returns
+    -------
+    out : CUPyDense
+    """
+    _check_same_shape(left, right)
+    # @TOCHECK: calling cublas.axpy(left._cp, right._cp, scale) might have better poerformance
+    left._cp += right._cp * scale
+
+    return left
 
 
 def sub_cupydense(left, right):
