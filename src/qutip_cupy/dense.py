@@ -370,9 +370,9 @@ def matmul_cupydense(left, right, scale=1, out=None):
     defaulting to 1.
     """
     if out:
-        return scale * (left @ right) + out
+        return (left @ right) * scale + out
     else:
-        return scale * (left @ right)
+        return (left @ right) * scale
 
 
 def add_cupydense(left, right, scale=1):
@@ -434,4 +434,5 @@ def sub_cupydense(left, right):
     -------
     out : CUPyDense
     """
+    _check_same_shape(left, right)
     return left - right
