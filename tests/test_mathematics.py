@@ -1,9 +1,8 @@
 import cupy as cp
+
 import pytest
 
 from qutip_cupy import dense
-
-
 from qutip_cupy import CuPyDense
 
 # from qutip.tests.core.data import conftest
@@ -31,58 +30,18 @@ class TestAdd(test_tools.TestAdd):
     ]
 
 
-# class TestAdd(test_tools.BinaryOpMixin):
-#     def op_numpy(self, left, right, scale):
-#         return np.add(left, scale * right)
+class TestAdjoint(test_tools.TestAdjoint):
 
-#     shapes = shapes_binary_identical()
-#     bad_shapes = shapes_binary_bad_identical()
-#     specialisations = [
-#         pytest.param(data.add_dense, CuPyDense, CuPyDense, CuPyDense),
-#     ]
-
-#     # `add` has an additional scalar parameter, because the operation is
-#     # actually more like `A + c*B`.  We just parametrise that scalar
-#     # separately.
-#     @pytest.mark.parametrize(
-#         "scale", [None, 0.2, 0.5j], ids=["unscaled", "scale[real]", "scale[complex]"]
-#     )
-#     def test_mathematically_correct(self, op, data_l, data_r, out_type, scale):
-#         """
-#         Test that the binary operation is mathematically correct for all the
-#         known type specialisations.
-#         """
-#         left, right = data_l(), data_r()
-#         if scale is not None:
-#             expected = self.op_numpy(left.to_array(), right.to_array(), scale)
-#             test = op(left, right, scale)
-#         else:
-#             expected = self.op_numpy(left.to_array(), right.to_array(), 1)
-#             test = op(left, right)
-#         assert isinstance(test, out_type)
-#         if issubclass(out_type, Data):
-#             assert test.shape == expected.shape
-#             np.testing.assert_allclose(test.to_array(), expected, atol=self.tol)
-#         else:
-#             assert abs(test - expected) < self.tol
+    specialisations = [
+        pytest.param(dense.adjoint_cupydense, CuPyDense, CuPyDense),
+    ]
 
 
-# class TestAdjoint(test_tools.UnaryOpMixin):
-#     def op_numpy(self, matrix):
-#         return np.conj(matrix.T)
+class TestConj(test_tools.TestConj):
 
-#     specialisations = [
-#         pytest.param(data.adjoint_dense, CuPyDense, CuPyDense),
-#     ]
-
-
-# class TestConj(test_tools.UnaryOpMixin):
-#     def op_numpy(self, matrix):
-#         return np.conj(matrix)
-
-#     specialisations = [
-#         pytest.param(data.conj_dense, CuPyDense, CuPyDense),
-#     ]
+    specialisations = [
+        pytest.param(dense.conj_cupydense, CuPyDense, CuPyDense),
+    ]
 
 
 # class TestInner(BinaryOpMixin):
@@ -223,65 +182,38 @@ class TestAdd(test_tools.TestAdd):
 #     ]
 
 
-# class TestMatmul(BinaryOpMixin):
-#     def op_numpy(self, left, right):
-#         return np.matmul(left, right)
+class TestMatmul(test_tools.TestMatmul):
 
-#     shapes = shapes_binary_matmul()
-#     bad_shapes = shapes_binary_bad_matmul()
-#     specialisations = [
-#         pytest.param(data.matmul_csr, CSR, CSR, CSR),
-#         pytest.param(data.matmul_csr_dense_dense, CSR, Dense, Dense),
-#         pytest.param(data.matmul_dense, Dense, Dense, Dense),
-#     ]
+    specialisations = [
+        pytest.param(dense.matmul_cupydense, CuPyDense, CuPyDense, CuPyDense),
+    ]
 
 
-# class TestMul(UnaryScalarOpMixin):
-#     def op_numpy(self, matrix, scalar):
-#         return scalar * matrix
+class TestMul(test_tools.TestMul):
 
-#     specialisations = [
-#         pytest.param(data.mul_csr, CSR, CSR),
-#         pytest.param(data.mul_dense, Dense, Dense),
-#     ]
+    specialisations = [
+        pytest.param(dense.mul_cupydense, CuPyDense, CuPyDense),
+    ]
 
 
-# class TestNeg(UnaryOpMixin):
-#     def op_numpy(self, matrix):
-#         return -matrix
+class TestNeg(test_tools.TestNeg):
 
-#     specialisations = [
-#         pytest.param(data.neg_csr, CSR, CSR),
-#         pytest.param(data.neg_dense, Dense, Dense),
-#     ]
+    specialisations = [
+        pytest.param(dense.neg_cupydense, CuPyDense, CuPyDense),
+    ]
 
 
-# class TestProject(UnaryOpMixin):
-#     def op_numpy(self, matrix):
-#         if matrix.shape[1] == 1:
-#             matrix = np.conj(matrix.T)
-#         return np.conj(matrix.T) @ matrix
+# class TestProject(test_tools.Test):
 
-#     shapes = [
-#         (pytest.param((1, 100), id="bra"),),
-#         (pytest.param((100, 1), id="ket"),),
-#         (pytest.param((1, 1), id="scalar"),),
-#     ]
 #     specialisations = [
 #         pytest.param(data.project_csr, CSR, CSR),
 #     ]
 
 
-# class TestSub(BinaryOpMixin):
-#     def op_numpy(self, left, right):
-#         return left - right
-
-#     shapes = shapes_binary_identical()
-#     bad_shapes = shapes_binary_bad_identical()
-#     specialisations = [
-#         pytest.param(data.sub_csr, CSR, CSR, CSR),
-#         pytest.param(data.sub_dense, Dense, Dense, Dense),
-#     ]
+class TestSub(test_tools.TestSub):
+    specialisations = [
+        pytest.param(dense.sub_cupydense, CuPyDense, CuPyDense, CuPyDense),
+    ]
 
 
 # class TestTrace(UnaryOpMixin):
@@ -308,14 +240,11 @@ class TestAdd(test_tools.TestAdd):
 #             op(data_m())
 
 
-# class TestTranspose(UnaryOpMixin):
-#     def op_numpy(self, matrix):
-#         return matrix.T
+class TestTranspose(test_tools.TestTranspose):
 
-#     specialisations = [
-#         pytest.param(data.transpose_csr, CSR, CSR),
-#         pytest.param(data.transpose_dense, Dense, Dense),
-#     ]
+    specialisations = [
+        pytest.param(dense.transpose_cupydense, CuPyDense, CuPyDense),
+    ]
 
 
 # class TestProject(UnaryOpMixin):
