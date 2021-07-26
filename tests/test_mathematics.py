@@ -1,4 +1,3 @@
-import numpy as np
 import cupy as cp
 import pytest
 
@@ -10,39 +9,10 @@ from qutip_cupy import CuPyDense
 # from qutip.tests.core.data import conftest
 import qutip.tests.core.data.test_mathematics as test_tools
 
-# from qutip.tests.core.data.test_mathematics import (
-#     shape_unary,
-#     shapes_binary_identical,
-#     shapes_binary_bad_identical,
-#     shapes_binary_unrestricted,
-#     shapes_binary_bad_unrestricted,
-#     shapes_binary_matmul,
-#     shapes_binary_bad_matmul,
-#     UnaryOpMixin,
-#     UnaryScalarOpMixin,
-#     BinaryOpMixin,
-#     TernaryOpMixin,
-# )
-
-
-# def cases_cupydense(shape):
-#     """
-#     Return a list of generators of the different special cases for Dense
-#     matrices of a given shape.
-#     """
-
-#     def factory(fortran):
-#         return lambda: conftest.random_dense(shape, fortran)
-
-#     return [
-#         pytest.param(factory(False), id="C"),
-#         pytest.param(factory(True), id="Fortran"),
-#     ]
-
-
-# Factory methods for generating the cases, mapping type to the function.
-# _ALL_CASES is for getting all the special cases to test, _RANDOM is for
-# getting just a single case from each.
+# This are the global variables of the qutip test module
+# by setting them in this way the value gets propagated to the abstract
+# mixing which in turn propagates them to the mixing and finally sets
+# the test cases when pytests are called
 test_tools._ALL_CASES = {
     CuPyDense: lambda shape: [lambda: CuPyDense(cp.random.rand(*shape))]
 }
@@ -385,7 +355,8 @@ class TestAdd(test_tools.TestAdd):
 #     # Add a diagonal so `matrix` is not singular
 #     return data.inv_csr(
 #         data.add(
-#             matrix, data.diag([1.1] * matrix.shape[0], shape=matrix.shape, dtype="csr")
+#             matrix, data.diag([1.1] * matrix.shape[0],
+# shape=matrix.shape, dtype="csr")
 #         )
 #     )
 
@@ -427,4 +398,3 @@ class TestAdd(test_tools.TestAdd):
 #         pytest.param(data.split_columns_csr, CSR, list),
 #         pytest.param(data.split_columns_dense, Dense, list),
 #     ]
-

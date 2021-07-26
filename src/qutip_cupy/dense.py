@@ -6,7 +6,8 @@ conversion and specializations for registration with QuTiP's data layer.
 import numbers
 
 import cupy as cp
-from cupy import cublas
+
+# from cupy import cublas
 from qutip.core import data
 
 
@@ -413,7 +414,8 @@ def iadd_cupydense(left, right, scale=1):
     out : CUPyDense
     """
     _check_same_shape(left, right)
-    # @TOCHECK: calling cublas.axpy(left._cp, right._cp, scale) might have better poerformance
+    # @TOCHECK: calling cublas.axpy(left._cp, right._cp, scale)
+    # might have better performance
     left._cp += right._cp * scale
 
     return left
