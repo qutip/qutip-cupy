@@ -23,6 +23,7 @@ with warnings.catch_warnings():
 # qutip_cupy imports need to be after the cupy import check above
 from .version import version as __version__  # noqa: E402
 from . import dense as cd  # noqa: E402
+from . import dense_functions as cdf  # noqa: F401
 
 __all__ = ["__version__", "CuPyDense"]
 
@@ -53,6 +54,8 @@ data.sub.add_specialisations([(CuPyDense, CuPyDense, CuPyDense, cd.sub_cupydense
 data.diag.add_specialisations([(CuPyDense, cd.diags)])
 data.identity.add_specialisations([(CuPyDense, cd.identity)])
 data.zeros.add_specialisations([(CuPyDense, cd.sub_cupydense)])
+
+data.trace.add_specialisations([(CuPyDense, cdf.trace_cupydense)])
 
 # We must register the functions to the data layer but do not want
 # the data layer or qutip_cupy.dense to be accessible from qutip_cupy
