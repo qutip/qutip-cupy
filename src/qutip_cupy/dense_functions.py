@@ -28,7 +28,7 @@ def reshape_cupydense(cp_arr, n_rows_out, n_cols_out):
 def _check_square_matrix(matrix):
     if matrix.shape[0] != matrix.shape[1]:
         raise ValueError(
-            "".join(["matrix shape ", str(matrix.shape), " is not square.",])
+            "".join(["matrix shape ", str(matrix.shape), " is not square."])
         )
 
 
