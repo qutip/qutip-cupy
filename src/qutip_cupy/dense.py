@@ -140,7 +140,7 @@ class CuPyDense(data.Data):
 
 # @TOCHECK  emti and empty_like are not dispatched in qutip
 # if we do not use them internally here we should remove them
-def empty(rows, cols, fortran):
+def empty(rows, cols, fortran=True):
     """
     Return a new Dense type of the given shape, with the data allocated but
     uninitialised.
@@ -150,7 +150,7 @@ def empty(rows, cols, fortran):
     return CuPyDense._raw_cupy_constructor(cparr)
 
 
-def empty_like(other, fortran):
+def empty_like(other, fortran=True):
     """
     Return a new Dense type of the same shape as the given array.
     """
@@ -159,7 +159,7 @@ def empty_like(other, fortran):
     return CuPyDense._raw_cupy_constructor(cparr)
 
 
-def zeros(rows, cols, fortran):
+def zeros(rows, cols, fortran=True):
     """Return the zero matrix with the given shape."""
     order = "F" if fortran else "C"
     cparr = cp.zeros(shape=(rows, cols), dtype=cp.complex128, order=order)
@@ -173,7 +173,7 @@ def identity(dimension, scale=1, fortran=True):
     is passed, then the result will be `scale` times the identity.
     """
     order = "F" if fortran else "C"
-    if scale != 1:
+    if scale == 1:
         cparr = cp.eye(dimension, dtype=cp.complex128, order=order)
     else:
         cparr = scale * cp.eye(dimension, dtype=cp.complex128, order=order)
@@ -225,15 +225,16 @@ def diags(diagonals, offsets=None, shape=None):
     # we make sure to export the variables to the GPU
     # we should actually benchmark if we should ascertain
     # that sending the variables to the device is better before than after
-    diagonals = cp.asarray(diagonals)
-    offsets = cp.asarray(offsets)
+
+    # diagonals = cp.array(diagonals)
+    # offsets = cp.array(offsets)
     try:
         diagonals = list(diagonals)
         if diagonals and cp.isscalar(diagonals[0]):
             # Catch the case where we're being called as (for example)
             #   diags([1, 2, 3], 0)
             # with a single diagonal and offset.
-            diagonals = diagonals[cp.newaxis, :]
+            diagonals = [diagonals]
     except TypeError:
         raise TypeError("diagonals must be a list of arrays of complex") from None
     diagonals_length = diagonals.shape[0]
