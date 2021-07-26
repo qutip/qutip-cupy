@@ -56,6 +56,7 @@ data.identity.add_specialisations([(CuPyDense, cd.identity)])
 data.zeros.add_specialisations([(CuPyDense, cd.sub_cupydense)])
 
 data.trace.add_specialisations([(CuPyDense, cdf.trace_cupydense)])
+data.reshape.add_specialisations([(CuPyDense, CuPyDense, cdf.reshape_cupydense)])
 
 # We must register the functions to the data layer but do not want
 # the data layer or qutip_cupy.dense to be accessible from qutip_cupy
