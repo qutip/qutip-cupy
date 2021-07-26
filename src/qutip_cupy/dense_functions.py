@@ -7,16 +7,6 @@ from .dense import CuPyDense
 
 
 def tidyup_dense(matrix, tol, inplace=True):
-    # cdef Dense out = matrix if inplace else matrix.copy()
-    # cdef double complex value
-    # cdef size_t ptr
-    # for ptr in range(matrix.shape[0] * matrix.shape[1]):
-    #     value = matrix.data[ptr]
-    #     if fabs(value.real) < tol:
-    #         matrix.data[ptr].real = 0
-    #     if fabs(value.imag) < tol:
-    #         matrix.data[ptr].imag = 0
-    # return out
     pass
 
 
