@@ -1,21 +1,23 @@
-#Remove this file after adding actual benchmarks
+# Remove this file after adding actual benchmarks
 
 import pytest
 import numpy as np
 import cupy as cp
 
-#from qutip_cupy import CuPyDense
+# from qutip_cupy import CuPyDense
 
 from .cpu_gpu_times_wrapper import GpuWrapper
 
-@pytest.fixture(scope="function", params=((1000, 1000)))#,(2000, 2000)))
+
+@pytest.fixture(scope="function", params=((1000, 1000)))  # ,(2000, 2000)))
 def shape(request):
     return request.param
+
 
 @pytest.mark.benchmark()
 def test_matmul(shape, benchmark):
 
-    array = np.random.uniform(size=shape) + 1.j*np.random.uniform(size=shape)
+    array = np.random.uniform(size=shape) + 1.0j * np.random.uniform(size=shape)
 
     cp_arr = cp.array(array)
 
@@ -23,7 +25,7 @@ def test_matmul(shape, benchmark):
         return cp_arr @ cp_arr
 
     benchmark2 = GpuWrapper(benchmark)
-    cp_mult = benchmark2.pedanticupy(matmul_, cp_arr)
+    cp_mult = benchmark2.pedanticupy(matmul_, (cp_arr,))
 
     np_mult = matmul_(array)
 
