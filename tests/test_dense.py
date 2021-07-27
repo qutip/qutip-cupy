@@ -2,15 +2,11 @@ import warnings
 import numpy as np
 import pytest
 
-with warnings.catch_warnings():
-    warnings.filterwarnings(
-        action="ignore", category=UserWarning, message=r"matplotlib not found:"
-    )
+from qutip_cupy import CuPyDense
+from qutip_cupy import dense
 
-    from qutip.core import data
-
-from qutip_cupy import CuPyDense  # noqa:E402
-from qutip_cupy import dense  # noqa:E402
+# import qutip after qutip_cupy to supress the matplotlib import warning
+from qutip.core import data
 
 
 @pytest.fixture(scope="function", params=((1, 2), (5, 10), (7, 3), (2, 5)))
