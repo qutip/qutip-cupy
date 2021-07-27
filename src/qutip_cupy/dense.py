@@ -209,7 +209,6 @@ def diags(diagonals, offsets=None, shape=None):
             diagonals = [diagonals]
     except TypeError:
         raise TypeError("diagonals must be a list of arrays of complex") from None
-    diagonals_length = len(diagonals)
     if offsets is None:
         if len(diagonals) == 0:
             offsets = []
@@ -222,9 +221,9 @@ def diags(diagonals, offsets=None, shape=None):
     offsets = np.atleast_1d(offsets)
     if offsets.ndim > 1:
         raise ValueError("offsets must be a 1D array of integers")
-    if diagonals_length != len(offsets):
+    if len(diagonals) != len(offsets):
         raise ValueError("number of diagonals does not match number of offsets")
-    if diagonals_length == 0:
+    if len(diagonals) == 0:
         if shape is None:
             raise ValueError(
                 "cannot construct matrix" "with no diagonals without a shape"
@@ -232,7 +231,6 @@ def diags(diagonals, offsets=None, shape=None):
         else:
             n_rows, n_cols = shape
         return zeros(n_rows, n_cols)
-
     order = np.argsort(offsets)
     diagonals_ = []
     offsets_ = []
@@ -260,7 +258,6 @@ def diags(diagonals, offsets=None, shape=None):
             raise ValueError("given diagonals do not have the correct lengths")
     if n_rows == 0 and n_cols == 0:
         raise ValueError("can't produce a 0x0 matrix")
-
     out = zeros(n_rows, n_cols, fortran=True)
 
     for diag_idx in range(len(diagonals_)):
