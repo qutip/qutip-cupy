@@ -1,12 +1,11 @@
 import cupy as cp
 import pytest
 
-
-import qutip.tests.core.data.test_mathematics as test_tools
-
 from qutip_cupy import dense
 from qutip_cupy import dense_functions as cdf
 from qutip_cupy import CuPyDense
+
+import qutip.tests.core.data.test_mathematics as test_tools
 
 
 def random_cupydense(shape):
