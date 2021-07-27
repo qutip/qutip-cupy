@@ -69,11 +69,12 @@ def test_true_div(shape):
 def test_itrue_div(shape):
 
     array = np.random.uniform(size=shape) + 1.0j * np.random.uniform(size=shape)
+    cpd_array = CuPyDense(array)
 
-    cpdense_tr = CuPyDense(array).__itruediv__(2.0)
-    qtpdense_tr = data.Dense(array).__itruediv__(2.0)
+    cpd_array /= 2
+    qtpdense = data.Dense(array / 2)
 
-    np.testing.assert_array_equal(cpdense_tr.to_array(), qtpdense_tr.to_array())
+    np.testing.assert_array_equal(cpd_array.to_array(), qtpdense.to_array())
 
 
 def test_mul(shape):
