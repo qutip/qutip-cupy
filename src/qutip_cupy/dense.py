@@ -319,8 +319,7 @@ def trace_cupydense(cpd_array):
 
 def imul_cupydense(cpd_array, value):
     """Multiply this CuPyDense `cpd_array` by a complex scalar `value`."""
-    cpd_array.__imul__(value)
-    return cpd_array
+    return cpd_array.__imul__(value)
 
 
 def mul_cupydense(cpd_array, value):
