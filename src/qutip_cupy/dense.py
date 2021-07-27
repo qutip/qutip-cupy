@@ -226,7 +226,7 @@ def diags(diagonals, offsets=None, shape=None):
     if len(diagonals) == 0:
         if shape is None:
             raise ValueError(
-                "cannot construct matrix" "with no diagonals without a shape"
+                "cannot construct matrix with no diagonals without a shape"
             )
         else:
             n_rows, n_cols = shape
@@ -258,6 +258,7 @@ def diags(diagonals, offsets=None, shape=None):
             raise ValueError("given diagonals do not have the correct lengths")
     if n_rows == 0 and n_cols == 0:
         raise ValueError("can't produce a 0x0 matrix")
+
     out = zeros(n_rows, n_cols, fortran=True)
 
     for diag_idx in range(len(diagonals_)):
