@@ -48,13 +48,13 @@ data.matmul.add_specialisations(
     [(CuPyDense, CuPyDense, CuPyDense, cd.matmul_cupydense)]
 )
 data.add.add_specialisations([(CuPyDense, CuPyDense, CuPyDense, cd.add_cupydense)])
-# data.iadd.add_specialisations([(CuPyDense, CuPyDense, CuPyDense, cd.iadd_cupydense)])
 data.sub.add_specialisations([(CuPyDense, CuPyDense, CuPyDense, cd.sub_cupydense)])
-
+# constructor
 data.diag.add_specialisations([(CuPyDense, cd.diags)])
 data.identity.add_specialisations([(CuPyDense, cd.identity)])
 data.zeros.add_specialisations([(CuPyDense, cd.sub_cupydense)])
-
+# dense_functions
+data.tidyup.add_specialisations([(CuPyDense, cdf.tidyup_dense)])
 data.trace.add_specialisations([(CuPyDense, cdf.trace_cupydense)])
 data.reshape.add_specialisations([(CuPyDense, CuPyDense, cdf.reshape_cupydense)])
 

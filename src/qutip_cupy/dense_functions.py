@@ -7,7 +7,7 @@ from .dense import CuPyDense
 
 
 def tidyup_dense(matrix, tol, inplace=True):
-    pass
+    return matrix
 
 
 def reshape_cupydense(cp_arr, n_rows_out, n_cols_out):
