@@ -1,16 +1,12 @@
-import warnings
 import cupy as cp
 import pytest
 
-with warnings.catch_warnings():
-    warnings.filterwarnings(
-        action="ignore", category=UserWarning, message=r"matplotlib not found:"
-    )
-    import qutip.tests.core.data.test_mathematics as test_tools
 
-from qutip_cupy import dense  # noqa:E402
-from qutip_cupy import dense_functions as cdf  # noqa:E402
-from qutip_cupy import CuPyDense  # noqa:E402
+import qutip.tests.core.data.test_mathematics as test_tools
+
+from qutip_cupy import dense
+from qutip_cupy import dense_functions as cdf
+from qutip_cupy import CuPyDense
 
 
 def random_cupydense(shape):
