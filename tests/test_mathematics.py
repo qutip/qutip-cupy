@@ -1,5 +1,4 @@
 import cupy as cp
-
 import pytest
 
 from qutip_cupy import dense

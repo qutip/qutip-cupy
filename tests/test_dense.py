@@ -1,8 +1,9 @@
-from qutip_cupy import CuPyDense
-from qutip_cupy import dense
 import numpy as np
 import pytest
 from qutip.core import data
+
+from qutip_cupy import CuPyDense
+from qutip_cupy import dense
 
 
 @pytest.fixture(scope="function", params=((1, 2), (5, 10), (7, 3), (2, 5)))

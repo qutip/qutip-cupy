@@ -8,7 +8,6 @@ import numbers
 import cupy as cp
 import numpy as np
 
-# from cupy import cublas
 from qutip.core import data
 
 
