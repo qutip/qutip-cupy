@@ -6,6 +6,7 @@ conversion and specializations for registration with QuTiP's data layer.
 import numbers
 
 import cupy as cp
+import numpy as np
 
 # from cupy import cublas
 from qutip.core import data
@@ -220,32 +221,30 @@ def diags(diagonals, offsets=None, shape=None):
     # This implementation follows the one of cupy.diagonal
     # alternatively we may define our own cuda kernel.
 
-    # we make sure to export the variables to the GPU
-    # we should actually benchmark if we should ascertain
-    # that sending the variables to the device is better before than after
+    # @TODO: explore replacing this by a CUDA kernel
+    # it should probably avoid the last for by assigning to different thread idx
+    # we know it is safe because we take care of repeated offsets at the beginning of the function
 
-    # diagonals = cp.array(diagonals)
-    # offsets = cp.array(offsets)
     try:
         diagonals = list(diagonals)
-        if diagonals and cp.isscalar(diagonals[0]):
+        if diagonals and np.isscalar(diagonals[0]):
             # Catch the case where we're being called as (for example)
             #   diags([1, 2, 3], 0)
             # with a single diagonal and offset.
             diagonals = [diagonals]
     except TypeError:
         raise TypeError("diagonals must be a list of arrays of complex") from None
-    diagonals_length = diagonals.shape[0]
+    diagonals_length = len(diagonals)
     if offsets is None:
-        if diagonals_length == 0:
+        if len(diagonals) == 0:
             offsets = []
-        elif diagonals_length == 1:
+        elif len(diagonals) == 1:
             offsets = [0]
         else:
             raise TypeError(
-                "offsets must be supplied" "if passing more than one diagonal"
+                "offsets must be supplied if passing more than one diagonal"
             )
-    offsets = cp.atleast_1d(offsets)
+    offsets = np.atleast_1d(offsets)
     if offsets.ndim > 1:
         raise ValueError("offsets must be a 1D array of integers")
     if diagonals_length != len(offsets):
@@ -258,9 +257,8 @@ def diags(diagonals, offsets=None, shape=None):
         else:
             n_rows, n_cols = shape
         return zeros(n_rows, n_cols)
-    # I am keeping this section assuming that properly sorting will lead to
-    # contiguous memory accesses and a decreased runtime
-    order = cp.argsort(offsets)
+
+    order = np.argsort(offsets)
     diagonals_ = []
     offsets_ = []
     prev, cur = None, None
@@ -290,8 +288,9 @@ def diags(diagonals, offsets=None, shape=None):
 
     out = zeros(n_rows, n_cols, fortran=True)
 
-    for diag_idx in diagonals_length:
-        out.diagonal(offsets_[diag_idx])[:] = diagonals_[diag_idx]
+    for diag_idx in range(len(diagonals_)):
+
+        out._cp.diagonal(offsets_[diag_idx])[:] = diagonals_[diag_idx]
 
     return out
 
