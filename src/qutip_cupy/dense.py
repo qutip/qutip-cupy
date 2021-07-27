@@ -112,7 +112,6 @@ class CuPyDense(data.Data):
         return CuPyDense._raw_cupy_constructor(dense._cp * complex(number))
 
     def __imul__(self, other):
-
         self._cp.__imul__(other)
         return self
 
@@ -129,7 +128,6 @@ class CuPyDense(data.Data):
         return self
 
     def __neg__(self):
-
         return CuPyDense._raw_cupy_constructor(self._cp.__neg__())
 
     def __sub__(left, right):

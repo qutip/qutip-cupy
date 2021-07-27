@@ -222,4 +222,3 @@ class TestFactoryMethods:
     #     with pytest.raises(ValueError) as exc:
     #         base = data.one_element_dense(shape, position, value)
     #     assert str(exc.value).startswith("Position of the elements" " out of bound: ")
-
