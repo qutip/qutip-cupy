@@ -12,7 +12,9 @@ def tidyup_dense(matrix, tol, inplace=True):
 
 def reshape_cupydense(cp_arr, n_rows_out, n_cols_out):
 
-    return CuPyDense(cp_arr, (n_rows_out, n_cols_out))
+    return CuPyDense._raw_cupy_constructor(
+        cp.reshape(cp_arr._cp, (n_rows_out, n_cols_out))
+    )
 
 
 def _check_square_matrix(matrix):
