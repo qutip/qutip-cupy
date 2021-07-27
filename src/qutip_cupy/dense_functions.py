@@ -1,5 +1,5 @@
-# Contains functions for dense_cupy, this are the same functions that
-# are defined ouside the dense.pyx file
+"""Contains specialization functions for dense_cupy. These are the functions that
+ are defined outside of qutip/core/data/dense.pyx."""
 
 import cupy as cp
 
