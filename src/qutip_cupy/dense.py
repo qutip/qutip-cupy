@@ -180,10 +180,6 @@ def identity(dimension, scale=1, fortran=True):
     return CuPyDense._raw_cupy_constructor(cparr)
 
 
-def Dense_from_csr(CSR_matrix, fortran=False):
-    pass
-
-
 def _diagonal_length(
     offset, n_rows, n_cols,
 ):
@@ -223,7 +219,8 @@ def diags(diagonals, offsets=None, shape=None):
 
     # @TODO: explore replacing this by a CUDA kernel
     # it should probably avoid the last for by assigning to different thread idx
-    # we know it is safe because we take care of repeated offsets at the beginning of the function
+    # we know it is safe because we take care of repeated offsets
+    # at the beginning of the function
 
     try:
         diagonals = list(diagonals)
