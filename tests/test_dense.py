@@ -2,6 +2,7 @@ from qutip_cupy import CuPyDense
 from qutip_cupy import dense
 import numpy as np
 import pytest
+from qutip.core import data
 
 
 @pytest.fixture(scope="function", params=((1, 2), (5, 10), (7, 3), (2, 5)))
@@ -14,8 +15,6 @@ class TestCuPyDenseDispatch:
         succesfully registered to QuTiP's Data Layer."""
 
     def test_conversion_cycle(self, shape):
-
-        from qutip.core import data
 
         qutip_dense = data.Dense(np.random.uniform(size=shape))
 
@@ -55,8 +54,6 @@ class TestCuPyDense:
 
 def test_true_div(shape):
 
-    from qutip.core import data
-
     array = np.random.uniform(size=shape) + 1.0j * np.random.uniform(size=shape)
 
     cup_arr = CuPyDense(array)
@@ -68,8 +65,6 @@ def test_true_div(shape):
 
 def test_itrue_div(shape):
 
-    from qutip.core import data
-
     array = np.random.uniform(size=shape) + 1.0j * np.random.uniform(size=shape)
 
     cpdense_tr = CuPyDense(array).__itruediv__(2.0)
@@ -80,8 +75,6 @@ def test_itrue_div(shape):
 
 def test_mul(shape):
 
-    from qutip.core import data
-
     array = np.random.uniform(size=shape) + 1.0j * np.random.uniform(size=shape)
 
     cpdense_tr = CuPyDense(array).__mul__(2.0 + 1.0j)
@@ -91,8 +84,6 @@ def test_mul(shape):
 
 
 def test_matmul(shape):
-
-    from qutip.core import data
 
     array = np.random.uniform(size=shape) + 1.0j * np.random.uniform(size=shape)
 
