@@ -137,27 +137,6 @@ class CuPyDense(data.Data):
         return CuPyDense._raw_cupy_constructor(left._cp - right._cp)
 
 
-# @TOCHECK  emti and empty_like are not dispatched in qutip
-# if we do not use them internally here we should remove them
-def empty(rows, cols, fortran=True):
-    """
-    Return a new Dense type of the given shape, with the data allocated but
-    uninitialised.
-    """
-    order = "F" if fortran else "C"
-    cparr = cp.empty(shape=(rows, cols), dtype=cp.complex128, order=order)
-    return CuPyDense._raw_cupy_constructor(cparr)
-
-
-def empty_like(other, fortran=True):
-    """
-    Return a new Dense type of the same shape as the given array.
-    """
-    order = "F" if fortran else "C"
-    cparr = cp.empty_like(other, dtype=cp.complex128, order=order)
-    return CuPyDense._raw_cupy_constructor(cparr)
-
-
 def zeros(rows, cols, fortran=True):
     """Return the zero matrix with the given shape."""
     order = "F" if fortran else "C"

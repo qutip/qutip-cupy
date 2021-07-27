@@ -103,13 +103,6 @@ def test_matmul(shape):
 
 
 class TestFactoryMethods:
-    def test_empty(self, shape):
-        base = dense.empty(shape[0], shape[1])
-        nd = base.to_array()
-        assert isinstance(base, CuPyDense)
-        assert base.shape == shape
-        assert nd.shape == shape
-
     def test_zeros(self, shape):
         base = dense.zeros(shape[0], shape[1])
         nd = base.to_array()
