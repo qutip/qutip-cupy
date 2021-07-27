@@ -24,4 +24,6 @@ def _check_square_matrix(matrix):
 
 def trace_cupydense(cp_arr):
     _check_square_matrix(cp_arr)
+    # @TODO: whnen qutip allows it we should remove this call to item()
+    # as it takes a time penalty commmunicating data from GPU to CPU.
     return cp.trace(cp_arr._cp).item()
