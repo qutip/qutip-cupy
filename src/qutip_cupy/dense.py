@@ -406,7 +406,7 @@ def iadd_cupydense(left, right, scale=1):
 
     Returns
     -------
-    out : CUPyDense
+    out : CuPyDense
     """
     _check_same_shape(left, right)
     # @TOCHECK: calling cublas.axpy(left._cp, right._cp, scale)
