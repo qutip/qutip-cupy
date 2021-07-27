@@ -340,10 +340,13 @@ def matmul_cupydense(left, right, scale=1, out=None):
     where `left`, `right` and `out` are matrices.  `scale` is a complex scalar,
     defaulting to 1.
     """
-    if out:
-        return (left @ right) * scale + out
-    else:
+    # This may be done  more naturally with gemm from cupy.cublas
+    # but the GPU timings which are not very different.
+    if out is None:
         return (left @ right) * scale
+    else:
+        out += (left @ right) * scale
+        return out
 
 
 def add_cupydense(left, right, scale=1):
