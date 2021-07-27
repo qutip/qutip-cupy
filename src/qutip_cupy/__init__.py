@@ -52,7 +52,7 @@ data.sub.add_specialisations([(CuPyDense, CuPyDense, CuPyDense, cd.sub_cupydense
 # constructor
 data.diag.add_specialisations([(CuPyDense, cd.diags)])
 data.identity.add_specialisations([(CuPyDense, cd.identity)])
-data.zeros.add_specialisations([(CuPyDense, cd.szeros)])
+data.zeros.add_specialisations([(CuPyDense, cd.zeros)])
 # dense_functions
 data.tidyup.add_specialisations([(CuPyDense, cdf.tidyup_dense)])
 data.trace.add_specialisations([(CuPyDense, cdf.trace_cupydense)])
