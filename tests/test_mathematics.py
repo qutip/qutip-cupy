@@ -24,9 +24,7 @@ test_tools._ALL_CASES = {CuPyDense: lambda shape: [lambda: random_cupydense(shap
 test_tools._RANDOM = {
     CuPyDense: lambda shape: [lambda: random_cupydense(shape)],
 }
-# @TODO:This one should be replaced by a complex number random generator in conf
-
-# And now finally we get into the meat of the actual mathematical tests.
+# @TODO: add a simple precision complex random generator.
 
 
 class TestAdd(test_tools.TestAdd):
