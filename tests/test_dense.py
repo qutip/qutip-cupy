@@ -81,10 +81,10 @@ def test_mul(shape):
 
     array = np.random.uniform(size=shape) + 1.0j * np.random.uniform(size=shape)
 
-    cpdense_tr = CuPyDense(array).__mul__(2.0 + 1.0j)
-    qtpdense_tr = data.Dense(array).__mul__(2.0 + 1.0j)
+    cpdense_mul = CuPyDense(array) * (2.0 + 1.0j)
+    qtpdense_mul = data.Dense(array) * (2.0 + 1.0j)
 
-    np.testing.assert_array_equal(cpdense_tr.to_array(), qtpdense_tr.to_array())
+    np.testing.assert_array_equal(cpdense_mul.to_array(), qtpdense_mul.to_array())
 
 
 def test_matmul(shape):
