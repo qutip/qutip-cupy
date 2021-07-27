@@ -10,15 +10,20 @@ from qutip_cupy import CuPyDense
 import qutip.tests.core.data.test_mathematics as test_tools
 
 
+def random_cupydense(shape):
+    """Generate a random `CuPyDense` matrix with the given shape."""
+    out = (cp.random.rand(*shape) + 1j * cp.random.rand(*shape)).astype(cp.complex128)
+    out = CuPyDense._raw_cupy_constructor(out)
+    return out
+
+
 # This are the global variables of the qutip test module
 # by setting them in this way the value gets propagated to the abstract
 # mixing which in turn propagates them to the mixing and finally sets
 # the test cases when pytests are called
-test_tools._ALL_CASES = {
-    CuPyDense: lambda shape: [lambda: CuPyDense(cp.random.rand(*shape))]
-}
+test_tools._ALL_CASES = {CuPyDense: lambda shape: [lambda: random_cupydense(shape)]}
 test_tools._RANDOM = {
-    CuPyDense: lambda shape: [lambda: CuPyDense(cp.random.rand(*shape))],
+    CuPyDense: lambda shape: [lambda: random_cupydense(shape)],
 }
 # @TODO:This one should be replaced by a complex number random generator in conf
 
