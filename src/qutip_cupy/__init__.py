@@ -23,7 +23,7 @@ with warnings.catch_warnings():
 # qutip_cupy imports need to be after the cupy import check above
 from .version import version as __version__  # noqa: E402
 from . import dense as cd  # noqa: E402
-from . import dense_functions as cdf  # noqa: F401
+from . import dense_functions as cdf  # noqa: E402
 
 __all__ = ["__version__", "CuPyDense"]
 
