@@ -1,9 +1,16 @@
+import warnings
 import numpy as np
 import pytest
-from qutip.core import data
 
-from qutip_cupy import CuPyDense
-from qutip_cupy import dense
+with warnings.catch_warnings():
+    warnings.filterwarnings(
+        action="ignore", category=UserWarning, message=r"matplotlib not found:"
+    )
+
+    from qutip.core import data
+
+from qutip_cupy import CuPyDense  # noqa:E402
+from qutip_cupy import dense  # noqa:E402
 
 
 @pytest.fixture(scope="function", params=((1, 2), (5, 10), (7, 3), (2, 5)))
