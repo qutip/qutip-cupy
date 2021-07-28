@@ -86,3 +86,10 @@ class TestTranspose(test_tools.TestTranspose):
     specialisations = [
         pytest.param(dense.transpose_cupydense, CuPyDense, CuPyDense),
     ]
+
+
+class TestInner(test_tools.TestInner):
+
+    specialisations = [
+        pytest.param(cdf.inner_cupydense, CuPyDense, CuPyDense, complex),
+    ]
