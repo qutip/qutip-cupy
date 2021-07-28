@@ -86,3 +86,10 @@ class TestTranspose(test_tools.TestTranspose):
     specialisations = [
         pytest.param(dense.transpose_cupydense, CuPyDense, CuPyDense),
     ]
+
+
+class TestKron(test_tools.TestKron):
+
+    specialisations = [
+        pytest.param(cdf.kron_cupydense, CuPyDense, CuPyDense, CuPyDense),
+    ]
