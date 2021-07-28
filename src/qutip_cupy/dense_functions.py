@@ -29,3 +29,7 @@ def trace_cupydense(cp_arr):
     # @TODO: whnen qutip allows it we should remove this call to item()
     # as it takes a time penalty commmunicating data from GPU to CPU.
     return cp.trace(cp_arr._cp).item()
+
+
+def kron_cupydense(cp_arr1, cp_arr2):
+    return CuPyDense._raw_cupy_constructor(cp.kron(cp_arr1._cp, cp_arr2._cp))
