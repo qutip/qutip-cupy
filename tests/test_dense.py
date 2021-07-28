@@ -89,12 +89,23 @@ def test_mul(shape):
 
 def test_matmul(shape):
 
-    array = np.random.uniform(size=shape) + 1.0j * np.random.uniform(size=shape)
+    array1 = np.random.uniform(size=shape) + 1.0j * np.random.uniform(size=shape)
 
-    cpdense_tr = CuPyDense(array).__mul__(2.0 + 1.0j)
-    qtpdense_tr = data.Dense(array).__mul__(2.0 + 1.0j)
+    cpdense1 = CuPyDense(array1)
+    qtpdense1 = data.Dense(array1)
 
-    np.testing.assert_array_equal(cpdense_tr.to_array(), qtpdense_tr.to_array())
+    shape2 = (shape[1], np.random.choice([1, 2, 6, 7, 8]))
+    array2 = np.random.uniform(size=shape2) + 1.0j * np.random.uniform(size=shape2)
+
+    cpdense2 = CuPyDense(array2)
+    qtpdense2 = data.Dense(array2)
+
+    cpdense_matmul = cpdense1 @ cpdense2
+    qtpdense_matmul = qtpdense1 @ qtpdense2
+
+    np.testing.assert_array_almost_equal(
+        cpdense_matmul.to_array(), qtpdense_matmul.to_array(), decimal=10
+    )
 
 
 class TestFactoryMethods:
