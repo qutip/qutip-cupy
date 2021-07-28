@@ -58,6 +58,9 @@ data.tidyup.add_specialisations([(CuPyDense, cdf.tidyup_dense)])
 data.trace.add_specialisations([(CuPyDense, cdf.trace_cupydense)])
 data.reshape.add_specialisations([(CuPyDense, CuPyDense, cdf.reshape_cupydense)])
 data.inner.add_specialisations([(CuPyDense, CuPyDense, cdf.inner_cupydense)])
+data.inner_op.add_specialisations(
+    [(CuPyDense, CuPyDense, CuPyDense, cdf.inner_op_cupydense)]
+)
 # We must register the functions to the data layer but do not want
 # the data layer or qutip_cupy.dense to be accessible from qutip_cupy
 del data
