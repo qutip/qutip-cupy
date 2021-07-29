@@ -262,7 +262,6 @@ def diags(diagonals, offsets=None, shape=None):
     out = zeros(n_rows, n_cols, fortran=True)
 
     for diag_idx in range(len(diagonals_)):
-
         out._cp.diagonal(offsets_[diag_idx])[:] = diagonals_[diag_idx]
 
     return out
