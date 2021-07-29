@@ -98,7 +98,7 @@ class CuPyDense(data.Data):
     def __add__(left, right):
         if not isinstance(left, CuPyDense) or not isinstance(right, CuPyDense):
             return NotImplemented
-        return CuPyDense._raw_cupy_constructor(cp.add(left._cp, right._cp))
+        return CuPyDense._raw_cupy_constructor(left._cp + right._cp)
 
     def __matmul__(left, right):
         if not isinstance(left, CuPyDense) or not isinstance(right, CuPyDense):
