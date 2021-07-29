@@ -29,3 +29,12 @@ def trace_cupydense(cp_arr):
     # @TODO: whnen qutip allows it we should remove this call to item()
     # as it takes a time penalty commmunicating data from GPU to CPU.
     return cp.trace(cp_arr._cp).item()
+
+
+def pow_cupydense(cp_arr, n):
+    if cp_arr.shape[0] != cp_arr.shape[1]:
+        raise TypeError("matrix power only works with square matrices")
+
+    out_arr = cp.linalg.matrix_power(cp_arr._cp, n)
+
+    return CuPyDense._raw_cupy_constructor(out_arr)
