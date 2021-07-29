@@ -40,3 +40,12 @@ def l2_cupydense(cp_arr):
     if cp_arr.shape[0] != 1 and cp_arr.shape[1] != 1:
         raise ValueError("L2 norm is only defined on vectors")
     return frobenius_cupydense(cp_arr)
+
+
+def max_cupydense(cp_arr):
+    return cp.max(cp.abs(cp_arr._cp)).item()
+
+
+def one_cupydense(cp_arr):
+
+    return cp.linalg.norm(cp_arr._cp, ord=1).item()

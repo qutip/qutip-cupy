@@ -89,7 +89,7 @@ class TestTranspose(test_tools.TestTranspose):
     ]
 
 
-class TestFrobenius(test_tools.UnaryOpMixin):
+class TestFrobeniusNorm(test_tools.UnaryOpMixin):
     # TODO add this tests to QuTiP and then inherit
     def op_numpy(self, matrix):
         return np.linalg.norm(matrix)
@@ -107,7 +107,7 @@ class TestFrobenius(test_tools.UnaryOpMixin):
     ]
 
 
-class TestL2(test_tools.UnaryOpMixin):
+class TestL2Norm(test_tools.UnaryOpMixin):
     # TODO add this tests to QuTiP and then inherit
     def op_numpy(self, matrix):
         return np.linalg.norm(matrix)
@@ -136,3 +136,39 @@ class TestL2(test_tools.UnaryOpMixin):
         """
         with pytest.raises(ValueError):
             op(data_m())
+
+
+class TestMaxNorm(test_tools.UnaryOpMixin):
+    # TODO add this tests to QuTiP and then inherit
+    def op_numpy(self, matrix):
+        return np.max(np.abs(matrix))
+
+    shapes = [
+        (pytest.param((1, 1), id="1"),),
+        (pytest.param((100, 100), id="100"),),
+        (pytest.param((100, 1), id="100_ket"),),
+        (pytest.param((1, 100), id="100_bra"),),
+        (pytest.param((23, 30), id="23_30"),),
+    ]
+
+    specialisations = [
+        pytest.param(cdf.max_cupydense, CuPyDense, float),
+    ]
+
+
+class TestL1Norm(test_tools.UnaryOpMixin):
+    # TODO add this tests to QuTiP and then inherit
+    def op_numpy(self, matrix):
+        return np.linalg.norm(matrix, ord=1)
+
+    shapes = [
+        (pytest.param((1, 1), id="1"),),
+        (pytest.param((100, 100), id="100"),),
+        (pytest.param((100, 1), id="100_ket"),),
+        (pytest.param((1, 100), id="100_bra"),),
+        (pytest.param((23, 30), id="23_30"),),
+    ]
+
+    specialisations = [
+        pytest.param(cdf.one_cupydense, CuPyDense, float),
+    ]
