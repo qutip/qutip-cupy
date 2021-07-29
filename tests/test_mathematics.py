@@ -1,4 +1,5 @@
 import cupy as cp
+import numpy as np
 import pytest
 
 from qutip_cupy import dense
@@ -86,3 +87,52 @@ class TestTranspose(test_tools.TestTranspose):
     specialisations = [
         pytest.param(dense.transpose_cupydense, CuPyDense, CuPyDense),
     ]
+
+
+class TestFrobenius(test_tools.UnaryOpMixin):
+    # TODO add this tests to QuTiP and then inherit
+    def op_numpy(self, matrix):
+        return np.linalg.norm(matrix)
+
+    shapes = [
+        (pytest.param((1, 1), id="1"),),
+        (pytest.param((100, 100), id="100"),),
+        (pytest.param((100, 1), id="100_ket"),),
+        (pytest.param((1, 100), id="100_bra"),),
+        (pytest.param((23, 30), id="23_30"),),
+    ]
+
+    specialisations = [
+        pytest.param(cdf.frobenius_cupydense, CuPyDense, float),
+    ]
+
+
+class TestL2(test_tools.UnaryOpMixin):
+    # TODO add this tests to QuTiP and then inherit
+    def op_numpy(self, matrix):
+        return np.linalg.norm(matrix)
+
+    shapes = [
+        (pytest.param((1, 1), id="1"),),
+        (pytest.param((100, 1), id="20_ket"),),
+        (pytest.param((1, 100), id="10_bra"),),
+    ]
+
+    bad_shapes = [
+        (pytest.param((100, 100), id="100"),),
+        (pytest.param((23, 30), id="23_30"),),
+        (pytest.param((15, 10), id="15_10"),),
+    ]
+
+    specialisations = [
+        pytest.param(cdf.l2_cupydense, CuPyDense, float),
+    ]
+
+    # Trace actually does have bad shape, so we put that in too.
+    def test_incorrect_shape_raises(self, op, data_m):
+        """
+        Test that the operation produces a suitable error if the shape is not a
+        bra or ket.
+        """
+        with pytest.raises(ValueError):
+            op(data_m())
