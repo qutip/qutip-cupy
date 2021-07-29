@@ -29,3 +29,14 @@ def trace_cupydense(cp_arr):
     # @TODO: whnen qutip allows it we should remove this call to item()
     # as it takes a time penalty commmunicating data from GPU to CPU.
     return cp.trace(cp_arr._cp).item()
+
+
+def frobenius_cupydense(cp_arr):
+    # TODO: Expose CUBLAS' dznrm2 (like QuTiP does) and test if it is faster
+    return cp.linalg.norm(cp_arr._cp).item()
+
+
+def l2_cupydense(cp_arr):
+    if cp_arr.shape[0] != 1 and cp_arr.shape[1] != 1:
+        raise ValueError("L2 norm is only defined on vectors")
+    return frobenius_cupydense(cp_arr)
