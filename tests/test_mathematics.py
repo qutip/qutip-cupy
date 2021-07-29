@@ -1,4 +1,5 @@
 import cupy as cp
+import numpy as np
 import pytest
 
 from qutip_cupy import dense
@@ -6,6 +7,7 @@ from qutip_cupy import dense_functions as cdf
 from qutip_cupy import CuPyDense
 
 import qutip.tests.core.data.test_mathematics as test_tools
+from qutip.core.data import Data
 
 
 def random_cupydense(shape):
@@ -86,3 +88,37 @@ class TestTranspose(test_tools.TestTranspose):
     specialisations = [
         pytest.param(dense.transpose_cupydense, CuPyDense, CuPyDense),
     ]
+
+
+class TestPow(test_tools._GenericOpMixin):
+
+    # This should be part of QuTiP and only inherited here
+    # TODO: Add it to QuTiP and inherit here
+
+    def op_numpy(self, matrix, scalar):
+
+        return np.linalg.matrix_power(matrix, scalar)
+
+    shapes = [
+        (pytest.param((1, 1),),),
+        (pytest.param((5, 5),),),
+        (pytest.param((10, 10),),),
+    ]
+    specialisations = [
+        pytest.param(cdf.pow_cupydense, CuPyDense, CuPyDense),
+    ]
+
+    @pytest.mark.parametrize(
+        "scalar",
+        [pytest.param(1, id="1"), pytest.param(2, id="2"), pytest.param(5, id="5")],
+    )
+    def test_mathematically_correct(self, op, data_m, scalar, out_type):
+        matrix = data_m()
+        expected = self.op_numpy(matrix.to_array(), scalar)
+        test = op(matrix, scalar)
+        assert isinstance(test, out_type)
+        if issubclass(out_type, Data):
+            assert test.shape == expected.shape
+            np.testing.assert_allclose(test.to_array(), expected, atol=self.tol)
+        else:
+            assert abs(test - expected) < self.tol
