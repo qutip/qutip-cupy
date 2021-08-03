@@ -33,7 +33,7 @@ def trace_cupydense(cp_arr):
 
 def pow_cupydense(cp_arr, n):
     if cp_arr.shape[0] != cp_arr.shape[1]:
-        raise TypeError("matrix power only works with square matrices")
+        raise ValueError("matrix power only works with square matrices")
 
     out_arr = cp.linalg.matrix_power(cp_arr._cp, n)
 
