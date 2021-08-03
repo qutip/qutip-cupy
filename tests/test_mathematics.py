@@ -104,6 +104,11 @@ class TestPow(test_tools._GenericOpMixin):
         (pytest.param((5, 5),),),
         (pytest.param((10, 10),),),
     ]
+
+    bad_shapes = [
+        (x,) for x in test_tools.shapes_unary() if x.values[0][0] != x.values[0][1]
+    ]
+
     specialisations = [
         pytest.param(cdf.pow_cupydense, CuPyDense, CuPyDense),
     ]
@@ -122,3 +127,15 @@ class TestPow(test_tools._GenericOpMixin):
             np.testing.assert_allclose(test.to_array(), expected, atol=self.tol)
         else:
             assert abs(test - expected) < self.tol
+
+    @pytest.mark.parametrize(
+        "scalar",
+        [pytest.param(1, id="1"), pytest.param(2, id="2"), pytest.param(5, id="5")],
+    )
+    def test_incorrect_shape_raises(self, op, data_m, scalar):
+        """
+        Test that the operation produces a suitable error if the matrices are not
+        square.
+        """
+        with pytest.raises(ValueError):
+            op(data_m(), scalar)
