@@ -43,4 +43,4 @@ def project_dense(state):
     elif state.shape[0] == 1:
         return CuPyDense._raw_cupy_constructor(cp.outer(state.adjoint()._cp, state._cp))
     else:
-        raise TypeError("state must be a ket or a bra.")
+        raise ValueError("state must be a ket or a bra.")
