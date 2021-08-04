@@ -16,11 +16,6 @@ def random_cupydense(shape):
     return out
 
 
-@pytest.fixture(params=[CuPyDense], ids=["CuPyDense"])
-def datatype(request):
-    return request.param
-
-
 # This are the global variables of the qutip test module
 # by setting them in this way the value gets propagated to the abstract
 # mixing which in turn propagates them to the mixing and finally sets
@@ -98,7 +93,7 @@ class TestHerm:
     tol = 1e-5
 
     @pytest.mark.parametrize("size", (10, 20, 100, 1000))
-    def test_random_equal_structure(self, datatype, size):
+    def test_random_equal_structure(self, size):
 
         # Complex Hermitian matrices
         base = (
@@ -120,7 +115,7 @@ class TestHerm:
 
     @pytest.mark.parametrize("cols", (2, 4))
     @pytest.mark.parametrize("rows", (1, 5))
-    def test_nonsquare_shapes(self, datatype, rows, cols):
+    def test_nonsquare_shapes(self, rows, cols):
         base = (
             np.random.uniform(size=(rows, cols))
             + np.random.uniform(size=(rows, cols)) * 1.0j
@@ -129,8 +124,8 @@ class TestHerm:
         assert not cdf.isherm_cupydense(base, self.tol)
         assert not cdf.isherm_cupydense(base.transpose(), self.tol)
 
-    # def test_diagonal_elements(self, datatype):
-    #     n = 10
-    #     base = _data.to(datatype, _data.create(np.diag(np.random.rand(n))))
-    #     assert _data.isherm(base, tol=self.tol)
-    #     assert not _data.isherm(base * 1j, tol=self.tol)
+    def test_diagonal_elements(self):
+        n = 10
+        base = CuPyDense(np.diag(np.random.rand(n)))
+        assert cdf.isherm_cupydense(base, tol=self.tol)
+        assert not cdf.isherm_cupydense(base * 1j, tol=self.tol)
