@@ -29,3 +29,28 @@ def trace_cupydense(cp_arr):
     # @TODO: whnen qutip allows it we should remove this call to item()
     # as it takes a time penalty commmunicating data from GPU to CPU.
     return cp.trace(cp_arr._cp).item()
+
+
+def isherm_cupydense(cp_arr, tol):
+    if cp_arr.shape[0] != cp_arr.shape[1]:
+        return False
+
+    hermcheck_kernel = cp.RawKernel(
+        r"""
+    #include <cupy/complex.cuh>
+    extern "C" __global__
+    void hermcheck(const complex<double>* x1,const float* tol, unsigned int* y) {
+    int tidx = blockDim.x * blockIdx.x + threadIdx.x;
+    int tidy = blockDim.y * blockIdx.y + threadIdx.y;
+
+    atomicAnd(y,int(abs(x1[tidx,tidy] - conj(x1[tidy,tidx])) < tol[0]));
+
+    }""",
+        "hermcheck",
+    )
+    out = cp.ones(shape=[1], dtype=cp.unsignedinteger)
+
+    # TODO: check if theres is a better way to set thread dim and block dim
+    symcheck_kernel(cp_arr.shape, (1, 1), (cp_arr, tol, out))
+
+    return bool(out.item())
