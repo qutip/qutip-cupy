@@ -30,12 +30,7 @@ def trace_cupydense(cp_arr):
     # as it takes a time penalty commmunicating data from GPU to CPU.
     return cp.trace(cp_arr._cp).item()
 
-
-def isherm_cupydense(cp_arr, tol):
-    if cp_arr.shape[0] != cp_arr.shape[1]:
-        return False
-    size = cp_arr.shape[0]
-    hermcheck_kernel = cp.RawKernel(
+ hermcheck_kernel = cp.RawKernel(
         r"""
     #include <cupy/complex.cuh>
     extern "C" __global__
@@ -49,10 +44,16 @@ def isherm_cupydense(cp_arr, tol):
     }""",
         "hermcheck",
     )
+
+def isherm_cupydense(cp_arr, tol):
+    if cp_arr.shape[0] != cp_arr.shape[1]:
+        return False
+    size = cp_arr.shape[0]
+   
     out = cp.ones(shape=[1], dtype=cp.uint)
     print(out)
     # TODO: check if theres is a better way to set thread dim and block dim
-    hermcheck_kernel((size, size), (1, 1), (cp_arr._cp, size, tol, out))
+    hermcheck_kernel( (1, 1),(size, size), (cp_arr._cp, size, tol, out))
     print(cp_arr.shape)
     print(out)
     return bool(out.item())
