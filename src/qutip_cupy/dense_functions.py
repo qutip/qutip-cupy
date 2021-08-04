@@ -31,19 +31,18 @@ def trace_cupydense(cp_arr):
     return cp.trace(cp_arr._cp).item()
 
 
-hermcheck_kernel = cp.RawKernel(
+hermdiff_kernel = cp.RawKernel(
     r"""
     #include <cupy/complex.cuh>
     extern "C" __global__
-    void hermcheck(const complex<double>* x1,const int size,
-                    const double tol, unsigned int* y) {
+    void hermdiff(const complex<double>* x1,const int size,const double tol, bool* y) {
         int tidx = blockDim.x * blockIdx.x + threadIdx.x;
         int tidy = blockDim.y * blockIdx.y + threadIdx.y;
         if((tidx < size) & (tidy < size)){
-           atomicAnd(y,int(norm(x1[tidx*size+tidy] - conj(x1[tidy*size+tidx])) < tol));
+            y[tidx+size*tidy] = norm(x1[tidx*size+tidy] - conj(x1[tidy*size+tidx])) < tol;
         };
     }""",
-    "hermcheck",
+    "hermdiff",
 )
 
 
@@ -51,11 +50,11 @@ def isherm_cupydense(cp_arr, tol):
     if cp_arr.shape[0] != cp_arr.shape[1]:
         return False
     size = cp_arr.shape[0]
-    out = cp.ones(shape=[1], dtype=cp.uint)
-    # TODO: check if theres is a better way to set thread dim and block dim
+    diff = cp.empty((size, size), dtype=cp.bool_)
+    # TODO: check if there is a better way to set thread dim and block dim
     block_size = 32
     grid_size = (size + block_size - 1) // block_size
-    hermcheck_kernel(
-        (grid_size, grid_size), (block_size, block_size), (cp_arr._cp, size, tol, out)
+    hermdiff_kernel(
+        (grid_size, grid_size), (block_size, block_size), (cp_arr._cp, size, tol, diff)
     )
-    return bool(out.item())
+    return diff.all().item()
