@@ -1,4 +1,5 @@
 import cupy as cp
+import numpy as np
 import pytest
 
 from qutip_cupy import dense
@@ -13,6 +14,11 @@ def random_cupydense(shape):
     out = (cp.random.rand(*shape) + 1j * cp.random.rand(*shape)).astype(cp.complex128)
     out = CuPyDense._raw_cupy_constructor(out)
     return out
+
+
+@pytest.fixture(params=[CuPyDense], ids=["CuPyDense"])
+def datatype(request):
+    return request.param
 
 
 # This are the global variables of the qutip test module
@@ -86,3 +92,45 @@ class TestTranspose(test_tools.TestTranspose):
     specialisations = [
         pytest.param(dense.transpose_cupydense, CuPyDense, CuPyDense),
     ]
+
+
+class TestHerm:
+    tol = 1e-5
+
+    @pytest.mark.parametrize("size", (10, 20, 100, 1000))
+    def test_random_equal_structure(self, datatype, size):
+
+        # Complex Hermitian matrices
+        base = (
+            np.random.uniform(size=(size, size))
+            + np.random.uniform(size=(size, size)) * 1j
+        ).astype(np.complex128)
+        base += base.T.conj()
+        base = CuPyDense(base)
+        assert cdf.isherm_cupydense(base, self.tol)
+
+        # Complex skew-Hermitian matrices
+        base = (
+            np.random.uniform(size=(size, size))
+            + np.random.uniform(size=(size, size)) * 1.0j
+        ).astype(np.complex128)
+        base += base.T
+        base = CuPyDense(base)
+        assert not cdf.isherm_cupydense(base, self.tol)
+
+    @pytest.mark.parametrize("cols", (2, 4))
+    @pytest.mark.parametrize("rows", (1, 5))
+    def test_nonsquare_shapes(self, datatype, rows, cols):
+        base = (
+            np.random.uniform(size=(rows, cols))
+            + np.random.uniform(size=(rows, cols)) * 1.0j
+        ).astype(np.complex128)
+        base = CuPyDense(base)
+        assert not cdf.isherm_cupydense(base, self.tol)
+        assert not cdf.isherm_cupydense(base.transpose(), self.tol)
+
+    # def test_diagonal_elements(self, datatype):
+    #     n = 10
+    #     base = _data.to(datatype, _data.create(np.diag(np.random.rand(n))))
+    #     assert _data.isherm(base, tol=self.tol)
+    #     assert not _data.isherm(base * 1j, tol=self.tol)
