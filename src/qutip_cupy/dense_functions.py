@@ -39,7 +39,8 @@ hermdiff_kernel = cp.RawKernel(
         int tidx = blockDim.x * blockIdx.x + threadIdx.x;
         int tidy = blockDim.y * blockIdx.y + threadIdx.y;
         if((tidx < size) & (tidy < size)){
-            y[tidx+size*tidy] = norm(x1[tidx*size+tidy] - conj(x1[tidy*size+tidx])) < tol;
+            y[tidx+size*tidy] = norm(x1[tidx*size+tidy]
+                                    - conj(x1[tidy*size+tidx])) < tol;
         };
     }""",
     "hermdiff",
