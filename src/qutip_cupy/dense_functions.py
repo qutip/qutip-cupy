@@ -31,7 +31,7 @@ def trace_cupydense(cp_arr):
     return cp.trace(cp_arr._cp).item()
 
 
-hermdiff_kernel = cp.RawKernel(
+_hermdiff_kernel = cp.RawKernel(
     r"""
     #include <cupy/complex.cuh>
     extern "C" __global__
@@ -58,7 +58,7 @@ def isherm_cupydense(cp_arr, tol):
     # TODO: check if there is a better way to set thread dim and block dim
     block_size = 32
     grid_size = (size + block_size - 1) // block_size
-    hermdiff_kernel(
+    _hermdiff_kernel(
         (grid_size, grid_size), (block_size, block_size), (cp_arr._cp, size, tol, diff)
     )
     return diff.all().item()
