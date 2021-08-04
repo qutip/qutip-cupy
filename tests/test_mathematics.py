@@ -90,7 +90,7 @@ class TestTranspose(test_tools.TestTranspose):
 
 
 class TestHerm:
-    tol = 1e-5
+    tol = 1e-12
 
     @pytest.mark.parametrize("size", (10, 20, 100, 1000))
     def test_random_equal_structure(self, size):
