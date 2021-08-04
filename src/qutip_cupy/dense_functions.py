@@ -31,7 +31,7 @@ def trace_cupydense(cp_arr):
     return cp.trace(cp_arr._cp).item()
 
 
-def project_dense(state):
+def project_cupydense(state):
     """
     Calculate the projection |state><state|.  The shape of `state` will be used
     to determine if it has been supplied as a ket or a bra.  The result of this

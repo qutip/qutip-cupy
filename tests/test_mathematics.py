@@ -91,5 +91,5 @@ class TestTranspose(test_tools.TestTranspose):
 class TestProject(test_tools.TestProject):
 
     specialisations = [
-        pytest.param(cdf.project_dense, CuPyDense, CuPyDense),
+        pytest.param(cdf.project_cupydense, CuPyDense, CuPyDense),
     ]
