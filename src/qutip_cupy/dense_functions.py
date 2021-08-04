@@ -39,9 +39,10 @@ def isherm_cupydense(cp_arr, tol):
         r"""
     #include <cupy/complex.cuh>
     extern "C" __global__
-    void hermcheck(const complex<double>* x1,const int size,const double tol, unsigned int* y) {
-    int tidx = blockDim.x * blockIdx.x + threadIdx.x;
-    int tidy = blockDim.y * blockIdx.y + threadIdx.y;
+    void hermcheck(const complex<double>* x1,const int size,
+                    const double tol, unsigned int* y) {
+      int tidx = blockDim.x * blockIdx.x + threadIdx.x;
+      int tidy = blockDim.y * blockIdx.y + threadIdx.y;
 
     atomicAnd(y,int(norm(x1[tidx*size+tidy] - conj(x1[tidy*size+tidx])) < tol));
 
