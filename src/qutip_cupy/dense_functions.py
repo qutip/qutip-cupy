@@ -30,30 +30,32 @@ def trace_cupydense(cp_arr):
     # as it takes a time penalty commmunicating data from GPU to CPU.
     return cp.trace(cp_arr._cp).item()
 
- hermcheck_kernel = cp.RawKernel(
-        r"""
+
+hermcheck_kernel = cp.RawKernel(
+    r"""
     #include <cupy/complex.cuh>
     extern "C" __global__
     void hermcheck(const complex<double>* x1,const int size,
                     const double tol, unsigned int* y) {
-      int tidx = blockDim.x * blockIdx.x + threadIdx.x;
-      int tidy = blockDim.y * blockIdx.y + threadIdx.y;
-
-    atomicAnd(y,int(norm(x1[tidx*size+tidy] - conj(x1[tidy*size+tidx])) < tol));
-
+        int tidx = blockDim.x * blockIdx.x + threadIdx.x;
+        int tidy = blockDim.y * blockIdx.y + threadIdx.y;
+        if((tidx < size) & (tidy < size)){
+           atomicAnd(y,int(norm(x1[tidx*size+tidy] - conj(x1[tidy*size+tidx])) < tol));
+        };
     }""",
-        "hermcheck",
-    )
+    "hermcheck",
+)
+
 
 def isherm_cupydense(cp_arr, tol):
     if cp_arr.shape[0] != cp_arr.shape[1]:
         return False
     size = cp_arr.shape[0]
-   
     out = cp.ones(shape=[1], dtype=cp.uint)
-    print(out)
     # TODO: check if theres is a better way to set thread dim and block dim
-    hermcheck_kernel( (1, 1),(size, size), (cp_arr._cp, size, tol, out))
-    print(cp_arr.shape)
-    print(out)
+    block_size = 32
+    grid_size = (size + block_size - 1) // block_size
+    hermcheck_kernel(
+        (grid_size, grid_size), (block_size, block_size), (cp_arr._cp, size, tol, out)
+    )
     return bool(out.item())
