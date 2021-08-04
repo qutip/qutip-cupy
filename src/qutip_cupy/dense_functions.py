@@ -38,9 +38,9 @@ hermdiff_kernel = cp.RawKernel(
     void hermdiff(const complex<double>* x1,const int size,const double tol, bool* y) {
         for (unsigned int tidx = blockDim.x * blockIdx.x + threadIdx.x; tidx < size;
                                                     tidx += gridDim.x * blockDim.x) {
-        for (unsigned int tidy = blockDim.y * blockIdx.y + threadIdx.y; 
+        for (unsigned int tidy = blockDim.y * blockIdx.y + threadIdx.y;
                                         tidy < size; tidy += gridDim.y * blockDim.y) {
-            
+
             y[tidx+size*tidy] = norm(x1[tidx*size+tidy]
                                     - conj(x1[tidy*size+tidx])) < tol;
         };
