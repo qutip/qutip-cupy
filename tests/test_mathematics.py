@@ -1,4 +1,6 @@
 import cupy as cp
+from cupy._creation.from_data import asarray
+import numpy as np
 import pytest
 
 from qutip_cupy import dense
@@ -85,4 +87,16 @@ class TestTranspose(test_tools.TestTranspose):
 
     specialisations = [
         pytest.param(dense.transpose_cupydense, CuPyDense, CuPyDense),
+    ]
+
+
+class TestSplitColumns(test_tools.UnaryOpMixin):
+    def op_numpy(self, matrix, copy=True):
+        return [
+            np.array(matrix[:, k], copy=copy).reshape(matrix.shape[0], 1)
+            for k in range(matrix.shape[1])
+        ]
+
+    specialisations = [
+        pytest.param(cdf.split_columns_cupydense, CuPyDense, list),
     ]
