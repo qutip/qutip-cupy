@@ -29,3 +29,7 @@ def trace_cupydense(cp_arr):
     # @TODO: whnen qutip allows it we should remove this call to item()
     # as it takes a time penalty commmunicating data from GPU to CPU.
     return cp.trace(cp_arr._cp).item()
+
+
+def split_columns_cupydense(cp_arr, copy=True):
+    return [CuPyDense(cp_arr._cp[:, k], copy=copy) for k in range(cp_arr.shape[1])]
