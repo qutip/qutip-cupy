@@ -31,6 +31,15 @@ def trace_cupydense(cp_arr):
     return cp.trace(cp_arr._cp).item()
 
 
+def pow_cupydense(cp_arr, n):
+    if cp_arr.shape[0] != cp_arr.shape[1]:
+        raise ValueError("matrix power only works with square matrices")
+
+    out_arr = cp.linalg.matrix_power(cp_arr._cp, n)
+
+    return CuPyDense._raw_cupy_constructor(out_arr)
+
+
 def project_cupydense(state):
     """
     Calculate the projection |state><state|.  The shape of `state` will be used
