@@ -128,7 +128,7 @@ class TestL2Norm(test_tools.UnaryOpMixin):
         pytest.param(cdf.l2_cupydense, CuPyDense, float),
     ]
 
-    # Trace actually does have bad shape, so we put that in too.
+    # l2 norm actually does have bad shape, so we put that in too.
     def test_incorrect_shape_raises(self, op, data_m):
         """
         Test that the operation produces a suitable error if the shape is not a
