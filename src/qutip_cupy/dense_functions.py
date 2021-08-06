@@ -39,6 +39,7 @@ def pow_cupydense(cp_arr, n):
 
     return CuPyDense._raw_cupy_constructor(out_arr)
 
+
 def project_cupydense(state):
     """
     Calculate the projection |state><state|.  The shape of `state` will be used
