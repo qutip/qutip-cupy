@@ -171,11 +171,11 @@ class TestL1Norm(test_tools.UnaryOpMixin):
 
     specialisations = [
         pytest.param(cdf.one_cupydense, CuPyDense, float),
- 
+    ]
+
 
 class TestProject(test_tools.TestProject):
 
     specialisations = [
         pytest.param(cdf.project_cupydense, CuPyDense, CuPyDense),
-
     ]

@@ -45,11 +45,11 @@ def l2_cupydense(cp_arr):
 def max_cupydense(cp_arr):
     return cp.max(cp.abs(cp_arr._cp)).item()
 
-  
+
 def one_cupydense(cp_arr):
     return cp.linalg.norm(cp_arr._cp, ord=1).item()
-  
-  
+
+
 def project_cupydense(state):
     """
     Calculate the projection |state><state|.  The shape of `state` will be used
@@ -63,4 +63,3 @@ def project_cupydense(state):
         return CuPyDense._raw_cupy_constructor(cp.outer(state.adjoint()._cp, state._cp))
     else:
         raise ValueError("state must be a ket or a bra.")
-
