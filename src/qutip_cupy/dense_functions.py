@@ -48,8 +48,8 @@ def max_cupydense(cp_arr):
 
 def one_cupydense(cp_arr):
     return cp.linalg.norm(cp_arr._cp, ord=1).item()
-  
- 
+
+
 def pow_cupydense(cp_arr, n):
     if cp_arr.shape[0] != cp_arr.shape[1]:
         raise ValueError("matrix power only works with square matrices")

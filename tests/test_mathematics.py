@@ -174,7 +174,7 @@ class TestL1Norm(test_tools.UnaryOpMixin):
         pytest.param(cdf.one_cupydense, CuPyDense, float),
     ]
 
- 
+
 class TestPow(test_tools._GenericOpMixin):
 
     # This should be part of QuTiP and only inherited here
