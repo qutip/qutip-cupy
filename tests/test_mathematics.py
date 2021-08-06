@@ -139,3 +139,10 @@ class TestPow(test_tools._GenericOpMixin):
         """
         with pytest.raises(ValueError):
             op(data_m(), scalar)
+
+
+class TestProject(test_tools.TestProject):
+
+    specialisations = [
+        pytest.param(cdf.project_cupydense, CuPyDense, CuPyDense),
+    ]

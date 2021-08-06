@@ -38,3 +38,18 @@ def pow_cupydense(cp_arr, n):
     out_arr = cp.linalg.matrix_power(cp_arr._cp, n)
 
     return CuPyDense._raw_cupy_constructor(out_arr)
+
+  
+def project_cupydense(state):
+    """
+    Calculate the projection |state><state|.  The shape of `state` will be used
+    to determine if it has been supplied as a ket or a bra.  The result of this
+    function will be identical is passed `state` or `adjoint(state)`.
+    """
+
+    if state.shape[1] == 1:
+        return CuPyDense._raw_cupy_constructor(cp.outer(state._cp, state.adjoint()._cp))
+    elif state.shape[0] == 1:
+        return CuPyDense._raw_cupy_constructor(cp.outer(state.adjoint()._cp, state._cp))
+    else:
+        raise ValueError("state must be a ket or a bra.")
