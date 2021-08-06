@@ -58,12 +58,11 @@ data.tidyup.add_specialisations([(CuPyDense, cdf.tidyup_dense)])
 data.trace.add_specialisations([(CuPyDense, cdf.trace_cupydense)])
 data.reshape.add_specialisations([(CuPyDense, CuPyDense, cdf.reshape_cupydense)])
 
-# the whole norm module is imported in QuTiP
-# so the dispatching is peculiar
 data.norm.l2.add_specialisations([(CuPyDense, cdf.l2_cupydense)])
 data.norm.frobenius.add_specialisations([(CuPyDense, cdf.frobenius_cupydense)])
 data.norm.max.add_specialisations([(CuPyDense, cdf.max_cupydense)])
 data.norm.one.add_specialisations([(CuPyDense, cdf.one_cupydense)])
+
 # We must register the functions to the data layer but do not want
 # the data layer or qutip_cupy.dense to be accessible from qutip_cupy
 del data
