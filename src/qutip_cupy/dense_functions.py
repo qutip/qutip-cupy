@@ -47,5 +47,4 @@ def max_cupydense(cp_arr):
 
 
 def one_cupydense(cp_arr):
-
     return cp.linalg.norm(cp_arr._cp, ord=1).item()
