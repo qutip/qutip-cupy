@@ -31,6 +31,25 @@ def trace_cupydense(cp_arr):
     return cp.trace(cp_arr._cp).item()
 
 
+def frobenius_cupydense(cp_arr):
+    # TODO: Expose CUBLAS' dznrm2 (like QuTiP does) and test if it is faster
+    return cp.linalg.norm(cp_arr._cp).item()
+
+
+def l2_cupydense(cp_arr):
+    if cp_arr.shape[0] != 1 and cp_arr.shape[1] != 1:
+        raise ValueError("L2 norm is only defined on vectors")
+    return frobenius_cupydense(cp_arr)
+
+
+def max_cupydense(cp_arr):
+    return cp.max(cp.abs(cp_arr._cp)).item()
+
+
+def one_cupydense(cp_arr):
+    return cp.linalg.norm(cp_arr._cp, ord=1).item()
+
+
 def pow_cupydense(cp_arr, n):
     if cp_arr.shape[0] != cp_arr.shape[1]:
         raise ValueError("matrix power only works with square matrices")
