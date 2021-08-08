@@ -28,7 +28,7 @@ def expect_cupydense(op, state):
         tr(op @ state)
     """
     if state.shape[1] == 1:
-        return _expect_dense_ket_cublas(op, state)
+        return _expect_dense_ket_naive2(op, state)
     return _expect_dense_dense_dm(op, state)
 
 
@@ -38,8 +38,8 @@ def _expect_dense_ket_naive(op, state):
 
 
 def _expect_dense_ket_naive2(op, state):
-
-    return cp.vdot(state, op @ state)
+    _check_shape_ket(op, state)
+    return cp.vdot(state._cp, op._cp @ state._cp).item()
 
 
 def _expect_dense_ket_cublas(op, state):
