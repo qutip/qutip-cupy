@@ -31,6 +31,10 @@ def trace_cupydense(cp_arr):
     return cp.trace(cp_arr._cp).item()
 
 
+def kron_cupydense(cp_arr1, cp_arr2):
+    return CuPyDense._raw_cupy_constructor(cp.kron(cp_arr1._cp, cp_arr2._cp))
+
+
 def frobenius_cupydense(cp_arr):
     # TODO: Expose CUBLAS' dznrm2 (like QuTiP does) and test if it is faster
     return cp.linalg.norm(cp_arr._cp).item()

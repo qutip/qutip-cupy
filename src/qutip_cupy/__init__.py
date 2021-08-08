@@ -57,6 +57,7 @@ data.zeros.add_specialisations([(CuPyDense, cd.zeros)])
 data.tidyup.add_specialisations([(CuPyDense, cdf.tidyup_dense)])
 data.trace.add_specialisations([(CuPyDense, cdf.trace_cupydense)])
 data.reshape.add_specialisations([(CuPyDense, CuPyDense, cdf.reshape_cupydense)])
+data.kron.add_specialisations([(CuPyDense, CuPyDense, CuPyDense, cdf.kron_cupydense)])
 
 data.norm.l2.add_specialisations([(CuPyDense, cdf.l2_cupydense)])
 data.norm.frobenius.add_specialisations([(CuPyDense, cdf.frobenius_cupydense)])

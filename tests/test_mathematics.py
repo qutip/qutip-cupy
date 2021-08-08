@@ -90,6 +90,13 @@ class TestTranspose(test_tools.TestTranspose):
     ]
 
 
+class TestKron(test_tools.TestKron):
+
+    specialisations = [
+        pytest.param(cdf.kron_cupydense, CuPyDense, CuPyDense, CuPyDense),
+    ]
+
+
 class TestFrobeniusNorm(test_tools.UnaryOpMixin):
     # TODO add this tests to QuTiP and then inherit
     def op_numpy(self, matrix):
