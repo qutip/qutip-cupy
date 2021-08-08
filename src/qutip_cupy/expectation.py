@@ -1,4 +1,3 @@
-from .dense import CuPyDense
 import cupy as cp
 from cupy import cublas
 
@@ -44,26 +43,37 @@ def _expect_dense_ket_naive2(op, state):
 
 
 def _expect_dense_ket_cublas(op, state):
-
+    _check_shape_ket(op, state)
     out = cp.zeros((1, 1), cp.complex128)
 
-    cublas.gemm("H", "N", state, op @ state, out=out)
+    cublas.gemm("H", "N", state._cp, op._cp @ state._cp, out=out)
 
     return out.item()
 
 
+def _check_shape_dm(op, state):
+    if (
+        op.shape[1] != state.shape[0]  # Matrix multiplication
+        or state.shape[0] != state.shape[1]  # State is square
+        or op.shape[0] != op.shape[1]  # Op is square
+    ):
+        raise ValueError(
+            "incorrect input shapes " + str(op.shape) + " and " + str(state.shape)
+        )
+
+
 def _expect_dense_dense_dm(op, state):
-    # _check_shape_dm(op, state)
-    # cdef double complex out=0
+    _check_shape_dm(op, state)
 
-    # state_row_stride = 1 if state.fortran else state.shape[1]
-    # state_col_stride = state.shape[0] if state.fortran else 1
-    # op_row_stride = 1 if op.fortran else op.shape[1]
-    # op_col_stride = op.shape[0] if op.fortran else 1
+    return cp.sum(op._cp * state._cp.transpose()).item()
 
-    # for row in range(op.shape[0]):
-    #     for col in range(op.shape[1]):
-    #         out += op.data[row * op_row_stride + col * op_col_stride] * \
-    #                state.data[col * state_row_stride + row * state_col_stride]
-    # return out
-    raise NotImplementedError
+
+def _check_shape_ket(op, state):
+    if (
+        op.shape[1] != state.shape[0]  # Matrix multiplication
+        or state.shape[1] != 1  # State is ket
+        or op.shape[0] != op.shape[1]  # op must be square matrix
+    ):
+        raise ValueError(
+            "incorrect input shapes " + str(op.shape) + " and " + str(state.shape)
+        )
