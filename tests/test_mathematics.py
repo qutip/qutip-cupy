@@ -4,6 +4,7 @@ import pytest
 
 from qutip_cupy import dense
 from qutip_cupy import dense_functions as cdf
+from qutip_cupy import linalg
 from qutip_cupy import CuPyDense
 
 import qutip.tests.core.data.test_mathematics as test_tools
@@ -237,4 +238,11 @@ class TestProject(test_tools.TestProject):
 
     specialisations = [
         pytest.param(cdf.project_cupydense, CuPyDense, CuPyDense),
+    ]
+
+
+class TestInv(test_tools.TestInv):
+
+    specialisations = [
+        pytest.param(linalg.inv_cupydense, CuPyDense, CuPyDense),
     ]
