@@ -18,7 +18,7 @@ def expect_dense_naive(op, state):
     return _expect_dense_dense_dm(op, state)
 
 
-def expect_dense(op, state):
+def expect_cupydense(op, state):
     """
     Get the expectation value of the operator `op` over the state `state`.  The
     state can be either a ket or a density matrix.
@@ -55,8 +55,7 @@ def _expect_dense_ket_cublas(op, state):
 def _expect_dense_dense_dm(op, state):
     # _check_shape_dm(op, state)
     # cdef double complex out=0
-    # cdef size_t row, col, op_row_stride, op_col_stride
-    # cdef size_t state_row_stride, state_col_stride
+
     # state_row_stride = 1 if state.fortran else state.shape[1]
     # state_col_stride = state.shape[0] if state.fortran else 1
     # op_row_stride = 1 if op.fortran else op.shape[1]
