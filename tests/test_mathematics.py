@@ -231,3 +231,4 @@ class TestProject(test_tools.TestProject):
     specialisations = [
         pytest.param(cdf.project_cupydense, CuPyDense, CuPyDense),
     ]
+
