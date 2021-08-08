@@ -23,6 +23,7 @@ with warnings.catch_warnings():
 # qutip_cupy imports need to be after the cupy import check above
 from .version import version as __version__  # noqa: E402
 from . import dense as cd  # noqa: E402
+from . import dense_functions as cdf  # noqa: E402
 
 __all__ = ["__version__", "CuPyDense"]
 
@@ -36,10 +37,34 @@ data.to.add_conversions(
 )
 data.to.register_aliases(["cupyd"], CuPyDense)
 
-data.adjoint.add_specialisations([(CuPyDense, CuPyDense, cd.cpd_adjoint)])
-data.transpose.add_specialisations([(CuPyDense, CuPyDense, cd.cpd_transpose)])
-data.conj.add_specialisations([(CuPyDense, CuPyDense, cd.cpd_conj)])
-data.trace.add_specialisations([(CuPyDense, cd.cpd_trace)])
+data.adjoint.add_specialisations([(CuPyDense, CuPyDense, cd.adjoint_cupydense)])
+data.transpose.add_specialisations([(CuPyDense, CuPyDense, cd.transpose_cupydense)])
+data.conj.add_specialisations([(CuPyDense, CuPyDense, cd.conj_cupydense)])
+data.trace.add_specialisations([(CuPyDense, cd.trace_cupydense)])
+data.mul.add_specialisations([(CuPyDense, CuPyDense, cd.mul_cupydense)])
+data.imul.add_specialisations([(CuPyDense, CuPyDense, cd.imul_cupydense)])
+data.neg.add_specialisations([(CuPyDense, CuPyDense, cd.neg_cupydense)])
+data.matmul.add_specialisations(
+    [(CuPyDense, CuPyDense, CuPyDense, cd.matmul_cupydense)]
+)
+data.add.add_specialisations([(CuPyDense, CuPyDense, CuPyDense, cd.add_cupydense)])
+data.sub.add_specialisations([(CuPyDense, CuPyDense, CuPyDense, cd.sub_cupydense)])
+# constructor
+data.diag.add_specialisations([(CuPyDense, cd.diags)])
+data.identity.add_specialisations([(CuPyDense, cd.identity)])
+data.zeros.add_specialisations([(CuPyDense, cd.zeros)])
+# dense_functions
+data.tidyup.add_specialisations([(CuPyDense, cdf.tidyup_dense)])
+data.trace.add_specialisations([(CuPyDense, cdf.trace_cupydense)])
+data.reshape.add_specialisations([(CuPyDense, CuPyDense, cdf.reshape_cupydense)])
+
+data.norm.l2.add_specialisations([(CuPyDense, cdf.l2_cupydense)])
+data.norm.frobenius.add_specialisations([(CuPyDense, cdf.frobenius_cupydense)])
+data.norm.max.add_specialisations([(CuPyDense, cdf.max_cupydense)])
+data.norm.one.add_specialisations([(CuPyDense, cdf.one_cupydense)])
+
+data.pow.add_specialisations([(CuPyDense, CuPyDense, cdf.pow_cupydense)])
+data.project.add_specialisations([(CuPyDense, CuPyDense, cdf.project_cupydense)])
 
 # We must register the functions to the data layer but do not want
 # the data layer or qutip_cupy.dense to be accessible from qutip_cupy

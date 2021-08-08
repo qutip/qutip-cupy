@@ -1,10 +1,9 @@
-# Contains functions for dense_cupy, this are the same functions that
-# are defined ouside the dense.pyx file
+"""Contains specialization functions for dense_cupy. These are the functions that
+ are defined outside of qutip/core/data/dense.pyx."""
 
+from .dense import CuPyDense
 import cupy as cp
 from cupy import cublas
-
-from . import CuPyDense
 
 
 def expect_dense_naive(op, state):
@@ -18,7 +17,7 @@ def expect_dense_naive(op, state):
         tr(op @ state)
     """
     if state.shape[1] == 1:
-        return _expect_dense_ket(op, state)
+        return _expect_dense_ket_naive(op, state)
     return _expect_dense_dense_dm(op, state)
 
 
@@ -33,7 +32,7 @@ def expect_dense(op, state):
         tr(op @ state)
     """
     if state.shape[1] == 1:
-        return _expect_dense_ket(op, state)
+        return _expect_dense_ket_cublas(op, state)
     return _expect_dense_dense_dm(op, state)
 
 
@@ -56,65 +55,6 @@ def _expect_dense_ket_cublas(op, state):
     return out.item()
 
 
-def _expect_dense_ket_kernel(op, state):
-    # _check_shape_ket(op, state)
-    # cdef double complex out=0, sum
-    # cdef size_t row, col, op_row_stride, op_col_stride
-    # op_row_stride = 1 if op.fortran else op.shape[1]
-    # op_col_stride = op.shape[0] if op.fortran else 1
-
-    # for row in range(op.shape[0]):
-    #     sum = 0
-    #     for col in range(op.shape[0]):
-    #         sum += (op.data[row * op_row_stride + col * op_col_stride] *
-    #                 state.data[col])
-    #     out += sum * conj(state.data[row])
-    # return out
-
-    # This is the more complex implementation
-    # per device optimization of kernel parameters has to be studied
-
-    complex_kernel = cp.RawKernel(
-        r"""
-    #include <cupy/complex.cuh>
-    extern "C" __global__
-    void expect(const complex<float>* d_M, const complex<float>* d_N,
-                complex<float>* d_P, int Width) {
-
-        __ shared__ float Mds[TILE_WIDTH][TILE_WIDTH];
-        __ shared__ float Nds[TILE_WIDTH][TILE_WIDTH];
-
-        int bx = blockIdx.x; int by = blockIdx.y;
-        int tx = threadIdx.x; int ty = threadIdx.y;
-        // Identify the row and column of the d_P element to work on
-        int Row = by * TILE_WIDTH + ty;
-       int Col = bx * TILE_WIDTH + tx;
-               float Pvalue = 0;
-        // Loop over the d_M and d_N tiles required to compute the d_P element
-
-        for (int m = 0; m < Width/TILE_WIDTH; ++m) {
-        // Coolaborative loading of d_M and d_N tiles into shared memory
-               Mds[tx][ty] = d_M [Row*Width + m*TILE_WIDTH+tx ];
-
-        Nds[tx][ty] = d_N [(m*TILE_WIDTH+ty )*Width + Col];
-
-        syncthreads();
-
-        for (int k = 0; k < TILE_WIDTH; ++k)
-        Pvalue += Mds[tx][k] * Nds[k][ty];
-        __ synchthreads();
-        }
-                }
-        d_P [Row*Width+Col] = Pvalue;
-
-
-     }
-    return out
-    """,
-        "my_func",
-    )
-
-
 def _expect_dense_dense_dm(op, state):
     # _check_shape_dm(op, state)
     # cdef double complex out=0
@@ -134,40 +74,68 @@ def _expect_dense_dense_dm(op, state):
 
 
 def tidyup_dense(matrix, tol, inplace=True):
-    # cdef Dense out = matrix if inplace else matrix.copy()
-    # cdef double complex value
-    # cdef size_t ptr
-    # for ptr in range(matrix.shape[0] * matrix.shape[1]):
-    #     value = matrix.data[ptr]
-    #     if fabs(value.real) < tol:
-    #         matrix.data[ptr].real = 0
-    #     if fabs(value.imag) < tol:
-    #         matrix.data[ptr].imag = 0
-    # return out
-    pass
+    return matrix
 
 
 def reshape_cupydense(cp_arr, n_rows_out, n_cols_out):
 
-    return CuPyDense(cp_arr, (n_rows_out, n_cols_out))
+    return CuPyDense._raw_cupy_constructor(
+        cp.reshape(cp_arr._cp, (n_rows_out, n_cols_out))
+    )
 
 
-def stack_cupydense(cp_arr, inplace=False):
-
-    pass
-
-
-def unstack_cupydense(cp_arr, idxint, inplace=False):
-
-    pass
+def _check_square_matrix(matrix):
+    if matrix.shape[0] != matrix.shape[1]:
+        raise ValueError(
+            "".join(["matrix shape ", str(matrix.shape), " is not square."])
+        )
 
 
-# reshape
-# stack
-# kron
+def trace_cupydense(cp_arr):
+    _check_square_matrix(cp_arr)
+    # @TODO: whnen qutip allows it we should remove this call to item()
+    # as it takes a time penalty commmunicating data from GPU to CPU.
+    return cp.trace(cp_arr._cp).item()
 
-# dot
 
-# eigval
-# pow
-# expm
+def frobenius_cupydense(cp_arr):
+    # TODO: Expose CUBLAS' dznrm2 (like QuTiP does) and test if it is faster
+    return cp.linalg.norm(cp_arr._cp).item()
+
+
+def l2_cupydense(cp_arr):
+    if cp_arr.shape[0] != 1 and cp_arr.shape[1] != 1:
+        raise ValueError("L2 norm is only defined on vectors")
+    return frobenius_cupydense(cp_arr)
+
+
+def max_cupydense(cp_arr):
+    return cp.max(cp.abs(cp_arr._cp)).item()
+
+
+def one_cupydense(cp_arr):
+    return cp.linalg.norm(cp_arr._cp, ord=1).item()
+
+
+def pow_cupydense(cp_arr, n):
+    if cp_arr.shape[0] != cp_arr.shape[1]:
+        raise ValueError("matrix power only works with square matrices")
+
+    out_arr = cp.linalg.matrix_power(cp_arr._cp, n)
+
+    return CuPyDense._raw_cupy_constructor(out_arr)
+
+
+def project_cupydense(state):
+    """
+    Calculate the projection |state><state|.  The shape of `state` will be used
+    to determine if it has been supplied as a ket or a bra.  The result of this
+    function will be identical is passed `state` or `adjoint(state)`.
+    """
+
+    if state.shape[1] == 1:
+        return CuPyDense._raw_cupy_constructor(cp.outer(state._cp, state.adjoint()._cp))
+    elif state.shape[0] == 1:
+        return CuPyDense._raw_cupy_constructor(cp.outer(state.adjoint()._cp, state._cp))
+    else:
+        raise ValueError("state must be a ket or a bra.")
