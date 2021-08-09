@@ -7,6 +7,7 @@ from qutip_cupy import dense_functions as cdf
 from qutip_cupy import CuPyDense
 
 import qutip.tests.core.data.test_mathematics as test_tools
+from qutip.core.data import Data
 
 
 def random_cupydense(shape):
@@ -129,3 +130,153 @@ class TestHerm:
         base = CuPyDense(np.diag(np.random.rand(n)))
         assert cdf.isherm_cupydense(base, tol=self.tol)
         assert not cdf.isherm_cupydense(base * 1j, tol=self.tol)
+
+
+class TestKron(test_tools.TestKron):
+
+    specialisations = [
+        pytest.param(cdf.kron_cupydense, CuPyDense, CuPyDense, CuPyDense),
+    ]
+
+
+class TestFrobeniusNorm(test_tools.UnaryOpMixin):
+    # TODO add this tests to QuTiP and then inherit
+    def op_numpy(self, matrix):
+        return np.linalg.norm(matrix)
+
+    shapes = [
+        (pytest.param((1, 1), id="1"),),
+        (pytest.param((100, 100), id="100"),),
+        (pytest.param((100, 1), id="100_ket"),),
+        (pytest.param((1, 100), id="100_bra"),),
+        (pytest.param((23, 30), id="23_30"),),
+    ]
+
+    specialisations = [
+        pytest.param(cdf.frobenius_cupydense, CuPyDense, float),
+    ]
+
+
+class TestL2Norm(test_tools.UnaryOpMixin):
+    # TODO add this tests to QuTiP and then inherit
+    def op_numpy(self, matrix):
+        return np.linalg.norm(matrix)
+
+    shapes = [
+        (pytest.param((1, 1), id="1"),),
+        (pytest.param((100, 1), id="20_ket"),),
+        (pytest.param((1, 100), id="10_bra"),),
+    ]
+
+    bad_shapes = [
+        (pytest.param((100, 100), id="100"),),
+        (pytest.param((23, 30), id="23_30"),),
+        (pytest.param((15, 10), id="15_10"),),
+    ]
+
+    specialisations = [
+        pytest.param(cdf.l2_cupydense, CuPyDense, float),
+    ]
+
+    # l2 norm actually does have bad shape, so we put that in too.
+    def test_incorrect_shape_raises(self, op, data_m):
+        """
+        Test that the operation produces a suitable error if the shape is not a
+        bra or ket.
+        """
+        with pytest.raises(ValueError):
+            op(data_m())
+
+
+class TestMaxNorm(test_tools.UnaryOpMixin):
+    # TODO add this tests to QuTiP and then inherit
+    def op_numpy(self, matrix):
+        return np.max(np.abs(matrix))
+
+    shapes = [
+        (pytest.param((1, 1), id="1"),),
+        (pytest.param((100, 100), id="100"),),
+        (pytest.param((100, 1), id="100_ket"),),
+        (pytest.param((1, 100), id="100_bra"),),
+        (pytest.param((23, 30), id="23_30"),),
+    ]
+
+    specialisations = [
+        pytest.param(cdf.max_cupydense, CuPyDense, float),
+    ]
+
+
+class TestL1Norm(test_tools.UnaryOpMixin):
+    # TODO add this tests to QuTiP and then inherit
+    def op_numpy(self, matrix):
+        return np.linalg.norm(matrix, ord=1)
+
+    shapes = [
+        (pytest.param((1, 1), id="1"),),
+        (pytest.param((100, 100), id="100"),),
+        (pytest.param((100, 1), id="100_ket"),),
+        (pytest.param((1, 100), id="100_bra"),),
+        (pytest.param((23, 30), id="23_30"),),
+    ]
+
+    specialisations = [
+        pytest.param(cdf.one_cupydense, CuPyDense, float),
+    ]
+
+
+class TestPow(test_tools._GenericOpMixin):
+
+    # This should be part of QuTiP and only inherited here
+    # TODO: Add it to QuTiP and inherit here
+
+    def op_numpy(self, matrix, scalar):
+
+        return np.linalg.matrix_power(matrix, scalar)
+
+    shapes = [
+        (pytest.param((1, 1),),),
+        (pytest.param((5, 5),),),
+        (pytest.param((10, 10),),),
+    ]
+
+    bad_shapes = [
+        (x,) for x in test_tools.shapes_unary() if x.values[0][0] != x.values[0][1]
+    ]
+
+    specialisations = [
+        pytest.param(cdf.pow_cupydense, CuPyDense, CuPyDense),
+    ]
+
+    @pytest.mark.parametrize(
+        "scalar",
+        [pytest.param(1, id="1"), pytest.param(2, id="2"), pytest.param(5, id="5")],
+    )
+    def test_mathematically_correct(self, op, data_m, scalar, out_type):
+        matrix = data_m()
+        expected = self.op_numpy(matrix.to_array(), scalar)
+        test = op(matrix, scalar)
+        assert isinstance(test, out_type)
+        if issubclass(out_type, Data):
+            assert test.shape == expected.shape
+            np.testing.assert_allclose(test.to_array(), expected, atol=self.tol)
+        else:
+            assert abs(test - expected) < self.tol
+
+    @pytest.mark.parametrize(
+        "scalar",
+        [pytest.param(1, id="1"), pytest.param(2, id="2"), pytest.param(5, id="5")],
+    )
+    def test_incorrect_shape_raises(self, op, data_m, scalar):
+        """
+        Test that the operation produces a suitable error if the matrices are not
+        square.
+        """
+        with pytest.raises(ValueError):
+            op(data_m(), scalar)
+
+
+class TestProject(test_tools.TestProject):
+
+    specialisations = [
+        pytest.param(cdf.project_cupydense, CuPyDense, CuPyDense),
+    ]
