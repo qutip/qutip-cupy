@@ -62,7 +62,40 @@ def _check_shape_dm(op, state):
         )
 
 
+_expect_dens_kernel = cp.RawKernel(
+    r"""
+    #include <cupy/complex.cuh>
+    extern "C" __global__
+    void expect_dens(const complex<double>* x1,const complex<double>* x2,
+                                        const int size, complex<double>* y) {
+        for (unsigned int tidx = blockDim.x * blockIdx.x + threadIdx.x; tidx < size;
+                                                      tidx += gridDim.x * blockDim.x) {
+            for(unsigned int j= 0; j<size; j++){
+                    y[tidx] += x1[j*size+tidx] * x2[tidx*size+j];
+                };
+        };
+    }""",
+    "expect_dens",
+)
+
+
+def expect_cupydense_dm(cp_arr, dens):
+    size = cp_arr.shape[0]
+    out = cp.zeros((size,), dtype=cp.complex128)
+    # TODO: check if there is a better way to set thread dim and block dim
+    block_size = 64
+    grid_size = (size + block_size - 1) // block_size
+    _expect_dens_kernel((grid_size,), (block_size,), (cp_arr, dens, size, out))
+    return out.sum()
+
+
 def _expect_dense_dense_dm(op, state):
+    _check_shape_dm(op, state)
+
+    return expect_cupydense_dm(op._cp, state._cp).item()
+
+
+def _expect_dense_dense_dm_cupy(op, state):
     _check_shape_dm(op, state)
 
     return cp.sum(op._cp * state._cp.transpose()).item()
