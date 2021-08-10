@@ -54,7 +54,8 @@ _hermdiff_kernel_half = cp.RawKernel(
     r"""
     #include <cupy/complex.cuh>
     extern "C" __global__
-    void hermdiff_half(const complex<double>* x1,const int size,const double tol, bool* y){
+    void hermdiff_half(const complex<double>* x1,
+                        const int size,const double tol, bool* y){
         for (unsigned int tidx = blockDim.x * blockIdx.x + threadIdx.x; tidx < size/2;
                                                     tidx += gridDim.x * blockDim.x) {
 
