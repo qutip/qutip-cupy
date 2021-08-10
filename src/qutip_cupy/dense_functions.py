@@ -82,7 +82,7 @@ def isherm_cupydense(cp_arr, tol):
     block_size = 32
     grid_size = (size // 2 + block_size - 1) // block_size
     _hermdiff_kernel_half((grid_size,), (block_size,), (cp_arr, size, tol, diff))
-    return diff.all()
+    return diff.all().item()
 
 
 def kron_cupydense(cp_arr1, cp_arr2):
