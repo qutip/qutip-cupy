@@ -76,12 +76,14 @@ _hermdiff_kernel_half = cp.RawKernel(
 
 
 def isherm_cupydense(cp_arr, tol):
+    if cp_arr.shape[0] != cp_arr.shape[1]:
+        return False
     size = cp_arr.shape[0]
     diff = cp.ones((size // 2,), dtype=cp.bool_)
     # TODO: check if there is a better way to set thread dim and block dim
-    block_size = 32
+    block_size = 64
     grid_size = (size // 2 + block_size - 1) // block_size
-    _hermdiff_kernel_half((grid_size,), (block_size,), (cp_arr, size, tol, diff))
+    _hermdiff_kernel_half((grid_size,), (block_size,), (cp_arr._cp, size, tol, diff))
     return diff.all().item()
 
 
