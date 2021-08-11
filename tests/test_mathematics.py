@@ -4,6 +4,7 @@ import pytest
 
 from qutip_cupy import dense
 from qutip_cupy import dense_functions as cdf
+from qutip_cupy import linalg
 from qutip_cupy import CuPyDense
 
 import qutip.tests.core.data.test_mathematics as test_tools
@@ -251,4 +252,18 @@ class TestProject(test_tools.TestProject):
 
     specialisations = [
         pytest.param(cdf.project_cupydense, CuPyDense, CuPyDense),
+    ]
+
+
+def _inv_cpd(matrix):
+    # Add a diagonal so `matrix` is not singular
+    return linalg.inv_cupydense(
+        matrix + dense.diags([1.1] * matrix.shape[0], [0], shape=matrix.shape)
+    )
+
+
+class TestInv(test_tools.TestInv):
+
+    specialisations = [
+        pytest.param(_inv_cpd, CuPyDense, CuPyDense),
     ]

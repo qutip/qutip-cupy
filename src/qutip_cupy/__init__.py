@@ -24,6 +24,7 @@ with warnings.catch_warnings():
 from .version import version as __version__  # noqa: E402
 from . import dense as cd  # noqa: E402
 from . import dense_functions as cdf  # noqa: E402
+from . import linalg  # noqa: E402
 
 __all__ = ["__version__", "CuPyDense"]
 
@@ -73,6 +74,8 @@ data.norm.one.add_specialisations([(CuPyDense, cdf.one_cupydense)])
 data.pow.add_specialisations([(CuPyDense, CuPyDense, cdf.pow_cupydense)])
 data.project.add_specialisations([(CuPyDense, CuPyDense, cdf.project_cupydense)])
 
+
+data.inv.add_specialisations([(CuPyDense, linalg.inv_cupydense)])
 # We must register the functions to the data layer but do not want
 # the data layer or qutip_cupy.dense to be accessible from qutip_cupy
 del data
