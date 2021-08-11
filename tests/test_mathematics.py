@@ -241,8 +241,15 @@ class TestProject(test_tools.TestProject):
     ]
 
 
+def _inv_cpd(matrix):
+    # Add a diagonal so `matrix` is not singular
+    return linalg.inv_cupydense(
+        matrix + dense.diags([1.1] * matrix.shape[0], [0], shape=matrix.shape)
+    )
+
+
 class TestInv(test_tools.TestInv):
 
     specialisations = [
-        pytest.param(linalg.inv_cupydense, CuPyDense, CuPyDense),
+        pytest.param(_inv_cpd, CuPyDense, CuPyDense),
     ]
