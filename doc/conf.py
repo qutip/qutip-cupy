@@ -7,11 +7,11 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath('../src/qutip_cupy'))
 
-needs_sphinx = '4.0'
+needs_sphinx = "4.0"
 
-project = 'qutip-cupy'
-author = 'QuTiP developers'
-copyright = '2021 and later, ' + author
+project = "qutip-cupy"
+author = "QuTiP developers"
+copyright = "2021 and later, " + author
 
 
 def _check_imported_local_package():
@@ -27,8 +27,9 @@ def _check_imported_local_package():
     up with a chimera.
     """
     import qutip_cupy
+
     repo_dir = pathlib.Path(__file__).absolute().parents[1]
-    expected_import_dir = repo_dir / 'src' / 'qutip_cupy'
+    expected_import_dir = repo_dir / "src" / "qutip_cupy"
     imported_dir = pathlib.Path(qutip_cupy.__file__).parent
     if expected_import_dir != imported_dir:
         warnings.warn(
@@ -42,7 +43,7 @@ def _check_imported_local_package():
 
 def _version():
     _check_imported_local_package()
-    filename = pathlib.Path(__file__).absolute().parents[1] / 'VERSION'
+    filename = pathlib.Path(__file__).absolute().parents[1] / "VERSION"
     with open(filename, "r") as file:
         version = file.read().strip()
     # Canonicalise the version format, just in case.
@@ -52,20 +53,20 @@ def _version():
 release = _version()
 
 extensions = [
-    'sphinx.ext.mathjax',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.autodoc',
-    'sphinx.ext.viewcode',
+    "sphinx.ext.mathjax",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.viewcode",
 ]
 
 # Patterns to exclude when looking for sources in the build.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 
 # HTML setup
 
-html_theme = 'sphinx_rtd_theme'
+html_theme = "sphinx_rtd_theme"
 # Directories for static files to be copied across after the build.
 html_static_path = []
 
@@ -73,6 +74,7 @@ html_static_path = []
 # Intersphinx setup
 
 intersphinx_mapping = {
+
     'qutip': ('https://qutip.org/docs/latest/', None),
     'python': ('https://docs.python.org/3', None),
     'numpy': ('https://numpy.org/doc/stable/', None),
