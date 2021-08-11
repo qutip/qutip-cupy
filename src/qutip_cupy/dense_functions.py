@@ -102,7 +102,7 @@ def inner_op_cupydense(left, op, right, scalar_is_ket=False):
         return (lstate * op._cp[0] * right._cp[0]).item()
 
     if left.shape[0] == 1:
-        return cp.vdot(cp.conj(left._cp), op._cp @ right._cp).item()
+        return cp.dot(left._cp, op._cp @ right._cp).item()
     return cp.vdot(left._cp, op._cp @ right._cp).item()
 
 
