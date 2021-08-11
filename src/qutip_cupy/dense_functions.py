@@ -44,8 +44,6 @@ def inner_cupydense(left, right, scalar_is_ket=False):
 
     if left.shape[0] == left.shape[1] == right.shape[1] == 1:
         if not cp.all(left._cp == 0) and not cp.all(right._cp == 0):
-            print(left._cp)
-            print(right._cp)
             return (
                 (cp.conj(left._cp[0, 0]) * right._cp[0, 0]).item()
                 if scalar_is_ket
@@ -56,7 +54,7 @@ def inner_cupydense(left, right, scalar_is_ket=False):
     if left.shape[0] == 1:
         # TODO check if this runs faster using qutip cublas methods
         # which allow to pass a flag to take conj
-        return cp.vdot(cp.conj(left._cp), right._cp).item()
+        return cp.dot(left._cp, right._cp).item()
 
     # TODO:remove the final .item when
     # possible as it forces CPU GPU  transfers.
