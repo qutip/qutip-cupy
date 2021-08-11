@@ -45,9 +45,9 @@ def inner_cupydense(left, right, scalar_is_ket=False):
     if left.shape[0] == left.shape[1] == right.shape[1] == 1:
         if not cp.all(left._cp == 0) and not cp.all(right._cp == 0):
             return (
-                (cp.conj(left._cp[0, 0]) * right._cp[0, 0]).item()
+                (cp.conj(left._cp[0]) * right._cp[0]).item()
                 if scalar_is_ket
-                else (left._cp[0, 0] * right._cp[0, 0]).item()
+                else (left._cp[0] * right._cp[0]).item()
             )
         return 0.0j
 
