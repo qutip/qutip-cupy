@@ -90,6 +90,20 @@ class TestTranspose(test_tools.TestTranspose):
     ]
 
 
+class TestInner(test_tools.TestInner):
+
+    specialisations = [
+        pytest.param(cdf.inner_cupydense, CuPyDense, CuPyDense, complex),
+    ]
+
+
+class TestInnerOp(test_tools.TestInnerOp):
+
+    specialisations = [
+        pytest.param(cdf.inner_op_cupydense, CuPyDense, CuPyDense, CuPyDense, complex),
+    ]
+
+
 class TestKron(test_tools.TestKron):
 
     specialisations = [
