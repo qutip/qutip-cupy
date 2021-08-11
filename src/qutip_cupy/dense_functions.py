@@ -31,25 +31,9 @@ def trace_cupydense(cp_arr):
     return cp.trace(cp_arr._cp).item()
 
 
-_hermdiff_kernel = cp.RawKernel(
-    r"""
-    #include <cupy/complex.cuh>
-    extern "C" __global__
-    void hermdiff(const complex<double>* x1,const int size,const double tol, bool* y) {
-        for (unsigned int tidx = blockDim.x * blockIdx.x + threadIdx.x; tidx < size;
-                                                    tidx += gridDim.x * blockDim.x) {
-        for (unsigned int tidy = blockDim.y * blockIdx.y + threadIdx.y;
-                                        tidy <= tidx; tidy += gridDim.y * blockDim.y) {
-
-            y[tidx+size*tidy] = norm(x1[tidx*size+tidy]
-                                    - conj(x1[tidy*size+tidx])) < tol;
-        };
-        };
-    }""",
-    "hermdiff",
-)
-
-
+# This kernel checks herm by distributing work among size/2 threads and balanciung out
+# the work contiguous threads access contiguous memory location
+# (i.e. items in the same row) at least in the first for loop.
 _hermdiff_kernel_half = cp.RawKernel(
     r"""
     #include <cupy/complex.cuh>
