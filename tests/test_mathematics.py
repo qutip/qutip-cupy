@@ -4,6 +4,7 @@ import pytest
 
 from qutip_cupy import dense
 from qutip_cupy import dense_functions as cdf
+from qutip_cupy import linalg
 from qutip_cupy import CuPyDense
 
 import qutip.tests.core.data.test_mathematics as test_tools
@@ -130,6 +131,20 @@ class TestHerm:
         base = CuPyDense(np.diag(np.random.rand(n)))
         assert cdf.isherm_cupydense(base, tol=self.tol)
         assert not cdf.isherm_cupydense(base * 1j, tol=self.tol)
+
+
+class TestInner(test_tools.TestInner):
+
+    specialisations = [
+        pytest.param(cdf.inner_cupydense, CuPyDense, CuPyDense, complex),
+    ]
+
+
+class TestInnerOp(test_tools.TestInnerOp):
+
+    specialisations = [
+        pytest.param(cdf.inner_op_cupydense, CuPyDense, CuPyDense, CuPyDense, complex),
+    ]
 
 
 class TestKron(test_tools.TestKron):
@@ -279,4 +294,18 @@ class TestProject(test_tools.TestProject):
 
     specialisations = [
         pytest.param(cdf.project_cupydense, CuPyDense, CuPyDense),
+    ]
+
+
+def _inv_cpd(matrix):
+    # Add a diagonal so `matrix` is not singular
+    return linalg.inv_cupydense(
+        matrix + dense.diags([1.1] * matrix.shape[0], [0], shape=matrix.shape)
+    )
+
+
+class TestInv(test_tools.TestInv):
+
+    specialisations = [
+        pytest.param(_inv_cpd, CuPyDense, CuPyDense),
     ]
