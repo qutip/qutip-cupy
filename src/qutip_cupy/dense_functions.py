@@ -65,7 +65,7 @@ def isherm_cupydense(cp_arr, tol):
     size = cp_arr.shape[0]
     diff = cp.ones((size // 2,), dtype=cp.bool_)
     # TODO: check if there is a better way to set thread dim and block dim
-    block_size = 64
+    block_size = 256
     grid_size = (size // 2 + block_size - 1) // block_size
     _hermdiff_kernel_half((grid_size,), (block_size,), (cp_arr._cp, size, tol, diff))
     return diff.all().item()
