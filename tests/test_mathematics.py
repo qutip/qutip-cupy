@@ -91,6 +91,18 @@ class TestTranspose(test_tools.TestTranspose):
     ]
 
 
+class TestSplitColumns(test_tools.UnaryOpMixin):
+    def op_numpy(self, matrix, copy=True):
+        return [
+            np.array(matrix[:, k], copy=copy).reshape(matrix.shape[0], 1)
+            for k in range(matrix.shape[1])
+        ]
+
+    specialisations = [
+        pytest.param(cdf.split_columns_cupydense, CuPyDense, list),
+    ]
+
+
 class TestInner(test_tools.TestInner):
 
     specialisations = [
