@@ -30,6 +30,16 @@ class TestCuPyDenseDispatch:
 class TestCuPyDense:
     """ Tests of the methods and constructors of the CuPyDense class. """
 
+    @pytest.mark.parametrize(["shape"], [pytest.param((5,)), pytest.param((3))])
+    def test_init_promotion_to_ket(sef, shape):
+        cupy_dense = CuPyDense(np.random.uniform(size=shape))
+        assert len(cupy_dense.shape) == 2
+        if isinstance(shape, int):
+            size = shape
+        else:
+            size = shape[0]
+        assert cupy_dense.shape == (size, 1)
+
     def test_shape(self, shape):
         cupy_dense = CuPyDense(np.random.uniform(size=shape))
         assert cupy_dense.shape == shape
