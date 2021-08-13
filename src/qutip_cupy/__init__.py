@@ -59,7 +59,7 @@ data.tidyup.add_specialisations([(CuPyDense, cdf.tidyup_dense)])
 data.trace.add_specialisations([(CuPyDense, cdf.trace_cupydense)])
 data.reshape.add_specialisations([(CuPyDense, CuPyDense, cdf.reshape_cupydense)])
 
-data.split_columns.add_specialisations([CuPyDense, cdf.split_columns_cupydense])
+data.split_columns.add_specialisations([(CuPyDense, cdf.split_columns_cupydense)])
 
 data.inner.add_specialisations([(CuPyDense, CuPyDense, cdf.inner_cupydense)])
 data.inner_op.add_specialisations(
