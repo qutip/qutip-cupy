@@ -71,6 +71,10 @@ def isherm_cupydense(cp_arr, tol):
     return diff.all().item()
 
 
+def split_columns_cupydense(cp_arr, copy=True):
+    return [CuPyDense(cp_arr._cp[:, k], copy=copy) for k in range(cp_arr.shape[1])]
+
+
 def _check_shape_inner(left, right):
     if (left.shape[0] != 1 and left.shape[1] != 1) or right.shape[1] != 1:
         raise ValueError(
