@@ -36,12 +36,12 @@ _expect_dense_kernel = cp.RawKernel(
     r"""
     #include <cupy/complex.cuh>
     extern "C" __global__
-    void expect_dens(const complex<double>* x1,const complex<double>* x2,
+    void expect_dens(const complex<double>* op,const complex<double>* dm,
                                         const int size, complex<double>* y) {
         for (unsigned int tidx = blockDim.x * blockIdx.x + threadIdx.x; tidx < size;
                                                       tidx += gridDim.x * blockDim.x) {
             for(unsigned int j= 0; j<size; j++){
-                    y[tidx] += x1[j*size+tidx] * x2[tidx*size+j];
+                    y[tidx] += op[j*size+tidx] * dm[tidx*size+j];
                 };
         };
     }""",
