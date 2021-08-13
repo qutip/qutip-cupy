@@ -24,7 +24,8 @@ class CuPyDense(data.Data):
         Data to be stored.
     shape: (int, int)
         Defaults to ``None``. If ``None`` will infer the shape from ``data``,
-        else it will set the shape for the internal CuPy array.
+        else it will set the shape for the internal CuPy array. If `` data`` has shape
+        of length less than one then ``data`` will be reshaped as a ket.
     copy: bool
         Defaults to ``True``. Whether to make a copy of
         the elements in ``data`` or not.
@@ -37,6 +38,8 @@ class CuPyDense(data.Data):
         base = cp.array(data, dtype=self.dtype, order="K", copy=copy)
         if shape is None:
             shape = base.shape
+            if len(shape) == 0:
+                shape = (1, 1)
             # Promote to a ket by default if passed 1D data.
             if len(shape) == 1:
                 shape = (shape[0], 1)
@@ -48,17 +51,21 @@ class CuPyDense(data.Data):
             and shape[1] > 0
         ):
             raise ValueError(
-                f"shape must be a 2-tuple of positive ints, but is {shape!r}"
+                "shape must be a 2-tuple of positive ints, but is " + repr(shape)
             )
-        if shape and (shape[0] != base.shape[0] or shape[1] != base.shape[1]):
-            if shape[0] * shape[1] != base.size:
-                raise ValueError(
-                    f"invalid shape {shape} for input data with size {base.shape}"
+        if shape[0] * shape[1] != base.size:
+            raise ValueError(
+                "".join(
+                    [
+                        "invalid shape ",
+                        str(shape),
+                        " for input data with size ",
+                        str(base.size),
+                    ]
                 )
-            else:
-                self._cp = base.reshape(shape)
-        else:
-            self._cp = base
+            )
+
+        self._cp = base.reshape(shape)
 
         super().__init__((shape[0], shape[1]))
 
