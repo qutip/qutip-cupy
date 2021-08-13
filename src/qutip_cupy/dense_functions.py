@@ -33,7 +33,7 @@ def trace_cupydense(cp_arr):
 
 def split_columns_cupydense(cp_arr, copy=True):
     return [CuPyDense(cp_arr._cp[:, k], copy=copy) for k in range(cp_arr.shape[1])]
- 
+
 
 def _check_shape_inner(left, right):
     if (left.shape[0] != 1 and left.shape[1] != 1) or right.shape[1] != 1:
@@ -155,4 +155,3 @@ def project_cupydense(state):
         return CuPyDense._raw_cupy_constructor(cp.outer(state.adjoint()._cp, state._cp))
     else:
         raise ValueError("state must be a ket or a bra.")
-
