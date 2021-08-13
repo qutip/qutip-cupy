@@ -31,6 +31,46 @@ def trace_cupydense(cp_arr):
     return cp.trace(cp_arr._cp).item()
 
 
+# This kernel checks herm by distributing work among size/2 threads and balanciung out
+# the work contiguous threads access contiguous memory location
+# (i.e. items in the same row) at least in the first for loop.
+_hermdiff_kernel_half = cp.RawKernel(
+    r"""
+    #include <cupy/complex.cuh>
+    extern "C" __global__
+    void hermdiff_half(const complex<double>* x1,
+                        const int size,const double tol, bool* y){
+        for (unsigned int tidx = blockDim.x * blockIdx.x + threadIdx.x; tidx < size/2;
+                                                    tidx += gridDim.x * blockDim.x) {
+
+            for(unsigned int j= size - tidx; j<size; j++){
+                    y[tidx] =  y[tidx] && (norm(x1[j*size+tidx]
+                                        - conj(x1[tidx*size+j])) < tol);
+                };
+
+            for(unsigned int k= 0; k<=tidx; k++){
+                    y[tidx] =  y[tidx] && (norm(x1[k*size+tidx]
+                                        - conj(x1[tidx*size+k])) < tol);
+                };
+
+        };
+    }""",
+    "hermdiff_half",
+)
+
+
+def isherm_cupydense(cp_arr, tol):
+    if cp_arr.shape[0] != cp_arr.shape[1]:
+        return False
+    size = cp_arr.shape[0]
+    diff = cp.ones((size // 2,), dtype=cp.bool_)
+    # TODO: check if there is a better way to set thread dim and block dim
+    block_size = 256
+    grid_size = (size // 2 + block_size - 1) // block_size
+    _hermdiff_kernel_half((grid_size,), (block_size,), (cp_arr._cp, size, tol, diff))
+    return diff.all().item()
+
+
 def split_columns_cupydense(cp_arr, copy=True):
     return [CuPyDense(cp_arr._cp[:, k], copy=copy) for k in range(cp_arr.shape[1])]
 
