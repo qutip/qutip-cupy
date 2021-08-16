@@ -20,20 +20,22 @@ def dtype(request):
     return request.param
 
 
-@pytest.fixture(scope="function", params=((1000, 1000)))  # ,(2000, 2000)))
-def shape(request):
+@pytest.fixture(scope="function", params=[50, 100, 1000])
+def size(request):
     return request.param
 
 
 @pytest.mark.benchmark()
-def test_matmul(shape, benchmark, request):
+def test_matmul(size, benchmark, request):
     # Group benchmark by operation, density and size.
     group = request.node.callspec.id  # noqa:F821
     group = group.split("-")
     benchmark.group = "-".join(group[1:])
     benchmark.extra_info["dtype"] = "complex"  # group[0]
 
-    array = np.random.uniform(size=shape) + 1.0j * np.random.uniform(size=shape)
+    array = np.random.uniform(size=(size, size)) + 1.0j * np.random.uniform(
+        size=(size, size)
+    )
 
     cp_arr = cp.array(array)
 
