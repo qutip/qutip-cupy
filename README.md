@@ -22,15 +22,15 @@ If you want to try out the package you will need to have a CUDA enabled GPU, `Qu
 We recommend using a conda environment `Python >= 3.7`.
 To install `CuPy` we recommend the following steps:
 
-- conda install -c conda-forge cupy
+- `conda install -c conda-forge cupy`
 
 To install `QuTiP >5.0.0` while it is not yet released we recommend:
 
-- python -mpip install git+https://github.com/qutip/qutip.git@dev.major
+- `python -mpip install git+https://github.com/qutip/qutip.git@dev.major`
 
 Now you can safely install `qutip_cupy`
 
-- python -mpip install git+https://github.com/qutip/qutip-cupy.git
+- `python -mpip install git+https://github.com/qutip/qutip-cupy.git`
 
 Usage
 ------------
@@ -55,3 +55,4 @@ This then returns
 
 ```
 
+You can now start working with `CuPy` based arrays seamlessly. `qutip-cupy` takes care to dispatch all specialisations for functions, and if there is no specialisation for the given function yet `QuTiP`'s data-layer will force a conversion to one of its own data-types and run the required function within the CPU. We recommend that you check our `GitHub` issues to stay up to date on any missing or new specialisation.
