@@ -2,7 +2,8 @@
 import pytest
 import numpy as np
 import cupy as cp
-import qutip as qt
+from qutip.core.data import Dense
+
 from qutip_cupy import CuPyDense
 
 import benchmark_tools
@@ -15,8 +16,8 @@ from benchmark_tools.cpu_gpu_times_wrapper import GpuWrapper
 cp.cuda.Device(benchmark_tools._DEVICE).use()
 
 # Supported dtypes
-dtype_list = [np, CuPyDense, qt.data.Dense, qt.data.CSR]
-dtype_ids = ["numpy", "CuPy", "qutip(Dense)", "qutip(CSR)"]
+dtype_list = [CuPyDense, Dense]
+dtype_ids = ["CuPy", "qutip(Dense)"]
 
 
 @pytest.fixture(params=dtype_list, ids=dtype_ids)
@@ -30,7 +31,7 @@ def size(request):
 
 
 @pytest.mark.benchmark()
-def test_matmul(size, benchmark, request):
+def test_matmul(size, benchmark, request, dtype):
     # Group benchmark by operation, density and size.
     group = request.node.callspec.id  # noqa:F821
     group = group.split("-")
@@ -41,13 +42,17 @@ def test_matmul(size, benchmark, request):
         size=(size, size)
     )
 
-    cp_arr = cp.array(array)
+    if dtype == CuPyDense:
+        arr = CuPyDense(array)
 
-    def matmul_(cp_arr):
-        return cp_arr @ cp_arr
+    elif dtype == Dense:
+        arr = Dense(array)
+
+    def matmul_(arr):
+        return arr @ arr
 
     benchmark2 = GpuWrapper(benchmark)
-    cp_mult = benchmark2.pedanticupy(matmul_, (cp_arr,))
+    cp_mult = benchmark2.pedanticupy(matmul_, (arr,))
 
     np_mult = matmul_(array)
 
