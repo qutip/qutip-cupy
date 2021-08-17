@@ -1,14 +1,18 @@
 # Remove this file after adding actual benchmarks
-
 import pytest
 import numpy as np
 import cupy as cp
 import qutip as qt
 from qutip_cupy import CuPyDense
 
-# from qutip_cupy import CuPyDense
+import benchmark_tools
+from benchmark_tools.cpu_gpu_times_wrapper import GpuWrapper
 
-from .cpu_gpu_times_wrapper import GpuWrapper
+# from benchmarks import cpu_gpu_times_wrapper
+# from cpgtw import GpuWrapper
+
+# Set device_id
+cp.cuda.Device(benchmark_tools._DEVICE).use()
 
 # Supported dtypes
 dtype_list = [np, CuPyDense, qt.data.Dense, qt.data.CSR]

@@ -1,4 +1,5 @@
 # this has benen mostly borrowed from the qutip-tensorflow implementation
+import cupy as cp
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -6,6 +7,8 @@ import pytest
 import argparse
 import glob
 from pathlib import Path
+
+import benchmarks
 
 
 def unravel(data, key):
@@ -117,13 +120,36 @@ def main(args=[]):
                         """,
     )
 
+    parser.add_argument(
+        "--device_id",
+        default=0,
+        help="""Device id for benchmarking.
+                        """,
+    )
+
     if args:
         args, other_args = parser.parse_known_args([])
     else:
         args, other_args = parser.parse_known_args()
 
+    benchmarks.DEVICE = args.device_id
+
     if not args.plot_only:
         run_benchmarks(other_args)
+
+    try:
+        # we are asumming benchmarking on the default device for other benchmarks we may set a
+        # global variable in the benchmarks module that initializes the device value
+        # everyehere and is set by the user
+        device_id = cp.cuda.get_device_id()
+
+    except NotImplementedError:
+        print("No GPU device found")
+
+    with cp.cuda.device.Device(device_id) as device:
+
+        print("The sepcifications for your current device are:")
+        print(device.attributes)
 
     benchmark_latest = get_latest_benchmark_path()
     benchmark_latest = benchmark_to_dataframe(benchmark_latest)
