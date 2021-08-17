@@ -16,8 +16,8 @@ from benchmark_tools.cpu_gpu_times_wrapper import GpuWrapper
 cp.cuda.Device(benchmark_tools._DEVICE).use()
 
 # Supported dtypes
-dtype_list = [CuPyDense, Dense]
-dtype_ids = ["CuPy", "qutip(Dense)"]
+dtype_list = ["CuPyDense", "CuPyDense_half_precision", "Dense"]
+dtype_ids = ["CuPy", "CuPy_half", "qutip(Dense)"]
 
 
 @pytest.fixture(params=dtype_list, ids=dtype_ids)
@@ -25,27 +25,29 @@ def dtype(request):
     return request.param
 
 
-@pytest.fixture(scope="function", params=[50, 100, 1000])
+@pytest.fixture(scope="function", params=[50, 100, 1000])  # , 4000])
 def size(request):
     return request.param
 
 
 @pytest.mark.benchmark()
-def test_matmul(size, benchmark, request, dtype):
+def test_matmul(dtype, size, benchmark, request):
     # Group benchmark by operation, density and size.
     group = request.node.callspec.id  # noqa:F821
     group = group.split("-")
     benchmark.group = "-".join(group[1:])
-    benchmark.extra_info["dtype"] = "complex"  # group[0]
+    benchmark.extra_info["dtype"] = group[0]
 
     array = np.random.uniform(size=(size, size)) + 1.0j * np.random.uniform(
         size=(size, size)
     )
 
-    if dtype == CuPyDense:
+    if dtype == "CuPyDense":
         arr = CuPyDense(array)
+    elif dtype == "CuPyDense_half_precision":
+        arr = CuPyDense(array, dtype=cp.complex64)
 
-    elif dtype == Dense:
+    elif dtype == "Dense":
         arr = Dense(array)
 
     def matmul_(arr):
@@ -56,4 +58,33 @@ def test_matmul(size, benchmark, request, dtype):
 
     np_mult = matmul_(array)
 
-    np.testing.assert_array_almost_equal(cp.asnumpy(cp_mult), np_mult)
+    np.testing.assert_array_almost_equal(cp_mult.to_array(), np_mult)
+
+
+# @pytest.mark.benchmark()
+# def test_add(dtype, size, benchmark, request):
+#     # Group benchmark by operation, density and size.
+#     group = request.node.callspec.id  # noqa:F821
+#     group = group.split("-")
+#     benchmark.group = "-".join(group[1:])
+#     benchmark.extra_info["dtype"] = group[0]
+
+#     array = np.random.uniform(size=(size, size)) + 1.0j * np.random.uniform(
+#         size=(size, size)
+#     )
+
+#     if dtype == CuPyDense:
+#         arr = CuPyDense(array)
+
+#     elif dtype == Dense:
+#         arr = Dense(array)
+
+#     def add_(arr):
+#         return arr + arr
+
+#     benchmark2 = GpuWrapper(benchmark)
+#     cp_mult = benchmark2.pedanticupy(add_, (arr,))
+
+#     np_mult = add_(array)
+
+#     np.testing.assert_array_almost_equal(cp_mult.to_array(), np_mult)
