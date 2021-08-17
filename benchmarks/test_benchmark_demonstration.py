@@ -56,4 +56,3 @@ def test_matmul(dtype, size, benchmark, request):
     np_mult = matmul_(array)
 
     np.testing.assert_array_almost_equal(cp_mult.to_array(), np_mult)
-
