@@ -57,8 +57,8 @@ def plot_benchmark(df, destination_folder):
         plt.yscale("log")
         plt.xscale("log")
         plt.savefig(f".benchmarks/figures/{operation}.png")
-        plt.xlabel("N")
-        plt.ylabel("t(s)")
+        plt.xlabel("Size")
+        plt.ylabel("Time (s)")
         plt.close()
 
 
