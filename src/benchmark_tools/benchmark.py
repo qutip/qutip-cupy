@@ -8,7 +8,7 @@ import argparse
 import glob
 from pathlib import Path
 
-import benchmarks
+import benchmark_tools
 
 
 def unravel(data, key):
@@ -132,21 +132,12 @@ def main(args=[]):
     else:
         args, other_args = parser.parse_known_args()
 
-    benchmarks.DEVICE = args.device_id
+    benchmark_tools._DEVICE = args.device_id
 
     if not args.plot_only:
         run_benchmarks(other_args)
 
-    try:
-        # we are asumming benchmarking on the default device for other benchmarks we may set a
-        # global variable in the benchmarks module that initializes the device value
-        # everyehere and is set by the user
-        device_id = cp.cuda.get_device_id()
-
-    except NotImplementedError:
-        print("No GPU device found")
-
-    with cp.cuda.device.Device(device_id) as device:
+    with cp.cuda.device.Device(benchmark_tools._DEVICE) as device:
 
         print("The sepcifications for your current device are:")
         print(device.attributes)
