@@ -55,4 +55,11 @@ This then returns
 
 ```
 
-You can now start working with `CuPy` based arrays seamlessly. `qutip-cupy` takes care to dispatch all specialisations for functions, and if there is no specialisation for the given function yet `QuTiP`'s data-layer will force a conversion to one of its own data-types and run the required function within the CPU. We recommend that you check our `GitHub` issues to stay up to date on any missing or new specialisation.
+In this way you can create CuPyDense arrays that live in the defult device on your environment. If you have more than one GPU we recommend that you check the documentatyion. We also provide some custom constructors.
+
+You can now start working with `CuPy` based arrays seamlessly. `qutip-cupy` takes care to dispatch all specialisations for functions, and if there is no specialisation for the given function yet `QuTiP`'s data-layer will force a conversion to one of its own data-types and run the required function within the CPU. We recommend that you check our `GitHub` issues to stay up to date on any missing or new specialisations.
+
+Benchmarks
+------------
+
+This is a work in progress.
