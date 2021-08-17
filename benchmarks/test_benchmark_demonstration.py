@@ -9,9 +9,6 @@ from qutip_cupy import CuPyDense
 import benchmark_tools
 from benchmark_tools.cpu_gpu_times_wrapper import GpuWrapper
 
-# from benchmarks import cpu_gpu_times_wrapper
-# from cpgtw import GpuWrapper
-
 # Set device_id
 cp.cuda.Device(benchmark_tools._DEVICE).use()
 
@@ -60,31 +57,3 @@ def test_matmul(dtype, size, benchmark, request):
 
     np.testing.assert_array_almost_equal(cp_mult.to_array(), np_mult)
 
-
-# @pytest.mark.benchmark()
-# def test_add(dtype, size, benchmark, request):
-#     # Group benchmark by operation, density and size.
-#     group = request.node.callspec.id  # noqa:F821
-#     group = group.split("-")
-#     benchmark.group = "-".join(group[1:])
-#     benchmark.extra_info["dtype"] = group[0]
-
-#     array = np.random.uniform(size=(size, size)) + 1.0j * np.random.uniform(
-#         size=(size, size)
-#     )
-
-#     if dtype == CuPyDense:
-#         arr = CuPyDense(array)
-
-#     elif dtype == Dense:
-#         arr = Dense(array)
-
-#     def add_(arr):
-#         return arr + arr
-
-#     benchmark2 = GpuWrapper(benchmark)
-#     cp_mult = benchmark2.pedanticupy(add_, (arr,))
-
-#     np_mult = add_(array)
-
-#     np.testing.assert_array_almost_equal(cp_mult.to_array(), np_mult)
