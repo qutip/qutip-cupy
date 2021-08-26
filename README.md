@@ -42,10 +42,10 @@ When working with a new `Qobj` you may proceed as follows:
 ``` python
 import qutip 
 import qutip_cupy
-from qutip_cupy import CuPyDense
 
-qobj = qutip.Qobj( CuPyDense([2,1] ))
+qobj = qutip.Qobj([0, 1], dtype="cupyd")
 qobj.data
+
 ```
 
 This then returns
@@ -55,7 +55,41 @@ This then returns
 
 ```
 
-In this way you can create CuPyDense arrays that live in the defult GPPU device on your environment. If you have more than one GPU we recommend that you check the documentation if you want to choose a custom one. We also provide some custom constructors to initialize `CuPyDense` arrays.
+In this way you can create CuPyDense arrays that live in the defult GPU device on your environment. If you have more than one GPU we recommend that you check the documentation if you want to choose a custom one. We also provide some custom constructors to initialize `CuPyDense` arrays.
+
+Operations that return an array will return control inmediately to the user, while scalar valued functions will block and return the result to general memory.
+
+You can operate a CuPyDense-backed state with a CuPyDense-backed unitary, and the result will also be CuPyDense-backed.
+
+``` python
+import numpy as np 
+theta = (1/2)*np.pi
+
+U = qutip.Qobj([[np.cos(theta), 1.j*np.sin(theta)],[-1.j*np.sin(theta),np.cos(theta) ]]).to('cupyd')
+
+qobj_end = U @ qobj
+
+qobj_end.data
+
+```
+
+``` python
+<qutip_cupy.dense.CuPyDense at 0x7f1190688d20>
+
+```
+
+You can then calculate the overlap of  the new state with the original state. The resulting overlap lives in the CPU and if you wanted to then calculate the probability of finding the new state to be the original state (i.e. you were to project on a suitable base that has as an element the original state) one should use CPU-bound computation, in this case we call `np.linalg.norm` .
+
+``` python
+
+overlap = qobj_end.overlap(qobj)
+np.linalg.norm(overlap)
+
+```
+
+``` python
+6.123233995736766e-17
+```
 
 You can now start working with `CuPy` based arrays seamlessly. `qutip-cupy` takes care to dispatch all functions to specialisations on `CuPyDense` arrays, and if there is no specialisation for the given function yet `QuTiP`'s data-layer will force a conversion to one of its own data-types and run the required function within the CPU. We recommend that you check our `GitHub` issues to stay up to date on any missing or new specialisations.
 
