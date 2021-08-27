@@ -83,12 +83,12 @@ You can then calculate the overlap of  the new state with the original state. Th
 ``` python
 
 overlap = qobj_end.overlap(qobj)
-np.linalg.norm(overlap)
+np.linalg.norm(overlap)**2
 
 ```
 
 ``` python
-6.123233995736766e-17
+3.749399456654644e-33
 ```
 
 You can now start working with `CuPy` based arrays seamlessly. `qutip-cupy` takes care to dispatch all functions to specialisations on `CuPyDense` arrays, and if there is no specialisation for the given function yet `QuTiP`'s data-layer will force a conversion to one of its own data-types and run the required function within the CPU. We recommend that you check our `GitHub` issues to stay up to date on any missing or new specialisations.
