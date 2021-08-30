@@ -1,3 +1,5 @@
+"""Contains specialization functions for calculating expectation."""
+
 import cupy as cp
 
 
@@ -53,8 +55,9 @@ def _expect_dense_dense_dm(op, state):
     _check_shape_dm(op, state)
     size = op.shape[0]
     out = cp.zeros((size,), dtype=cp.complex128)
-    # TODO: check if there is a better way to set thread dim and block dim
-    block_size = 64
+    # Having this batch size may hinder performance when running other
+    # applications in the same GPU.
+    block_size = 1024
     grid_size = (size + block_size - 1) // block_size
     _expect_dense_kernel((grid_size,), (block_size,), (op._cp, state._cp, size, out))
     return out.sum().item()
