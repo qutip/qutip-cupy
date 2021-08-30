@@ -6,7 +6,7 @@
 import warnings
 
 try:
-    __import__("cupy")
+    import cupy as cp
 except ModuleNotFoundError:
     raise RuntimeError(
         "qutip_cupy requires cupy to be installed, please install cupy by following "
@@ -36,14 +36,18 @@ data.to.add_conversions(
         (data.Dense, CuPyDense, cd.dense_from_cupydense),
     ]
 )
-data.to.register_aliases(["cupyd"], CuPyDense)
+data.to.register_aliases(["cupyd", "CuPyDense"], CuPyDense)
 
 
 def is_cupydense(data):
     return isinstance(data, CuPyDense)
 
 
-data.create.add_creators([(is_cupydense, CuPyDense, 80)])
+def is_cupy(data):
+    return isinstance(data, cp.ndarray)  # noqa: F821
+
+
+data.create.add_creators([(is_cupydense, CuPyDense, 80), (is_cupy, CuPyDense, 81)])
 
 
 data.adjoint.add_specialisations([(CuPyDense, CuPyDense, cd.adjoint_cupydense)])
@@ -92,5 +96,6 @@ data.inv.add_specialisations([(CuPyDense, linalg.inv_cupydense)])
 
 # We must register the functions to the data layer but do not want
 # the data layer or qutip_cupy.dense to be accessible from qutip_cupy
+del cp
 del data
 del cd
