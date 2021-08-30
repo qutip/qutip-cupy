@@ -4,6 +4,7 @@ import pytest
 
 from qutip_cupy import dense
 from qutip_cupy import dense_functions as cdf
+from qutip_cupy import linalg
 from qutip_cupy import CuPyDense
 from qutip_cupy.expectation import expect_cupydense
 
@@ -89,6 +90,27 @@ class TestTranspose(test_tools.TestTranspose):
 
     specialisations = [
         pytest.param(dense.transpose_cupydense, CuPyDense, CuPyDense),
+    ]
+
+
+class TestInner(test_tools.TestInner):
+
+    specialisations = [
+        pytest.param(cdf.inner_cupydense, CuPyDense, CuPyDense, complex),
+    ]
+
+
+class TestInnerOp(test_tools.TestInnerOp):
+
+    specialisations = [
+        pytest.param(cdf.inner_op_cupydense, CuPyDense, CuPyDense, CuPyDense, complex),
+    ]
+
+
+class TestKron(test_tools.TestKron):
+
+    specialisations = [
+        pytest.param(cdf.kron_cupydense, CuPyDense, CuPyDense, CuPyDense),
     ]
 
 
@@ -239,4 +261,18 @@ class TestExpect(test_expect_tools.TestExpect):
 
     specialisations = [
         pytest.param(expect_cupydense, CuPyDense, CuPyDense, complex),
+    ]
+
+
+def _inv_cpd(matrix):
+    # Add a diagonal so `matrix` is not singular
+    return linalg.inv_cupydense(
+        matrix + dense.diags([1.1] * matrix.shape[0], [0], shape=matrix.shape)
+    )
+
+
+class TestInv(test_tools.TestInv):
+
+    specialisations = [
+        pytest.param(_inv_cpd, CuPyDense, CuPyDense),
     ]
