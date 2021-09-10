@@ -39,15 +39,11 @@ data.to.add_conversions(
 data.to.register_aliases(["cupyd", "CuPyDense"], CuPyDense)
 
 
-def is_cupydense(data):
-    return isinstance(data, CuPyDense)
-
-
 def is_cupy(data):
     return isinstance(data, cp.ndarray)  # noqa: F821
 
 
-data.create.add_creators([(is_cupydense, CuPyDense, 80), (is_cupy, CuPyDense, 81)])
+data.create.add_creators([(is_cupy, CuPyDense, 80)])
 
 
 data.adjoint.add_specialisations([(CuPyDense, CuPyDense, cd.adjoint_cupydense)])
