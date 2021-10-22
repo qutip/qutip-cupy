@@ -38,6 +38,14 @@ data.to.add_conversions(
 )
 data.to.register_aliases(["cupyd"], CuPyDense)
 
+
+def is_cupydense(data):
+    return isinstance(data, CuPyDense)
+
+
+data.create.add_creators([(is_cupydense, CuPyDense, 80)])
+
+
 data.adjoint.add_specialisations([(CuPyDense, CuPyDense, cd.adjoint_cupydense)])
 data.transpose.add_specialisations([(CuPyDense, CuPyDense, cd.transpose_cupydense)])
 data.conj.add_specialisations([(CuPyDense, CuPyDense, cd.conj_cupydense)])
