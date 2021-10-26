@@ -6,8 +6,10 @@ from qutip_cupy import dense
 from qutip_cupy import dense_functions as cdf
 from qutip_cupy import linalg
 from qutip_cupy import CuPyDense
+from qutip_cupy.expectation import expect_cupydense
 
 import qutip.tests.core.data.test_mathematics as test_tools
+import qutip.tests.core.data.test_expect as test_expect_tools
 from qutip.core.data import Data
 
 
@@ -306,6 +308,13 @@ class TestProject(test_tools.TestProject):
 
     specialisations = [
         pytest.param(cdf.project_cupydense, CuPyDense, CuPyDense),
+    ]
+
+
+class TestExpect(test_expect_tools.TestExpect):
+
+    specialisations = [
+        pytest.param(expect_cupydense, CuPyDense, CuPyDense, complex),
     ]
 
 
