@@ -40,6 +40,8 @@ data.to.register_aliases(["cupyd", "CuPyDense"], CuPyDense)
 
 
 def is_cupy(data):
+    import cupy as cp
+
     return isinstance(data, cp.ndarray)  # noqa: F821
 
 
