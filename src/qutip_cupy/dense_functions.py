@@ -1,6 +1,5 @@
 """Contains specialization functions for dense_cupy. These are the functions that
  are defined outside of qutip/core/data/dense.pyx."""
-
 import cupy as cp
 
 from .dense import CuPyDense
