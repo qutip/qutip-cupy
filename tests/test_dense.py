@@ -71,7 +71,7 @@ def test_true_div(shape):
 
     cup_arr = CuPyDense(array)
     cpdense_over_2 = cup_arr / 2.0
-    qtpdense_over_2 = data.Dense(array) / 2.0
+    qtpdense_over_2 = data.Dense(array).__truediv__(2.0)
 
     np.testing.assert_array_equal(cpdense_over_2.to_array(), qtpdense_over_2.to_array())
 
@@ -81,7 +81,7 @@ def test_itrue_div(shape):
     array = np.random.uniform(size=shape) + 1.0j * np.random.uniform(size=shape)
     cpd_array = CuPyDense(array)
 
-    cpd_array /= 2
+    cpd_array.__itruediv__(2.0)
     qtpdense = data.Dense(array / 2)
 
     np.testing.assert_array_equal(cpd_array.to_array(), qtpdense.to_array())
@@ -92,7 +92,7 @@ def test_mul(shape):
     array = np.random.uniform(size=shape) + 1.0j * np.random.uniform(size=shape)
 
     cpdense_mul = CuPyDense(array) * (2.0 + 1.0j)
-    qtpdense_mul = data.Dense(array) * (2.0 + 1.0j)
+    qtpdense_mul = data.Dense(array).__mul__(2.0 + 1.0j)
 
     np.testing.assert_array_equal(cpdense_mul.to_array(), qtpdense_mul.to_array())
 
