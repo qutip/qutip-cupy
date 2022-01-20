@@ -39,8 +39,10 @@ jobs:
           python -mpip install -r doc/requirements.txt
 
       - name: Install QuTiP from GitHub
+        # temporally pinning qutip version
+        # should be restored to dev.major
         run: |
-          python -mpip install git+https://github.com/qutip/qutip.git@dev.major
+          python -mpip install git+https://github.com/qutip/qutip.git@c6d68c04a02c4fbeed14e0e07d44ab6021d53c8d 
           python -c 'import qutip; qutip.about()'
 
       - name: Install qutip-cupy from GitHub
