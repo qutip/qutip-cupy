@@ -8,6 +8,6 @@ runners:
     # Amazon AMI: Deep Learning AMI GPU CUDA 11.2.1 (Ubuntu 20.04) 20210625
     # for eu-west-1
     machine_image: ami-07b138161bedd526d
-    preemptible: false
+    preemptible: true
     labels:
       - gpu
