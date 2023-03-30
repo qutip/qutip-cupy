@@ -58,7 +58,7 @@ jobs:
   cases:
     name: ${{ matrix.os }}, ${{ matrix.case-name }}
     needs: validate
-    runs-on: [self-hosted, gpu]
+    runs-on: [self-hosted, cirun-gpu-runner]
     strategy:
       fail-fast: false
       matrix:
