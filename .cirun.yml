@@ -7,12 +7,11 @@ runners:
     instance_type: g4dn.xlarge  # Cheapest VM on AWS
     # Amazon AMI: Deep Learning AMI GPU CUDA 11.2.1 (Ubuntu 20.04) 20210625
     # for eu-west-1
-    machine_image: ami-07b138161bedd526d
+    machine_image: ami-00ac0c28c01352e53
     preemptible: false
-    workflow: .github/workflows/tests-gpu.yml
     count: 1
     labels:
-      - gpu
+      - "cirun-gpu-runner"
 
   - name: docs-gpu-runner
     cloud: aws
@@ -20,9 +19,8 @@ runners:
     instance_type: g4dn.xlarge  # Cheapest VM on AWS
     # Amazon AMI: Deep Learning AMI GPU CUDA 11.2.1 (Ubuntu 20.04) 20210625
     # for eu-west-1
-    machine_image: ami-07b138161bedd526d
+    machine_image: ami-00ac0c28c01352e53
     preemptible: false
-    workflow: .github/workflows/docs-gpu.yml
     count: 1
     labels:
-      - gpu
+      - "cirun-gpu-runner"
