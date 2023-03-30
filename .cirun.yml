@@ -9,10 +9,9 @@ runners:
     # for eu-west-1
     machine_image: ami-00ac0c28c01352e53
     preemptible: false
-    workflow: .github/workflows/tests-gpu.yml
     count: 1
     labels:
-      - gpu
+      - "cirun-gpu-runner"
 
   - name: docs-gpu-runner
     cloud: aws
@@ -22,7 +21,6 @@ runners:
     # for eu-west-1
     machine_image: ami-00ac0c28c01352e53
     preemptible: false
-    workflow: .github/workflows/docs-gpu.yml
     count: 1
     labels:
-      - gpu
+      - "cirun-gpu-runner"
