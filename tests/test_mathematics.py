@@ -253,55 +253,11 @@ class TestL1Norm(test_tools.UnaryOpMixin):
     ]
 
 
-class TestPow(test_tools._GenericOpMixin):
-
-    # This should be part of QuTiP and only inherited here
-    # TODO: Add it to QuTiP and inherit here
-
-    def op_numpy(self, matrix, scalar):
-
-        return np.linalg.matrix_power(matrix, scalar)
-
-    shapes = [
-        (pytest.param((1, 1),),),
-        (pytest.param((5, 5),),),
-        (pytest.param((10, 10),),),
-    ]
-
-    bad_shapes = [
-        (x,) for x in test_tools.shapes_unary() if x.values[0][0] != x.values[0][1]
-    ]
+class TestPow(test_tools.TestPow):
 
     specialisations = [
         pytest.param(cdf.pow_cupydense, CuPyDense, CuPyDense),
     ]
-
-    @pytest.mark.parametrize(
-        "scalar",
-        [pytest.param(1, id="1"), pytest.param(2, id="2"), pytest.param(5, id="5")],
-    )
-    def test_mathematically_correct(self, op, data_m, scalar, out_type):
-        matrix = data_m()
-        expected = self.op_numpy(matrix.to_array(), scalar)
-        test = op(matrix, scalar)
-        assert isinstance(test, out_type)
-        if issubclass(out_type, Data):
-            assert test.shape == expected.shape
-            np.testing.assert_allclose(test.to_array(), expected, atol=self.tol)
-        else:
-            assert abs(test - expected) < self.tol
-
-    @pytest.mark.parametrize(
-        "scalar",
-        [pytest.param(1, id="1"), pytest.param(2, id="2"), pytest.param(5, id="5")],
-    )
-    def test_incorrect_shape_raises(self, op, data_m, scalar):
-        """
-        Test that the operation produces a suitable error if the matrices are not
-        square.
-        """
-        with pytest.raises(ValueError):
-            op(data_m(), scalar)
 
 
 class TestProject(test_tools.TestProject):
