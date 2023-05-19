@@ -10,9 +10,20 @@ def tidyup_dense(matrix, tol, inplace=True):
 
 
 def reshape_cupydense(cp_arr, n_rows_out, n_cols_out):
-
     return CuPyDense._raw_cupy_constructor(
         cp.reshape(cp_arr._cp, (n_rows_out, n_cols_out))
+    )
+
+
+def column_stack_cupydense(cp_arr):
+    return CuPyDense._raw_cupy_constructor(
+        cp.reshape(cp_arr._cp, (-1, 1), order="F")
+    )
+
+
+def column_unstack_cupydense(cp_arr, rows):
+    return CuPyDense._raw_cupy_constructor(
+        cp.reshape(cp_arr._cp, (rows, -1), order="F")
     )
 
 

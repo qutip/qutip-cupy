@@ -102,45 +102,15 @@ class CuPyDense(data.Data):
     def trace(self):
         return self._cp.trace()
 
-    def __add__(left, right):
-        if not isinstance(left, CuPyDense) or not isinstance(right, CuPyDense):
-            return NotImplemented
-        return CuPyDense._raw_cupy_constructor(left._cp + right._cp)
-
-    def __matmul__(left, right):
-        if not isinstance(left, CuPyDense) or not isinstance(right, CuPyDense):
-            return NotImplemented
-        return CuPyDense._raw_cupy_constructor(left._cp @ right._cp)
-
-    def __mul__(left, right):
-        dense, number = (left, right) if isinstance(left, CuPyDense) else (right, left)
-        if not isinstance(number, numbers.Number):
-            return NotImplemented
-        return CuPyDense._raw_cupy_constructor(dense._cp * complex(number))
-
     def __imul__(self, other):
         self._cp.__imul__(other)
         return self
-
-    def __truediv__(left, right):
-        dense, number = (left, right) if isinstance(left, CuPyDense) else (right, left)
-        if not isinstance(number, numbers.Number):
-            return NotImplemented
-        return CuPyDense._raw_cupy_constructor(dense._cp.__truediv__(number))
 
     def __itruediv__(self, other):
         if not isinstance(other, numbers.Number):
             return NotImplemented
         self._cp.__itruediv__(other)
         return self
-
-    def __neg__(self):
-        return CuPyDense._raw_cupy_constructor(self._cp.__neg__())
-
-    def __sub__(left, right):
-        if not isinstance(left, CuPyDense) or not isinstance(right, CuPyDense):
-            return NotImplemented
-        return CuPyDense._raw_cupy_constructor(left._cp - right._cp)
 
 
 def zeros(rows, cols, fortran=True):
@@ -308,34 +278,34 @@ def _check_same_shape(left, right):
 
 
 def adjoint_cupydense(cpd_array):
-    return cpd_array.adjoint()
+    return CuPyDense._raw_cupy_constructor(cpd_array._cp.transpose().conj())
 
 
 def conj_cupydense(cpd_array):
-    return cpd_array.conj()
+    return CuPyDense._raw_cupy_constructor(cpd_array._cp.conj())
 
 
 def transpose_cupydense(cpd_array):
-    return cpd_array.transpose()
+    return CuPyDense._raw_cupy_constructor(cpd_array._cp.transpose())
 
 
 def trace_cupydense(cpd_array):
-    return cpd_array.trace()
+    return cpd_array._cp.trace()
 
 
 def imul_cupydense(cpd_array, value):
     """Multiply this CuPyDense `cpd_array` by a complex scalar `value`."""
-    return cpd_array.__imul__(value)
+    return self._cp.__imul__(value)
 
 
 def mul_cupydense(cpd_array, value):
     """Multiply this Dense `cpd_array` by a complex scalar `value`."""
-    return cpd_array * value
+    return CuPyDense._raw_cupy_constructor(dense._cp * value)
 
 
 def neg_cupydense(cpd_array):
     """Unary negation of this Dense `cpd_array`.  Return a new object."""
-    return cpd_array.__neg__()
+    return CuPyDense._raw_cupy_constructor(cpd_array._cp.__neg__())
 
 
 def matmul_cupydense(left, right, scale=1, out=None):
@@ -348,9 +318,10 @@ def matmul_cupydense(left, right, scale=1, out=None):
     # This may be done  more naturally with gemm from cupy.cublas
     # but the GPU timings which are not very different.
     if out is None:
-        return (left @ right) * scale
+        return CuPyDense._raw_cupy_constructor(left._cp @ right._cp * scale)
+        (left @ right) * scale
     else:
-        out += (left @ right) * scale
+        out._cp += (left._cp @ right._cp) * scale
         return out
 
 
@@ -372,7 +343,7 @@ def add_cupydense(left, right, scale=1):
     out : CUPyDense
     """
     _check_same_shape(left, right)
-    return left + right * scale
+    return CuPyDense._raw_cupy_constructor(left._cp + right._cp * scale)
 
 
 def iadd_cupydense(left, right, scale=1):
@@ -414,4 +385,4 @@ def sub_cupydense(left, right):
     out : CUPyDense
     """
     _check_same_shape(left, right)
-    return left - right
+    return CuPyDense._raw_cupy_constructor(left._cp - right._cp)
