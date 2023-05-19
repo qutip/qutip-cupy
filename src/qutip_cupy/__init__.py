@@ -65,8 +65,10 @@ data.zeros.add_specialisations([(CuPyDense, cd.zeros)])
 # dense_functions
 data.tidyup.add_specialisations([(CuPyDense, cdf.tidyup_dense)])
 data.trace.add_specialisations([(CuPyDense, cdf.trace_cupydense)])
-data.reshape.add_specialisations([(CuPyDense, CuPyDense, cdf.reshape_cupydense)])
 
+data.reshape.add_specialisations([(CuPyDense, CuPyDense, cdf.reshape_cupydense)])
+data.column_stack.add_specialisations([(CuPyDense, CuPyDense, cdf.column_stack_cupydense)])
+data.column_unstack.add_specialisations([(CuPyDense, CuPyDense, cdf.column_unstack_cupydense)])
 data.split_columns.add_specialisations([(CuPyDense, cdf.split_columns_cupydense)])
 
 data.inner.add_specialisations([(CuPyDense, CuPyDense, cdf.inner_cupydense)])

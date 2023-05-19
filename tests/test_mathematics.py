@@ -9,6 +9,7 @@ from qutip_cupy import CuPyDense
 from qutip_cupy.expectation import expect_cupydense
 
 import qutip.tests.core.data.test_mathematics as test_tools
+import qutip.tests.core.data.test_reshape as test_reshape_tools
 import qutip.tests.core.data.test_expect as test_expect_tools
 from qutip.core.data import Data
 
@@ -135,15 +136,31 @@ class TestHerm:
         assert not cdf.isherm_cupydense(base * 1j, tol=self.tol)
 
 
-class TestSplitColumns(test_tools.UnaryOpMixin):
-    def op_numpy(self, matrix, copy=True):
-        return [
-            np.array(matrix[:, k], copy=copy).reshape(matrix.shape[0], 1)
-            for k in range(matrix.shape[1])
-        ]
+class TestSplitColumns(test_reshape_tools.TestSplitColumns):
 
     specialisations = [
         pytest.param(cdf.split_columns_cupydense, CuPyDense, list),
+    ]
+
+
+class TestColumnStack(test_reshape_tools.TestColumnStack):
+
+    specialisations = [
+        pytest.param(cdf.column_stack_cupydense, CuPyDense, CuPyDense),
+    ]
+
+
+class TestColumnUnstack(test_reshape_tools.TestColumnUnstack):
+
+    specialisations = [
+        pytest.param(cdf.column_unstack_cupydense, CuPyDense, CuPyDense),
+    ]
+
+
+class TestReshape(test_reshape_tools.TestReshape):
+
+    specialisations = [
+        pytest.param(cdf.reshape_cupydense, CuPyDense, CuPyDense),
     ]
 
 
