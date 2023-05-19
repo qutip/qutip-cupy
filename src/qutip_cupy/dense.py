@@ -320,7 +320,6 @@ def matmul_cupydense(left, right, scale=1, out=None):
     # but the GPU timings which are not very different.
     if out is None:
         return CuPyDense._raw_cupy_constructor(left._cp @ right._cp * scale)
-        (left @ right) * scale
     else:
         out._cp += (left._cp @ right._cp) * scale
         return out
