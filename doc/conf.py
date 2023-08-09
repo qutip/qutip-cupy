@@ -3,6 +3,9 @@ import warnings
 
 import packaging.version
 
+import sys
+import os
+sys.path.insert(0, os.path.abspath('../src/qutip_cupy'))
 
 needs_sphinx = "4.0"
 
@@ -71,9 +74,11 @@ html_static_path = []
 # Intersphinx setup
 
 intersphinx_mapping = {
-    "qutip": ("https://qutip.org/docs/latest/", None),
-    "python": ("https://docs.python.org/3", None),
-    "numpy": ("https://numpy.org/doc/stable/", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
-    "cython": ("https://cython.readthedocs.io/en/latest/", None),
+
+    'qutip': ('https://qutip.org/docs/latest/', None),
+    'python': ('https://docs.python.org/3', None),
+    'numpy': ('https://numpy.org/doc/stable/', None),
+    'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
+    'cython': ('https://cython.readthedocs.io/en/latest/', None),
+    'cupy': ('https://docs.cupy.dev/en/stable/index.html', None)
 }
